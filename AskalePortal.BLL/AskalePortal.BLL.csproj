@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.26" />
+    <PackageReference Include="SapNwRfc" Version="1.4.0" />
+    <PackageReference Include="SSH.NET" Version="2025.1.0" />
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AskalePortal.Constants\AskalePortal.Constants.csproj" />
+    <ProjectReference Include="..\AskalePortal.DAL\AskalePortal.DAL.csproj" />
+    <ProjectReference Include="..\AskalePortal.Data\AskalePortal.Data.csproj" />
+  </ItemGroup>
+
+</Project>

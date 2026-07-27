@@ -1,0 +1,67 @@
+#nullable enable
+
+namespace AskalePortal.Data.Contracts.Detached;
+
+public sealed class HRExpenseWithOutTableDto
+{
+    public int Id { get; set; }
+
+    public int tripId { get; set; }
+
+    public int islemTuruId { get; set; }
+
+    public int currentStateId { get; set; }
+
+    public int currentUserId { get; set; }
+
+    public int expenseTypeId { get; set; }
+
+    public string plaka { get; set; }
+
+    public int aracTuruId { get; set; }
+
+    public decimal amount { get; set; }
+
+    public decimal approvedAmount { get; set; }
+
+    public decimal? totalLimitAmount { get; set; }
+
+    public int kalinanGunSayisi { get; set; }
+
+    public int otoparkGunSayisi { get; set; }
+
+    public string kdvOrani { get; set; }
+
+    public decimal? kdvDegeri { get; set; }
+
+    public DateTime? spendingTime { get; set; }
+
+    public string tripDesciption { get; set; }
+
+    public string fileNames { get; set; }
+
+    public int createdUserId { get; set; }
+
+    public bool? approval { get; set; }
+
+    public bool? lastApproved { get; set; }
+
+    public int onaySirasi { get; set; }
+
+    public bool gunlukMu { get; set; }
+
+    public string hrNot { get; set; }
+
+    public bool enabled { get; set; }
+
+    public DateTime? createdDate { get; set; }
+
+    public DateTime? updatedDate { get; set; }
+
+    public int? updatedUserId { get; set; }
+
+    public DateTime? islemTarihi { get; set; }
+
+    public int? vekaletId { get; set; }
+
+}

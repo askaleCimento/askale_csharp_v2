@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35514.174
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AskalePortal.API", "AskalePortal\AskalePortal.API.csproj", "{DCB79417-F4BE-4BBF-A7D6-546BEDBEBC7F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{160C2879-1294-4919-BFBF-1E3D77264CA2} = {160C2879-1294-4919-BFBF-1E3D77264CA2}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AskalePortal.BLL", "AskalePortal.BLL\AskalePortal.BLL.csproj", "{160C2879-1294-4919-BFBF-1E3D77264CA2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5727550B-4237-4732-B13B-2A0ACC5171A0} = {5727550B-4237-4732-B13B-2A0ACC5171A0}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AskalePortal.Constants", "AskalePortal.Constants\AskalePortal.Constants.csproj", "{138F057F-93AE-4BA5-BAEC-CC9A5F90CE29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AskalePortal.Data", "AskalePortal.Data\AskalePortal.Data.csproj", "{5727550B-4237-4732-B13B-2A0ACC5171A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AskalePortal.DAL", "AskalePortal.DAL\AskalePortal.DAL.csproj", "{48B7F9F6-34F1-40CC-BB26-127F57558711}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentOpen", "DocumentOpen\DocumentOpen.csproj", "{E59DD615-1095-4646-A178-D28FE36E9785}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCB79417-F4BE-4BBF-A7D6-546BEDBEBC7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCB79417-F4BE-4BBF-A7D6-546BEDBEBC7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCB79417-F4BE-4BBF-A7D6-546BEDBEBC7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCB79417-F4BE-4BBF-A7D6-546BEDBEBC7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{160C2879-1294-4919-BFBF-1E3D77264CA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{160C2879-1294-4919-BFBF-1E3D77264CA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{160C2879-1294-4919-BFBF-1E3D77264CA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{160C2879-1294-4919-BFBF-1E3D77264CA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{138F057F-93AE-4BA5-BAEC-CC9A5F90CE29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{138F057F-93AE-4BA5-BAEC-CC9A5F90CE29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{138F057F-93AE-4BA5-BAEC-CC9A5F90CE29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{138F057F-93AE-4BA5-BAEC-CC9A5F90CE29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5727550B-4237-4732-B13B-2A0ACC5171A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5727550B-4237-4732-B13B-2A0ACC5171A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5727550B-4237-4732-B13B-2A0ACC5171A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5727550B-4237-4732-B13B-2A0ACC5171A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48B7F9F6-34F1-40CC-BB26-127F57558711}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48B7F9F6-34F1-40CC-BB26-127F57558711}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48B7F9F6-34F1-40CC-BB26-127F57558711}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48B7F9F6-34F1-40CC-BB26-127F57558711}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E59DD615-1095-4646-A178-D28FE36E9785}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E59DD615-1095-4646-A178-D28FE36E9785}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E59DD615-1095-4646-A178-D28FE36E9785}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E59DD615-1095-4646-A178-D28FE36E9785}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8A8C774A-48CB-418F-9E50-EDE1441968C0}
+	EndGlobalSection
+EndGlobal

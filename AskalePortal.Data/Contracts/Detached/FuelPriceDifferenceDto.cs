@@ -1,0 +1,53 @@
+#nullable enable
+
+namespace AskalePortal.Data.Contracts.Detached;
+
+public sealed class FuelPriceDifferenceDto
+{
+    public int Id { get; set; }
+
+    public DateTime? createdDate { get; set; }
+
+    public int? createdUserId { get; set; }
+
+    public bool enabled { get; set; }
+
+    public DateTime? updatedDate { get; set; }
+
+    public int? updatedUserId { get; set; }
+
+    public bool? approval { get; set; }
+
+    public int? birimId { get; set; }
+
+    public int? companyId { get; set; }
+
+    public int? currentStateId { get; set; }
+
+    public int? currentUserId { get; set; }
+
+    public int? editId { get; set; }
+
+    public decimal fiyat { get; set; }
+
+    public DateTime? fiyatTarih { get; set; }
+
+    public string isinAdi { get; set; }
+
+    public decimal katSayi { get; set; }
+
+    public decimal? km { get; set; }
+
+    public string nevi { get; set; }
+
+    public int? onaySirasi { get; set; }
+
+    public DateTime sozlesmeBaslangic { get; set; }
+
+    public DateTime sozlesmeBitis { get; set; }
+
+    public int? userId { get; set; }
+
+    public string yukleniciFirma { get; set; }
+
+}

@@ -1,0 +1,28 @@
+﻿@using GleamTech.Web.Mvc
+@using GleamTech.DocumentUltimate.Web
+@model DocumentViewer
+<!DOCTYPE html>
+
+
+<html>
+<head>
+  <style>
+      .dv-control {
+          width: 95vw;
+          height: 95vh;
+      }
+  </style>
+    <title>Highlighting keywords</title>
+    @Html.RenderCss(Model)
+    @Html.RenderJs(Model)
+</head>
+<body style="margin: 20px;">
+    <div class="dv-control">
+
+        @Html.RenderControl(Model)
+    </div>
+
+    @*<iframe src='https://view.officeapps.live.com/op/embed.aspx?src=http://askale.mty.com.tr/files/documents/mukayese-ciro-ozet-rapor--20160531145108.xlsx' width='100%' height='500' frameborder='0'></iframe>*@
+</body>
+</html>
+

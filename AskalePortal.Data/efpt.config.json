@@ -1,0 +1,783 @@
+﻿{
+   "CodeGenerationMode": 5,
+   "ContextClassName": "DBDataContext",
+   "ContextNamespace": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "AskalePortal.Data",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[AccountPaymentKalemSAPTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AccountPaymentSAPTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AccountPaymentTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AccountPaymentType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ActionLog]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ActivePaymentDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ActiveProcess]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ActiveProcessDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ActiveProcessVekalet]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ActiveTransferDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AdminUser]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AdminUserGroup]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Announcement]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AnnualCalenderTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AnnualLeaveDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AnnualLeaveTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AnnualLeaveType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ApprovalProcess]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ApprovalProcessDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ApprovalProcessType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AracTalepTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AracTalepTableDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AracTuruTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AttachedFile]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AuditorTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BolumlerTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BolumUserHierarchyTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CeoTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ChatGptQueries]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ChatGroup]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ChatMessage]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Company]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CompanySection]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CompanyYetkili]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Config]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Customer]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DahiliYazismalarDetayTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DahiliYazismaMessage]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DahiliYazismaTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DieselPrice]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DieselPriceDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DigitalCoridorTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DigitalCoridorUserTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Document]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[DocumentArchive]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EArsivFatura]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EArsivFaturaYetkiler]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EducationQuestionAnswerTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EducationQuestionSectionTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EducationQuestionsTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EgitimBolumTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EgitimSoruCevap]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EgitimSoruCevap_2022]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EgitimSorulariTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EgitimTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EgitimVideoIzlemeTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EgitimVideoIzlemeTable_2022]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EgitimVideoTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EmailMessage]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EmailMessageKurumsal]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EmailMessages_12112020]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Employee]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EnerjiPiyasasiBolumlerTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EnerjiPiyasasiFiiliTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EnerjiPiyasasiVeriTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FactoryManagerMeeting]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FactoryManagerMeetingDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FactoryManagerMeetingPerformanceUser]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FactoryManagerMeetingUser]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Faq]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FazlaMesaiTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FazlaMesaiUniteler]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FinansUserTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FuelPriceDifference]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FuelPriceDifferenceDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[FuelPriceDifferenceMail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HelpDeskCategory]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HelpDeskDemand]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HelpDeskDemandHistory]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HelpDeskDemandRule]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HelpDeskMessage]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HelpDeskRole]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HelpDeskStatus]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HelpDeskType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRAccountJobTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRAnnouncement]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRAnnualSapIntegration]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRDepartmanTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRDestinationLocationTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRDocument]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HREmployeeType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRExpenseAmount]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRExpenseDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRExpenseTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRExpenseTripDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRExpenseTripTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRExpenseTypeTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRExpenseWithOutDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRExpenseWithOutTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRExpenseWithOutTripTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRGidisYeri]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRIslemTuruTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRMaasTablosu]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRMuhasebecilerTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRSgkPrim]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRTripDescription]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRUserLog]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRVekaletTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[HRVergiDilimleriTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IcraDocument]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IcYazismaHierarchyTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IcYazismalarDetayTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IcYazismalarMesajTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IcYazismalarTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IncomingDocument]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IncomingDocumentSource]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IncomingDocumentType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[InternalAuditor]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IPAddress]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ISGAksiyonTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ISGAksiyonTakipTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ISGGunTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ISGUser]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ISGUygunsuzlukKaynagiTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IsletmeToplantisiGidenMailTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[KatilimcilarTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[KeyValue]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[KurumsalDocument]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[KVKDocument]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[LoginLog]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[LoginLogs]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Meeting]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MeetingDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MeetingPerformanceUser]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MeetingUser]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Menu]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Module]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MusteriSikayetAction]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MusteriSikayetAksiyonTipi]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MusteriSikayetCategory]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MusteriSikayetEmail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MusteriSikayetForm]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MusteriSikayetKapatma]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[MusteriSikayetTipi]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Note]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[OdemeRaporuTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ParaBirimiTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PosRaporuTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PressAnnouncement]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ProcessState]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RaporTipleri]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Rating]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RatingQuestion]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RatingQuestionVote]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RepresentativeExpenseDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RepresentativeExpenseTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RepresentativeExpenseType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Role]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RoleDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SabahGidenEmailTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SabahGidenMailTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SaticiFirmalarTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SatisOzet]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SectionTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SevkiyatPlaka]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SMSMessage]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SozlesmeCinsiTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SozlesmeMailTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SozlesmeTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SozlesmeUpdateSatici]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SureliIsTakipTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TahsilatRaporuTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TiklamaSayaciTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ToplantiKararlari]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ToplantiYeriTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TransferPaymentKalemSAPTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TransferPaymentSAPTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UniteTurleriTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UserForm]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UserFormTemplate]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UserFormType]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UserGridSetting]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UserTelephoneTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Vekalet]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[WallPost]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": null,
+   "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": true,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false,
+   "UseT4Split": false
+}

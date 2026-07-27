@@ -1,0 +1,25 @@
+{
+  "CacheSourceKey": "29s8se",
+  "CachePdfKey": "29s8se/29s8se-m6ysdq.pdf",
+  "CacheXpzKey": "29s8se/29s8se-n8ggaj.xpz",
+  "CacheCopyKey": null,
+  "Document": "C:/Users/samet.gul/Desktop/files/documents/3.png",
+  "DocumentHandlerType": null,
+  "InputOptions": {
+    "Format": "Png",
+    "Password": null
+  },
+  "PdfOutputOptions": {
+    "Watermarks": [],
+    "FastWebViewEnabled": false,
+    "Format": "Pdf"
+  },
+  "XpzOutputOptions": {
+    "Password": "29s8se",
+    "HighQualityEnabled": false,
+    "Format": "Xpz"
+  },
+  "DownloadFileName": "3.png",
+  "DownloadEnabled": true,
+  "DownloadAsPdfEnabled": true
+}

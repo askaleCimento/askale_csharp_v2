@@ -1,0 +1,47 @@
+#nullable enable
+
+namespace AskalePortal.Data.Contracts.Detached;
+
+public sealed class AccountPaymentTableDto
+{
+    public int Id { get; set; }
+
+    public DateTime? createdDate { get; set; }
+
+    public int? createdUserId { get; set; }
+
+    public bool enabled { get; set; }
+
+    public DateTime? updatedDate { get; set; }
+
+    public int? updatedUserId { get; set; }
+
+    public int accountTypeId { get; set; }
+
+    public string aciklama { get; set; }
+
+    public string aliciAdiSoyadi { get; set; }
+
+    public string aliciBanka { get; set; }
+
+    public string aliciHesapNo { get; set; }
+
+    public string aliciSube { get; set; }
+
+    public string dosyaAdi { get; set; }
+
+    public decimal? eftTutari { get; set; }
+
+    public string kurumHesapNo { get; set; }
+
+    public string kurumKodu { get; set; }
+
+    public DateTime? odemeTarihi { get; set; }
+
+    public string paraBirimi { get; set; }
+
+    public string subeKodu { get; set; }
+
+    public string vergiTcNo { get; set; }
+
+}

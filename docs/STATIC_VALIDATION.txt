@@ -1,0 +1,3 @@
+Education module static validation: PASS
+
+Note: dotnet SDK is not installed in the generation environment; compile verification must be run locally.

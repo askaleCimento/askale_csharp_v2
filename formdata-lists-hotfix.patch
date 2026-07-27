@@ -1,0 +1,44 @@
+--- a/AskalePortal/Controllers/HelpDeskDemandController.cs
++++ b/AskalePortal/Controllers/HelpDeskDemandController.cs
+@@ -209,7 +209,7 @@
+ 
+         #region talepYonetimiDtoList
+         [HttpPost("talepYonetimiDtoList")]
+-        public ActionResult<List<HelpDeskDemandDto>> talepYonetimiDtoList([FromBody] Data.RequestParams.FilterParam<HelpDeskDemandParamsDto> filterParam)
++        public ActionResult<List<HelpDeskDemandDto>> talepYonetimiDtoList([FromForm] Data.RequestParams.FilterParam<HelpDeskDemandParamsDto> filterParam)
+         {
+             BLL.BLLActions.HelpDeskDemands bllHelpDeskDemand = new BLL.BLLActions.HelpDeskDemands(_configuration, _env);
+             List<HelpDeskDemandDto> liste = bllHelpDeskDemand.talepYonetimiDtoList(filterParam);
+--- a/AskalePortal/Controllers/HelpDeskStatusController.cs
++++ b/AskalePortal/Controllers/HelpDeskStatusController.cs
+@@ -117,7 +117,7 @@
+         #region getAllFilter
+         [HttpPost("getAllFilter")]
+ 
+-        public ActionResult<List<HelpDeskStatus>> getAllFilter([FromBody] FilterParam<HelpDeskStatusListDtoParameter> filterParam)
++        public ActionResult<List<HelpDeskStatus>> getAllFilter([FromForm] FilterParam<HelpDeskStatusListDtoParameter> filterParam)
+         {
+             BLL.BLLActions.HelpDeskStatuses bllHelpDeskStatuses = new BLL.BLLActions.HelpDeskStatuses(_configuration, _env);
+ 
+--- a/AskalePortal/Controllers/HelpDeskDemandRuleController.cs
++++ b/AskalePortal/Controllers/HelpDeskDemandRuleController.cs
+@@ -116,7 +116,7 @@
+         #region getAllFilter
+         [HttpPost("getAllFilter")]
+ 
+-        public ActionResult<List<HelpDeskDemandRule>> getAllFilter([FromBody] FilterParam<HelpDeskStatusListDtoParameter> filterParam)
++        public ActionResult<List<HelpDeskDemandRule>> getAllFilter([FromForm] FilterParam<HelpDeskStatusListDtoParameter> filterParam)
+         {
+             BLL.BLLActions.HelpDeskDemandRules bllHelpDeskDemandRules = new BLL.BLLActions.HelpDeskDemandRules(_configuration, _env);
+ 
+--- a/AskalePortal/Controllers/FaqController.cs
++++ b/AskalePortal/Controllers/FaqController.cs
+@@ -125,7 +125,7 @@
+         #region getAllFilter
+         [HttpPost("getAllFilter")]
+ 
+-        public ActionResult<List<Faq>> getAllFilter([FromBody] FilterParam<HelpDeskStatusListDtoParameter> filterParam)
++        public ActionResult<List<Faq>> getAllFilter([FromForm] FilterParam<HelpDeskStatusListDtoParameter> filterParam)
+         {
+             BLLActions.Faqs bllFaq = new BLLActions.Faqs(_configuration, _env);
+ 

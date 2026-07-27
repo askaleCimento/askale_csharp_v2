@@ -1,0 +1,37 @@
+#nullable enable
+
+namespace AskalePortal.Data.Contracts.Detached;
+
+public sealed class IcraDocumentDto
+{
+    public int Id { get; set; }
+
+    public int? archiveId { get; set; }
+
+    public Guid documentID { get; set; }
+
+    public int topId { get; set; }
+
+    public int typeId { get; set; }
+
+    public string typeName { get; set; }
+
+    public string title { get; set; }
+
+    public string filename { get; set; }
+
+    public int? fileSize { get; set; }
+
+    public int createdUserId { get; set; }
+
+    public string createdByUserName { get; set; }
+
+    public DateTime createdDate { get; set; }
+
+    public bool enabled { get; set; }
+
+    public DateTime? updatedDate { get; set; }
+
+    public int? updatedUserId { get; set; }
+
+}

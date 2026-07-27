@@ -1,0 +1,178 @@
+﻿<style type="text/css">
+    .userProfileImage {
+        width: 200px;
+        height: 200px;
+        padding: 1px;
+        border: solid 1px #ccc;
+        margin: 5px;
+    }
+
+    .userProfileName {
+        font-size: 20px;
+        font-weight: lighter;
+        color: #2679b5;
+        padding: 0;
+        margin: 8px 0px 10px 0px;
+        text-align: center;
+    }
+
+    .profile-user-info {
+        margin: 0px;
+    }
+
+    .profile-user-info-striped .profile-info-value {
+        padding-left: 0px;
+    }
+
+    textarea {
+        width: 100%;
+    }
+
+    .post {
+        clear: both;
+        margin: 10px 0px 5px 2px;
+        font-size: 11px;
+    }
+
+    .profile-activity .time {
+        display: block;
+        margin-top: 0px !important;
+        color: #90949c;
+        font-size: 11px;
+    }
+
+    .profile-activity a.user {
+        font-weight: bold;
+        color: #365899;
+        font-size: 14px;
+    }
+
+    .profile-activity .user-passive {
+        font-weight: 300;
+        color: #365899;
+        font-size: 14px;
+    }
+
+    .down-arrow {
+        position: relative;
+    }
+
+        .down-arrow:after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 100%;
+            width: 0;
+            height: 0;
+            border-top: 20px solid #dff0d8;
+            border-right: 100px solid transparent;
+            border-bottom: 0 solid transparent;
+            border-left: 100px solid transparent;
+        }
+</style>
+
+<div style="overflow-x:hidden;overflow-y:auto;height:650px;">
+
+
+    <div class="form-group">
+        <label class="col-sm-3">Oluşturan Kişi:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{USNAM}</strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3">Güncelleyen Kişi:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{AENAM}</strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3">SAP Belge No:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{OENUM}</strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3">SAP Kalem No:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{POSNR}</strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3">Fabrika:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{BUKRS}</strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3">Tarih:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{CPUDT}</strong>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-3">Satıcı No:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{LIFNR}</strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3">Satıcı Adı:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{NAME1}</strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3">Tutar:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{WRBTR}</strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3">IBAN:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{IBAN}</strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3">Banka:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{BANKA}</strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3">Şube:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{BRNCH}</strong>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3">Hesap No:</label>
+        <div class="col-sm-9 vcenter-form ">
+            <strong>{BANKN}</strong>
+        </div>
+    </div>
+
+    <div class="form-group">
+
+        <div class="col-sm-9 vcenter-form">
+
+            <div class="profile-activity clearfix alert alert-warning down-arrow">
+                <div>
+                    <img class="pull-left" alt="{name}" src="{url}?width=50&height =50">
+                    <a href="javascript:;" class="user tooltip-info">{name} {VTEXT}</a>
+                    <span class="time">
+                        <i class="ace-icon fa fa-clock-o bigger-110"></i>
+
+                        <strong>Onay Bekleniyor</strong>
+
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

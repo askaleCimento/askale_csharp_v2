@@ -1,0 +1,11 @@
+{
+  "entity_count": 189,
+  "dto_files": 189,
+  "controllers_metadata_changed": 80,
+  "direct_requests_converted": [
+    "AskalePortal/Controllers/HRAnnouncementController.cs",
+    "AskalePortal/Controllers/ActiveProcessChecksController.cs",
+    "AskalePortal/Controllers/SapSystemController.cs",
+    "AskalePortal/Controllers/IcYazismalarController.cs"
+  ]
+}

@@ -1,0 +1,99 @@
+#nullable enable
+
+namespace AskalePortal.Data.Contracts.Detached;
+
+public sealed class EmployeeDto
+{
+    public int Id { get; set; }
+
+    public string merni { get; set; }
+
+    public string mandt { get; set; }
+
+    public string pernr { get; set; }
+
+    public string ename { get; set; }
+
+    public string werks { get; set; }
+
+    public string name1 { get; set; }
+
+    public string btrtl { get; set; }
+
+    public string btext { get; set; }
+
+    public string persg { get; set; }
+
+    public string pgtxt { get; set; }
+
+    public string persk { get; set; }
+
+    public string pktxt { get; set; }
+
+    public string orgeh { get; set; }
+
+    public string orgtx { get; set; }
+
+    public string plans { get; set; }
+
+    public string plstx { get; set; }
+
+    public string stell { get; set; }
+
+    public string stltx { get; set; }
+
+    public string kostl { get; set; }
+
+    public string cinsy { get; set; }
+
+    public string sstxt { get; set; }
+
+    public string waers { get; set; }
+
+    public string schem { get; set; }
+
+    public string bankl { get; set; }
+
+    public string bankn { get; set; }
+
+    public string iban { get; set; }
+
+    public string slstext { get; set; }
+
+    public string kidem { get; set; }
+
+    public DateTime? eindt { get; set; }
+
+    public DateTime? bdate { get; set; }
+
+    public DateTime? fredt { get; set; }
+
+    public string bldgr { get; set; }
+
+    public string mrsta { get; set; }
+
+    public string numch { get; set; }
+
+    public string brplc { get; set; }
+
+    public string adrfr { get; set; }
+
+    public string stat2 { get; set; }
+
+    public string statx { get; set; }
+
+    public string sysuname { get; set; }
+
+    public bool enabled { get; set; }
+
+    public DateTime? createdDate { get; set; }
+
+    public int? createdUserId { get; set; }
+
+    public DateTime? updatedDate { get; set; }
+
+    public Guid? idEmployee { get; set; }
+
+    public int? updatedUserId { get; set; }
+
+}

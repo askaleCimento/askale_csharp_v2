@@ -1,0 +1,25 @@
+{
+  "CacheSourceKey": "z1b543",
+  "CachePdfKey": "z1b543/z1b543-2d4prk.pdf",
+  "CacheXpzKey": "z1b543/z1b543-qqefc1.xpz",
+  "CacheCopyKey": null,
+  "Document": "C:/Users/samet.gul/Desktop/files/documents/2.pptx",
+  "DocumentHandlerType": null,
+  "InputOptions": {
+    "Format": "Pptx",
+    "Password": null
+  },
+  "PdfOutputOptions": {
+    "Watermarks": [],
+    "FastWebViewEnabled": false,
+    "Format": "Pdf"
+  },
+  "XpzOutputOptions": {
+    "Password": "z1b543",
+    "HighQualityEnabled": false,
+    "Format": "Xpz"
+  },
+  "DownloadFileName": "2.pptx",
+  "DownloadEnabled": true,
+  "DownloadAsPdfEnabled": true
+}

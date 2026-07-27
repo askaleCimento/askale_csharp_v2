@@ -1,0 +1,41 @@
+#nullable enable
+
+namespace AskalePortal.Data.Contracts.Detached;
+
+public sealed class ISGAksiyonTakipTableDto
+{
+    public int Id { get; set; }
+
+    public double oncekiOlasilik { get; set; }
+
+    public double oncekiSiklik { get; set; }
+
+    public double oncekiSiddet { get; set; }
+
+    public double oncekiRisk { get; set; }
+
+    public int aksiyonId { get; set; }
+
+    public string aksiyonSorumlulari { get; set; }
+
+    public DateTime? planlananTarih { get; set; }
+
+    public DateTime? gerceklesenTarih { get; set; }
+
+    public string kisaAciklama { get; set; }
+
+    public string alinmasiGerekenOnlemler { get; set; }
+
+    public int? oncelik { get; set; }
+
+    public bool enabled { get; set; }
+
+    public DateTime? createdDate { get; set; }
+
+    public int? createdUserId { get; set; }
+
+    public DateTime? updatedDate { get; set; }
+
+    public int? updatedUserId { get; set; }
+
+}
