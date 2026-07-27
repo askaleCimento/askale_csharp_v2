@@ -1,0 +1,37 @@
+{
+  "CacheSourceKey": "11djvu2",
+  "CachePdfKey": "11djvu2/11djvu2-ls9sqh.pdf",
+  "CacheXpzKey": "11djvu2/11djvu2-78xdxw.xpz",
+  "CacheCopyKey": null,
+  "Document": "C:/Users/samet.gul/Desktop/files/documents/4.xlsx",
+  "DocumentHandlerType": null,
+  "InputOptions": {
+    "$type": "GleamTech.DocumentUltimate.SpreadsheetInputOptions, GleamTech.DocumentUltimate",
+    "OutputSheetRange": "visible",
+    "RenderColumnsFitToPages": 1,
+    "RenderRowsFitToPages": 0,
+    "RenderHeadings": false,
+    "RenderGridlines": false,
+    "RenderTitleColumns": null,
+    "RenderTitleRows": null,
+    "RenderArea": null,
+    "RenderBlackAndWhite": false,
+    "RenderCenterHorizontally": false,
+    "RenderCenterVertically": false,
+    "Format": "Xlsx",
+    "Password": null
+  },
+  "PdfOutputOptions": {
+    "Watermarks": [],
+    "FastWebViewEnabled": false,
+    "Format": "Pdf"
+  },
+  "XpzOutputOptions": {
+    "Password": "11djvu2",
+    "HighQualityEnabled": false,
+    "Format": "Xpz"
+  },
+  "DownloadFileName": "4.xlsx",
+  "DownloadEnabled": true,
+  "DownloadAsPdfEnabled": true
+}

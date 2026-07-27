@@ -1,0 +1,136 @@
+﻿using AskalePortal.Data.Models;
+using AskalePortal.Data.RequestModel;
+using AskalePortal.Data.ResponseModels;
+using AutoMapper;
+
+namespace AskalePortal.API.Mapper
+{
+    public class MapperProfile : Profile
+    {
+        public MapperProfile()
+        {
+            CreateMap<AdminUser, AdminUserSaveDto>();
+            CreateMap<AdminUserSaveDto, AdminUser>();
+            CreateMap<CompanyDto, Company>();
+            CreateMap<Company, CompanyDto>();
+            CreateMap<RoleDto, Role>();
+            CreateMap<Role, RoleDto>();
+            CreateMap<HelpDeskDemand, HelpDeskDemandSaveDto>();
+            CreateMap<HelpDeskDemandSaveDto, HelpDeskDemand>();
+            CreateMap<AracTalepTableSaveDto, AracTalepTable>();
+            CreateMap<AracTalepTable, AracTalepTableSaveDto>();
+            CreateMap<KurumsalDocumentsDto, KurumsalDocument>();
+            CreateMap<KurumsalDocument, KurumsalDocumentsDto>();
+            CreateMap<AnnualLeaveTableDto, AnnualLeaveTable>();
+            CreateMap<AnnualLeaveTable, AnnualLeaveTableDto>();
+            CreateMap<Rating, RatingDto>();
+            CreateMap<RatingDto, Rating>();
+            CreateMap<RatingQuestionDto, RatingQuestion>();
+            CreateMap<RatingQuestion, RatingQuestionDto>();
+            CreateMap<DieselPriceDto, DieselPrice>();
+            CreateMap<DieselPrice, DieselPriceDto>();
+            CreateMap<FuelPriceDifferenceDto, FuelPriceDifference>();
+            CreateMap<FuelPriceDifference, FuelPriceDifferenceDto>();
+            CreateMap<UserByNameEMailDto, AdminUser>();
+            CreateMap<AdminUser, UserByNameEMailDto>();
+            CreateMap<SozlesmeTableSaveDto, SozlesmeTable>();
+            CreateMap<SozlesmeTable, SozlesmeTableSaveDto>();
+            CreateMap<SureliIsTakipSaveDto, SureliIsTakipTable>();
+            CreateMap<SureliIsTakipTable, SureliIsTakipSaveDto>();
+            CreateMap<CorporateDocumentsDto, KVKDocument>();
+            CreateMap<KVKDocument, CorporateDocumentsDto>();
+            CreateMap<KvkDocumentDto, KVKDocument>();
+            CreateMap<KVKDocument, KvkDocumentDto>();
+            CreateMap<IncomingDocument, IncomingDocumentSaveDto>();
+            CreateMap<IncomingDocumentSaveDto, IncomingDocument>();
+            CreateMap<IncomingDocumentSource, IncomingDocumentSourceSaveDto>();
+            CreateMap<IncomingDocumentSourceSaveDto, IncomingDocumentSource>();
+            CreateMap<IncomingDocumentType, IncomingDocumentTypeSaveDto>();
+            CreateMap<IncomingDocumentTypeSaveDto, IncomingDocumentType>();
+            CreateMap<IncomingDocumentType, ComingDocumentTypeDto>();
+            CreateMap<ComingDocumentTypeDto, IncomingDocumentType>();
+            CreateMap<Announcement, AnnouncementSaveDto>();
+            CreateMap<AnnouncementSaveDto, Announcement>();
+            CreateMap<Meeting, MeetingSaveDto>();
+            CreateMap<MeetingSaveDto, Meeting>();
+            CreateMap<FactoryManagerMeeting, FactoryManagerMeetingSaveDto>();
+            CreateMap<FactoryManagerMeetingSaveDto, FactoryManagerMeeting>();
+            CreateMap<FactoryManagerMeetingDetail, FactoryManagerMeetingDetailSaveDto>();
+            CreateMap<FactoryManagerMeetingDetailSaveDto, FactoryManagerMeetingDetail>();
+            CreateMap<HRExpenseTypeTable, HRExpenseTypeTableSaveDto>();
+            CreateMap<HRExpenseTypeTableSaveDto, HRExpenseTypeTable>();
+            CreateMap<HRTripDescription, HRTripDescriptionSaveDto>();
+            CreateMap<HRTripDescriptionSaveDto, HRTripDescription>();
+            CreateMap<HREmployeeType, HREmployeeTypeSaveDto>();
+            CreateMap<HREmployeeTypeSaveDto, HREmployeeType>();
+            CreateMap<FinansUserTable, FinansUserTableSaveDto>();
+            CreateMap<FinansUserTableSaveDto, FinansUserTable>();
+            CreateMap<HRGidisYeri, HRGidisYeriSaveDto>();
+            CreateMap<HRGidisYeriSaveDto, HRGidisYeri>();
+            CreateMap<HRDestinationLocationTable, HRDestinationLocationTableSaveDto>();
+            CreateMap<HRDestinationLocationTableSaveDto, HRDestinationLocationTable>();
+            CreateMap<HRExpenseAmount, HRExpenseAmountSaveDto>();
+            CreateMap<HRExpenseAmountSaveDto, HRExpenseAmount>();
+            CreateMap<RepresentativeExpenseTable, RepresentativeExpenseTableSaveDto>();
+            CreateMap<RepresentativeExpenseTableSaveDto, RepresentativeExpenseTable>();
+            CreateMap<HRExpenseWithOutTable, HRExpenseWithOutTableSaveDto>();
+            CreateMap<HRExpenseWithOutTableSaveDto, HRExpenseWithOutTable>();
+            CreateMap<HRExpenseWithOutTripTable, HRExpenseWithOutTripTableSaveDto>();
+            CreateMap<HRExpenseWithOutTripTableSaveDto, HRExpenseWithOutTripTable>();
+            CreateMap<HRExpenseTripTable, HRExpenseTripTableSaveDto>();
+            CreateMap<HRExpenseTripTableSaveDto, HRExpenseTripTable>();
+            CreateMap<HRExpenseTable, HRExpenseTableSaveDto>();
+            CreateMap<HRExpenseTableSaveDto, HRExpenseTable>();
+            CreateMap<HelpDeskStatus, HelpDeskStatusSaveDto>();
+            CreateMap<HelpDeskStatusSaveDto, HelpDeskStatus>();
+            CreateMap<CompanySection, CompanySectionSaveDto>();
+            CreateMap<CompanySectionSaveDto, CompanySection>();
+            CreateMap<CompanySaveDto, Company>();
+            CreateMap<Company, CompanySaveDto>();
+            CreateMap<HelpDeskCategorySaveDto, HelpDeskCategory>();
+            CreateMap<HelpDeskCategory, HelpDeskCategorySaveDto>();
+            CreateMap<HelpDeskDemandRuleSaveDto, HelpDeskDemandRule>();
+            CreateMap<HelpDeskDemandRule, HelpDeskDemandRuleSaveDto>();
+            CreateMap<HelpDeskMessageSaveDto, HelpDeskMessage>();
+            CreateMap<HelpDeskMessage, HelpDeskMessageSaveDto>();
+            CreateMap<ISGGunTableSaveDto, ISGGunTable>();
+            CreateMap<ISGGunTable, ISGGunTableSaveDto>();
+            CreateMap<UserTelephoneTableSaveDto, UserTelephoneTable>();
+            CreateMap<UserTelephoneTable, UserTelephoneTableSaveDto>();
+            CreateMap<InternalCorrespondenceSaveDto, DahiliYazismaTable>();
+            CreateMap<DahiliYazismaTable, InternalCorrespondenceSaveDto>();
+            CreateMap<IcYazismalarTableSaveDto, IcYazismalarTable>();
+            CreateMap<IcYazismalarTable, IcYazismalarTableSaveDto>();
+            CreateMap<HRDepartmanTableSaveDto, HRDepartmanTable>();
+            CreateMap<HRDepartmanTable, HRDepartmanTableSaveDto>();
+            CreateMap<RoleDetailSaveDto, RoleDetail>();
+            CreateMap<RoleDetail, RoleDetailSaveDto>();
+            CreateMap<HelpDeskTypeSaveDto, HelpDeskType>();
+            CreateMap<HelpDeskType, HelpDeskTypeSaveDto>();
+            CreateMap<HelpDeskRoleSaveDto, HelpDeskRole>();
+            CreateMap<HelpDeskRole, HelpDeskRoleSaveDto>();
+            CreateMap<FaqSaveDto, Faq>();
+            CreateMap<Faq, FaqSaveDto>();
+            CreateMap<DocumentArchiveSaveDto, DocumentArchive>();
+            CreateMap<DocumentArchive, DocumentArchiveSaveDto>(); 
+            CreateMap<AnnualCalenderTableSaveDto, AnnualCalenderTable>();
+            CreateMap<AnnualCalenderTable, AnnualCalenderTableSaveDto>();
+            CreateMap<KurumsalDocumentSaveDto, KurumsalDocument>();
+            CreateMap<KurumsalDocument, KurumsalDocumentSaveDto>();
+            CreateMap<EArsivFaturaSaveDto, EArsivFatura>();
+            CreateMap<EArsivFatura, EArsivFaturaSaveDto>();
+            CreateMap<ApprovalProcessSaveDto, ApprovalProcess>();
+            CreateMap<ApprovalProcess, ApprovalProcessSaveDto>();
+            CreateMap<ApprovalProcessDetailSaveDto, ApprovalProcessDetail>();
+            CreateMap<ApprovalProcessDetail, ApprovalProcessDetailSaveDto>();
+            CreateMap<MusteriSikayetTipiSaveDto, MusteriSikayetTipi>();
+            CreateMap<MusteriSikayetTipi, MusteriSikayetTipiSaveDto>();
+            CreateMap<CustomerComplaintSaveDto, MusteriSikayetForm>();
+            CreateMap<MusteriSikayetForm, CustomerComplaintSaveDto>();
+            CreateMap<CustomerComplaintActionSaveDto, MusteriSikayetAction>();
+            CreateMap<MusteriSikayetAction, CustomerComplaintActionSaveDto>();
+        }
+
+    }
+    
+}

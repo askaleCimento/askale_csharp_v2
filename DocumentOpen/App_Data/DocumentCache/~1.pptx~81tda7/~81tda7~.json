@@ -1,0 +1,25 @@
+{
+  "CacheSourceKey": "81tda7",
+  "CachePdfKey": "81tda7/81tda7-2d4prk.pdf",
+  "CacheXpzKey": "81tda7/81tda7-yo5360.xpz",
+  "CacheCopyKey": null,
+  "Document": "C:/Users/samet.gul/Desktop/files/documents/1.pptx",
+  "DocumentHandlerType": null,
+  "InputOptions": {
+    "Format": "Pptx",
+    "Password": null
+  },
+  "PdfOutputOptions": {
+    "Watermarks": [],
+    "FastWebViewEnabled": false,
+    "Format": "Pdf"
+  },
+  "XpzOutputOptions": {
+    "Password": "81tda7",
+    "HighQualityEnabled": false,
+    "Format": "Xpz"
+  },
+  "DownloadFileName": "1.pptx",
+  "DownloadEnabled": true,
+  "DownloadAsPdfEnabled": true
+}

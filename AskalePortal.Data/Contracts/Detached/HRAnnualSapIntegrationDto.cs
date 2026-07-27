@@ -1,0 +1,37 @@
+#nullable enable
+
+namespace AskalePortal.Data.Contracts.Detached;
+
+public sealed class HRAnnualSapIntegrationDto
+{
+    public int Id { get; set; }
+
+    public string perno { get; set; }
+
+    public int yillikIzinId { get; set; }
+
+    public DateTime? izinbaslangici { get; set; }
+
+    public DateTime? izinbitisi { get; set; }
+
+    public string saat { get; set; }
+
+    public string duzeltme { get; set; }
+
+    public string izinturu { get; set; }
+
+    public bool approval { get; set; }
+
+    public int userId { get; set; }
+
+    public bool enabled { get; set; }
+
+    public DateTime? createdDate { get; set; }
+
+    public int? createdUserId { get; set; }
+
+    public DateTime? updatedDate { get; set; }
+
+    public int? updatedUserId { get; set; }
+
+}

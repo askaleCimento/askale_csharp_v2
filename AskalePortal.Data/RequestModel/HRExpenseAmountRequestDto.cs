@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AskalePortal.Data.RequestModel
+{
+    public class HRExpenseAmountRequestDto
+    {
+        public int? filterCalisanTuru{get;set;}
+        public int? filterHarcamaTuru{get;set;}
+    }
+}

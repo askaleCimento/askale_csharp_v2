@@ -1,0 +1,37 @@
+{
+  "CacheSourceKey": "17ne0y6",
+  "CachePdfKey": "17ne0y6/17ne0y6-ls9sqh.pdf",
+  "CacheXpzKey": "17ne0y6/17ne0y6-xiis43.xpz",
+  "CacheCopyKey": null,
+  "Document": "C:/Users/samet.gul/Desktop/files/documents/5.xlsx",
+  "DocumentHandlerType": null,
+  "InputOptions": {
+    "$type": "GleamTech.DocumentUltimate.SpreadsheetInputOptions, GleamTech.DocumentUltimate",
+    "OutputSheetRange": "visible",
+    "RenderColumnsFitToPages": 1,
+    "RenderRowsFitToPages": 0,
+    "RenderHeadings": false,
+    "RenderGridlines": false,
+    "RenderTitleColumns": null,
+    "RenderTitleRows": null,
+    "RenderArea": null,
+    "RenderBlackAndWhite": false,
+    "RenderCenterHorizontally": false,
+    "RenderCenterVertically": false,
+    "Format": "Xlsx",
+    "Password": null
+  },
+  "PdfOutputOptions": {
+    "Watermarks": [],
+    "FastWebViewEnabled": false,
+    "Format": "Pdf"
+  },
+  "XpzOutputOptions": {
+    "Password": "17ne0y6",
+    "HighQualityEnabled": false,
+    "Format": "Xpz"
+  },
+  "DownloadFileName": "5.xlsx",
+  "DownloadEnabled": true,
+  "DownloadAsPdfEnabled": true
+}

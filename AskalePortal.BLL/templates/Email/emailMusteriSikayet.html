@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<script src="../../Scripts/bootstrap.min.js"></script>
+</head>
+<body>
+	<table class="header-row" width="378" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;"><tbody><tr><td class="header-row-td" width="378" style="font-family: Arial, sans-serif; font-weight: normal; line-height: 19px; color: #478fca; margin: 0px; font-size: 18px; padding-bottom: 10px; padding-top: 15px;" valign="top" align="left">{title}</td></tr></tbody></table>
+	<p>
+		{Id} No'lu müşteri şikayet kaydınız alınmıştır. Müşteri Şikayetinin durumunu web uygulamasından (
+	</p>
+	<p>
+		Fabrika Hat Dışında: http://sapweb.askalecimento.com.tr:8380/it-portal/adminuser/login?next=musterisikayetform/detailmusterisikayetform/{Id}
+	</p>
+	<p>
+		Fabrika Hattından  : http://sapweb:8083/it-portal/adminuser/login?next=musterisikayetform/detailmusterisikayetform/{Id}
+	</p>
+	<p>
+		) kontrol edebilirsiniz.
+	</p>
+	<div class="table-responsive">
+
+		<table class="table table-striped table-bordered table-hover" style="margin-bottom:0px !important;">
+			<tbody>
+				<tr><td>ID</td><td style="width:20px;text-align: right;">:</td><td> {Id} </td> </tr>
+				<tr><td>Fabrika Adı</td><td style="width:20px;text-align: right;">:</td><td> {FabrikaAdi} </td> </tr>
+				<tr><td>Kategori </td><td style="width:20px;text-align: right;">:</td><td> {CategoryName} </td> </tr>
+				<tr><td>Müşteri Kodu </td><td style="width:20px;text-align: right;">:</td><td> {MusteriKodu} </td> </tr>
+				<tr><td>Müşteri Adı </td><td style="width:20px;text-align: right;">:</td><td> {MusteriAdi} </td> </tr>
+				<tr><td>Şikayet Tipi </td><td style="width:20px;text-align: right;">:</td><td> {SikayetTipi} </td> </tr>
+				<tr><td>Alınan Malzeme </td><td style="width:20px;text-align: right;">:</td><td> {MalzemeTuru} </td> </tr>
+				<tr><td>Malzeme Miktarı </td><td style="width:20px;text-align: right;">:</td><td> {MalzemeMiktari} </td> </tr>
+
+
+				<tr><td>Müşteri Temsilcisi </td><td style="width:20px;text-align: right;">:</td><td> {MusteriTemsilcisi} </td> </tr>
+				<tr><td>Müşteri Tel </td><td style="width:20px;text-align: right;">:</td><td> {MusteriTel} </td> </tr>
+				<tr><td>Müşteri Email </td><td style="width:20px;text-align: right;">:</td><td> {MusteriEmail} </td> </tr>
+				<tr><td>Satış Temsilcisi </td><td style="width:20px;text-align: right;">:</td><td> {name} </td> </tr>
+				<tr><td>Oluşturma Tarihi </td><td style="width:20px;text-align: right;">:</td><td> {createdDate} </td> </tr>
+				<tr><td>Açıklama </td><td style="width:20px;text-align: right;">:</td><td> {description} </td> </tr>
+			</tbody>
+		</table>
+		<table class="table-col" align="left" width="448" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
+			<tbody>
+				<tr>
+					<td class="table-col-td" width="448" style="font-family: Arial, sans-serif; line-height: 19px; color: #444444; font-size: 13px; font-weight: normal;" valign="top" align="left">
+						<table width="100%" cellspacing="0" cellpadding="0" border="0" style="table-layout: fixed;">
+							<tbody>
+								<tr>
+									<td width="100%" align="center" bgcolor="#f5f5f5" style="font-family: Arial, sans-serif; line-height: 24px; color: #bbbbbb; font-size: 13px; font-weight: normal; text-align: center; padding: 9px; border-width: 1px 0px 0px; border-style: solid; border-color: #e3e3e3; background-color: #f5f5f5;" valign="top">
+										{footer}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<br />
+		<br />
+		<br />
+		<p>Saygılarımızla.</p>
+	</div>
+
+
+
+</body>
+</html>

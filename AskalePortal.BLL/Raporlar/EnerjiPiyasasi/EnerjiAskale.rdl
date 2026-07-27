@@ -1,0 +1,2031 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DataSetEnerjiAskale">
+      <ConnectionProperties>
+        <DataProvider>OLEDB-MD</DataProvider>
+        <ConnectString />
+      </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>d1a82df1-6b82-44c8-8abf-f52eb2ae94b9</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSetEnerjiAskale">
+      <Query>
+        <DataSourceName>DataSetEnerjiAskale</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="date">
+          <DataField>date</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Saat">
+          <DataField>Saat</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Kirici1">
+          <DataField>Kirici1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Kirici2">
+          <DataField>Kirici2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="KlnNakil">
+          <DataField>KlnNakil</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Farin1">
+          <DataField>Farin1</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Farin2">
+          <DataField>Farin2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Firin1">
+          <DataField>Firin1</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Firin2">
+          <DataField>Firin2</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Komur1">
+          <DataField>Komur1</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Komur2">
+          <DataField>Komur2</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Cimento1">
+          <DataField>Cimento1</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Cimento2">
+          <DataField>Cimento2</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Cimento3">
+          <DataField>Cimento3</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Paketleme1">
+          <DataField>Paketleme1</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Paketleme2">
+          <DataField>Paketleme2</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Diger">
+          <DataField>Diger</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Toplam">
+          <DataField>Toplam</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="Fiili">
+          <DataField>Fiili</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="GunlukFiyat">
+          <DataField>GunlukFiyat</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="FiyatFarki">
+          <DataField>FiyatFarki</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>EgitimRaporuDataSet</rd:DataSetName>
+        <rd:SchemaPath>C:\Users\samet.gul\Desktop\Askale portal2\CMS.Web\Areas\Admin\Models\EgitimRaporuDataSet.xsd</rd:SchemaPath>
+        <rd:TableName>DataTable1</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.5cm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Tarih</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox11">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Saat</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox11</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Kırıcı 1</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Kırıcı 2</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox3</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Kln Nakil</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox6</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Farin 1</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox8</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox10">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Farin 2</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox10</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Firin1</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox5</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox9">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Firin2</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox9</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox12">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Kömür 1</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox12</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox14">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Kömür 2</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox14</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox16">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Çimento 1</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox16</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox18">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Çimento 2</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox18</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox20">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Çimento 3</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox20</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox22">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Paketleme 1</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox22</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox24">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Paketleme 2</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox24</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox26">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Diğer</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox26</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox28">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Toplam</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox28</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox108">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Fiili</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox108</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox30">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Günlük Fiyat</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox30</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox33">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Maliyet</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox33</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="date">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=FormatDateTime(Fields!date.Value,DateFormat.ShortDate)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>date</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Saat">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Saat.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Saat</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Kirici1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Kirici1.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Kirici1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Kirici2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Kirici2.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Kirici2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="KlnNakil">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!KlnNakil.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>KlnNakil</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Farin1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Farin1.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Farin1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Farin2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Farin2.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Farin2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Firin1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Firin1.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Firin1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Firin2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Firin2.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Firin2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Komur1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Komur1.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Komur1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Komur2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Komur2.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Komur2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Cimento1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Cimento1.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Cimento1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Cimento2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Cimento2.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Cimento2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Cimento3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Cimento3.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Cimento3</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Paketleme1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Paketleme1.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Paketleme1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Paketleme2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Paketleme2.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Paketleme2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Diger">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Diger.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Diger</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Toplam">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=FormatNumber(Fields!Toplam.Value,0)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Toplam</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Fiili">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=FormatNumber(CDbl(Fields!Fiili.Value),0)</Value>
+                                  <Style>
+                                    <Format>n2</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Fiili</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="GunlukFiyat">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=FormatNumber(CDbl(Fields!GunlukFiyat.Value),3)</Value>
+                                  <Style>
+                                    <Format>n3</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>GunlukFiyat</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="FiyatFarki">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=FormatNumber(CDbl(Fields!Fiili.Value*Fields!GunlukFiyat.Value),0)</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>FiyatFarki</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox88">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>TOPLAM</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox88</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>17</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Toplam1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=FormatNumber(CDbl(Sum(Fields!Toplam.Value)),0)</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Toplam1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Fiili1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=FormatNumber(Sum(Fields!Fiili.Value),0)</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Fiili1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox106">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=FormatNumber(CDbl(IIF(SUM(Fields!Fiili.Value)=0,0,Sum(Fields!Fiili.Value*Fields!GunlukFiyat.Value)/SUM(Fields!Fiili.Value))),3)</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox106</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox107">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=FormatNumber(CDbl(Sum(Fields!Fiili.Value*Fields!GunlukFiyat.Value)),0)</Value>
+                                  <Style>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox107</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Brown</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details" />
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>DataSetEnerjiAskale</DataSetName>
+            <Top>0.14111cm</Top>
+            <Left>0.28787cm</Left>
+            <Height>1.8cm</Height>
+            <Width>52.5cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>1.05105in</Height>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <TopBorder>
+            <Color>Black</Color>
+            <Style>Solid</Style>
+            <Width>1pt</Width>
+          </TopBorder>
+          <BottomBorder>
+            <Color>Black</Color>
+            <Style>Solid</Style>
+            <Width>1pt</Width>
+          </BottomBorder>
+        </Style>
+      </Body>
+      <Width>20.78263in</Width>
+      <Page>
+        <PageHeader>
+          <Height>2.57528cm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox4">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>AŞKALE ENERJi RAPORU</Value>
+                      <Style>
+                        <FontSize>14pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox2</rd:DefaultName>
+              <Top>0.7717cm</Top>
+              <Left>15.28787cm</Left>
+              <Height>0.9084cm</Height>
+              <Width>6.59193cm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Image Name="Image1">
+              <Source>Embedded</Source>
+              <Value>askalelogo</Value>
+              <Sizing>FitProportional</Sizing>
+              <Top>0.3175cm</Top>
+              <Left>0.73766cm</Left>
+              <Height>2.09339cm</Height>
+              <Width>5.33646cm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Image>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageHeader>
+        <PageFooter>
+          <Height>1.09389cm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox32">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Globals!PageNumber</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox32</rd:DefaultName>
+              <Top>0.17639cm</Top>
+              <Left>16.94245cm</Left>
+              <Height>0.6cm</Height>
+              <Width>2.95802cm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageFooter>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <TopMargin>1cm</TopMargin>
+        <BottomMargin>1cm</BottomMargin>
+        <ColumnSpacing>0.13cm</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>2</NumberOfRows>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <EmbeddedImages>
+    <EmbeddedImage Name="askalelogo">
+      <MIMEType>image/bmp</MIMEType>
+      <ImageData>Qk3eIwEAAAAAADYAAAAoAAAA8wAAAGYAAAABABgAAAAAAKgjAQDEDgAAxA4AAAAAAAAAAAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////n5+gsLCwfHx92NjY////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////goKD1tbXg4OE0tLS////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////oqKir6+w5OTlgYGB6+vr////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////jo6Qs7Oz6+vrgYGC5+fn////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////2dnZcnJz39/f1tbWiYmL+vr6////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////2trbcnJz29vb2trbiIiJ+Pj4////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////vb2+fHx97+/vtra2pqam////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////zMzMe3t86urquLi4oaGi////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////w8PEiYmK7OzsjIyNycnJ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////0dHRgoKD6OjojY2NxMTF////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////0tLTiIiIysrLeXl65+fn////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////4eHhh4eIuLi5dXV25OTk////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////5OTlgoKDd3d3iIiJ+vr6////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////7+/vjY2Nb29whISG9/f3////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9fX1l5eXb29wnp6f/f39/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Pz8qamqb29wlJSU+Pj4////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////f39tbW2b29wlpaY9fX1////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////x8fHb29wiYmL6+vr/////////////////////////////////////////////////////////////////////////////////////////////////Pz8////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////q6ur7e3u////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////p6epc3N0gYGB39/f////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9fX19fX1////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////qqqqgICCeXl6zMzN////////////////////////////////////////////////////////////////////////////////////////////r6+v0dHR////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////o6OknZ2e/////////f39+fn5////////////////////////////////////////////////////////////////6enp4uLi/Pz8////////////////////////////////////////////////////9/f3g4OEw8PEeHh5u7u7/f39////////////////////////////+vr7////////////////////////////////////////////////////////////4eHhu7u86Ojo////////////////////////5OTk4+Pk+/v7////////////////8fHycXFyb29whISErq6u2dnZ4eHhzMzMycnJz8/P4ODg+fn5/////////////////////////////Pz8////////////////+fn5vLy9vb294+Pk////////////9fX19fX1/////////////////Pz8////////5OTk6urqgoKD0tLSgoKDpaWm9/f3/////////f39/v7+////////////2dnZ/Pz8////////////////////////////////////////////////1tbXfX1++fn5////5OTlp6en////////////9vb219fX+Pj4////5+fn3d3d/Pz8////////////////39/gtra3y8vL9fX1////2dnZnJyctLS04+Pk/////////////////Pz8////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////7Ozsc3N00tLTlZWWcHBxb29wcXFyiIiJpKSkx8fH8fHy////+fn59/f3////1dXVlJSUqamq6+vr/////////v7+cHBxiYmKgoKDrKyt9PT0////paWmi4uLq6ur2trb////6+vrl5eXn5+h3NzclJSUhISEiYmKlZWW6+vrlpaYjY2N7Ozs/v7+pKSkmJiYxMTF+vr6////pKSkm5ud7+/v////////x8fHra2u1tbW////////////////////////////////h4eIiIiIdXV2urq78/PzxsbGv7/A/Pz8xsbGeXl6ioqLeXl6pqan7e3t////////////1dXVioqLb29wb29wb29wb29whYWHmpqcn5+hk5OTf3+AjY2Pv7+/+vr63t7e2dnZ/v7+paWmb29wiYmLzs7P////////7e3ucHBxq6urkpKUioqK3d3d9vb2dXV2cHBxiYmKrKyt9/f3xMTEb29wf3+Aurq7dHR0c3N0d3d4kZGR9vb2rq6ufX191NTU6+vrdHR0dXV2paWl4uLi////m5udiIiI29vb////////kZGSiYmLuLi5+vr6////////////////////////i4uLuLi4////5+fncHBx5OTkt7e30dHSqqqrfX1+hISG1dXWfHx9fHx9gICCsbGy8PDw////////r6+wfn5/s7O0gICCtLS0gICC1tbXw8PElpaYiIiJsrKy+vr7ra2tb29whoaH0tLS////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////tra2b29wnZ2d5ubm5+fn19fXwMDAnp6eeXl6cHBxmZmZz8/PkZGSoKCgj4+Pn5+hvLy8dXV2nZ2e+/v7////q6urmpqa+vr7p6eoeXl6ycnJcXFyzs7PtbW2dHR1e3t8m5udh4eIyMjJhISGcnJznZ2eubm5b29wtra2////o6OkeXl6sbGyb29wysrLmZmZdHR1vLy97u7ueHh5c3N0t7e4+fn5lpaYfX1+nJyclZWV5OTk////////////5OTkkZGTycnJtra3goKD2dnZnZ2ecnJzoaGihISEdXV2hYWHoqKi3Nzc+fn5ycnKi4uL6+vr////////////////9/f36+vr7OzskJCQs7O0////////////////6urqrq6ufn5/0NDQp6ephISGdXV2w8PE19fXeXl6ioqK8fHy////sLCwmZmZ/f39vr6/e3t7nZ2egoKD+/v71dXWhoaGcXFyfn5/oqKi5+fnmJiZcHBxv7+/z8/PdHR1r6+v////w8PEfX1+iYmLd3d58/Pzrq6vc3N0oKCg4eHheXl6cnJznp6f6urqiYmLkZGRuLi5jo6QzMzN////////////////////0tLSdXV28PDw////oqKio6Ol8/PzoKCgdXV2jY2P8fHxkZGSb29woqKi/Pz8urq7d3d3yMjI/v7+8vLyfX1+1tbX+/v7x8fHioqK2NjY////////4eHhi4uLcXFyd3d4vLy829vbkJCQtLS0AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+vr6gICCwcHC////
+/////////////////Pz8z8/PhISFcnJz3t7ex8fHdXV2f3+A9vb29PT0kZGRhoaH4+Pk/Pz8lZWVq6ur////5ubmjIyNb29w8/Pz/////f39vLy8fn5/cXFy5OTk/f39o6OlgICC/Pz80tLTcXFy0NDQ////8PDwmpqbb29wurq6////1NTUkZGTg4OEhYWHfX19vb29hISFp6eob29w19fY6+vrn5+gs7O0/v7+////////9PT0oKCgkpKUv7/Ag4OE+vr7goKDpaWl/f3919fXeXl6d3d3hISElZWV8fHy/f39/v7+////////////////////////////4+PkcHBx6+vr////////////////////2dnZeXl67Ozs3d3dgICCf3+A9PT0/v7+rq6ugICC0tLT/f39mpqbo6Ol////9PT0oqKidXV28PDw////////5eXlkZGRcHBx4eHh////ubm5hYWH+fn539/gdHR0ycnK////+vr7r6+wb29wt7e4////7e3tsbGyfn5/c3N0lJSU19fXgoKDjY2Pb29w29vc+vr6t7e3paWl/////////////////v7+ioqLpKSk////6+vrc3N05ubm////ysrLdXV2urq7/Pz8oKCgb29wv7/A////9fX1np6fmJiZ8/Pz5OTld3d539/f////0NDQgoKD9vb24+Pk39/g////0dHSgICCe3t88PDw/v7+0dHSAAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////zs7Pg4OE/f39////////////////////////
++fn5gYGBn5+h////7OzslJSUr6+w////////29vbe3t8xMTFuLi4d3d3/Pz8/////f39kZGSh4eI4+Pk////////+Pj4pqanjo6Q////////u7u8oKCg+Pj4oqKic3N07u7u/////v7+xMTFf3+A6urq////////6enppKSkpaWm////7Ozsjo6QcXFyzc3O////////1tbX+fn5////////////////x8fHfHx9cXFy1tbXzs7Ob29wv7/A////6enphYWHrq6vtLS0mJiZ////////////////////////////////////////nJycpqam////////////////////////sbGymJiY////9/f3r6+wzs7P////////6enpf3+AqampjY2NoqKi////////////jIyNenp70dHR/////////f39v7+/uLi5////////xMTEkZGS3t7ehISEhISE/Pz8////////2dnZoqKi+vr6////////+Pj4w8PE29vb////9vb2p6epl5eX8PDw////////9fX1////////////////////29vcb29w3t7e////qqqqkZGR/v7+////7OzskJCRpaWmoqKij4+PcnJzxMTE////////urq6gYGBsLCwd3d53t7e////////pqanioqLu7u8f3+AzMzN////+fn5s7O0ycnK////////AAAA/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v7+kJCRxMTF////////////////////////8/PzfHx9o6Ok////////////
+////////////////19fYb29wiYmK4+Pj////////////19fYb29wgYGBu7u8/v7+////////////////////////uLi4d3d5b29wvLy8/v7+////////////////////////////////////////////////////9vb2////////////////////////////////////////+fn539/f/Pz8////4ODg7Ozs////////+fn5srKzfn5/ioqL////////////////////////////////////////4eHhcnJz7u7u////////////////////6urqb29w6enp////////////////////////zMzNb29wtbW2/f39////////////1dXWcHBxlJSUpqan+Pj4////////////////////////x8fHcXFycHBx6+vr////////////////////////////////////////////////////////////////////////////////////////////+Pj4zMzMfHx9goKDy8vLsrKyb29wl5eXzc3O/////f39zMzMn5+g4eHh5OTk8vLy////////////jIyMfX195OTk/////////////f39rKyte3t8ra2ud3d5/Pz8////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////29vbe3t89/f3/////////////Pz8y8vLfX1+d3d35ubm////////////////////////////8PDwdnZ3
+yMjJ////////////////////qampra2tra2ulZWV8vLy////////////////////////0tLSq6ur+fn5////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9vb27e3u////////////////7+/vkZGTfX1+gICCnJyc4uLi////kZGSq6ur////////////////////////d3d3x8fH////////////////////////6Ojompqc6enp////////////////////r6+wq6urw8PDiYmK5+fn////////////////////////6+vr2dnZ////////////////////////////////////////////////////////////////////////////////////////////////29vbmpqcjIyMdHR1dXV2iIiIe3t7b29wnZ2d////////////////////////////////////////vLy8sbGy////////////////////////1tbWiYmLioqL/Pz8////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////kpKUn5+g0dHSwcHCoqKid3d5dHR1srKz9PT0////////////////////////////////////////////////////////////////
+/Pz8lJSUyMjI0dHShoaG5OTk////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////xsbGhoaH+fn57Ozsz8/PeHh5+fn50tLSdHR09PT0////////////////////gICBwsLC/////////////////////v7+/////////////////////////////////f39mpqbu7u74eHhhISF2dnZ/////////////v7+/////////////////////////////////////////////v7+////////////////////////////////////////////////////////////////////////ycnJgYGB+Pj4/f39i4uLubm5////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////29vbb29wb29wb29wcXFyvr6/9/f3////////////////////////////////4uLipqan////////////////////////////////////9fX1ioqKzMzM4+Pkg4OE
+4ODg////8/Pzn5+h8/Pz////////////7u7ur6+vpaWmwcHB9vb2////////sbGy2dnZ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////6Ojpe3t76enpeXl6mZmZdHR19fX1/v7+hISFurq7////////////////9PT0b29w3t7e////////////////s7Ozmpqa////////////////////////////////////+fn5jY2Pu7u86+vrgYGC19fY////0tLTfn5//f39////////////xMTEgICBfX19oaGi5OTl////8vLyfX193Nzc/////////////////////////////////////////////////////////////////////f39g4OEsbGx////3d3dc3N06Ojp////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////lpaXe3t8zs7OoaGhd3d4oaGh2tra////////////////////////////y8vLo6Ol////////////////////////////////////////7+/vgYGCysrL4+PjgYGB7u7u4+PjlJSU9vb2////
+////////iYmLhISGu7u8mpqbeHh50dHR/f39lpaX2trb////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////q6urmpqc8fHx2dnZ7+/v////////w8PDfn5//Pz8////////////ra2tjIyN/v7+////////////////1NTU19fY////////////////////////////////////////9fX1iIiJurq76Ojpf3+A7e3t5eXlxcXG////////////8PDwcXFysbGx4eHht7e3d3d4v7/A+fn5uLi5+Pj4////////////////////////////////////////////////////////////////////////zc3OcHBx5ubm////nZ2ekZGR/v7+////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////6urqcXFyx8fH////8vLyuLi5fHx9ioqL4eHh////////////////////////////////////////////////////////////////////////6+vrgYGCvLy8xMTFmJiZ////////////////////9vb2b29w3t7e////////
+19fXjY2P/Pz8/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Pz8pKSkhISG1NTU/v7+////////+fn5d3d4y8vL////8/Pzp6epeXl66Ojp////////////////////////////////////////////////////////////////////////8/PziYmLqqqqw8PDnp6f////////////////////2tracXFy/Pz8////////5OTkvb2+/////////////////////////////////////////////////////////////////////////////////////v7+hoaHk5OT////6OjocXFyxMTF////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////6urqsbGxzc3OoKCgenp78/Pz////////+Pj4m5udcnJz4eHh////////////////////////////////////////////////////////////////////////8fHykZGSnp6ffX1+6Ojp/////////////////Pz8ra2u+fn5////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////zc3OgICBhISFsrKz0tLS2dnZjY2OeXl6mpqccXFyj4+P6+vr////////////////////////////////////////////////////////////////////////////////+fn5pKSki4uLdHR19fX1/////////////////f391dXW////////////////////////////////////////////////////////////////////////////////////////////////////////////1NTUb29w0tLT////paWmdXV28fHy////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////7OzsnZ2edHR1b29wb29weXl6iIiJkZGRj4+PdXV2b29wzs7O/////////////////////////////////////////////////////////////////////////////f39w8PDhISF3d3d////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Pz8zs7PoKCgfn5/dXV2e3t8iIiIqamp1tbW/v7+////////////////////////////////////////////////////////////////////////////////////////////3d3dqqqr+Pj4////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////kZGRhISE/v7+7+/vd3d4z8/P////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+/v739/gw8PDsbGyoaGhnJycnp6fr6+w2tra////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////5OTlzMzN////////9fX1/v7+////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////Pz/tLD1f3rveHLumZTy19b6////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////+/v/WlPpGhDiGhDiGhDiGhDiGhDiT0fpzMr5////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////rKn1GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiiILw/Pz/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////f3rvGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDia2Ts/f3/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////ioXwGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDii4bw////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8/Pz4uPj4uPj4uPj4uPj8vPz////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8PDw4uPj6urq9vb2////////////////////////////////////////////////////////////////////////////////////////////////////////////7u7u4uPj8PDw/v7+/////////////////////////////Pz86+zs
+5OTk8/Pz////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////xcL4GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiHRPh19b6////////////////////////////////////////////////////////////////////////////////////tLW1S05OSUlJ9fX1////////xsbGU1VVoKGh9vb2////////////3NzcHB4eGx0dGx0dGx0dY2Vl////////xcXFREdHREdHREdHREdHn6Cg////////2dnZREdHREdHREdHREdHhoeH////////7+/vSUlJREdHREdHREdHbW9v////////////////9vb2f4CALzAwGx0dGx0dGx0dGx0dNTc3aGlpt7e3/f39////////////mJmZREdHREdHREdHREdHxsbG////////1dXVREdHREdHREdHREdHhIWF////////////////w8TELjAwGx0dGx0dGx0dJScnT1BQ+/v7////////////4eHha2xsJigoGx0dGx0dGx0dMTMzbW9vwMHB/v7+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////7+79uLX2iILwZ2HsTUbpQDfnNizmNizmNizmLiXlJx3kJx3kJx3kJx3kJx3kJx3kJx3kJx3kJx3kJx3krKn14uH74uH74uH74uH74uH74uH74uH74uH74uH74uH7mpXyJx3kJx3kJx3kJx3kJx3kJx3kJx3kJx3kJx3kVU/q////////////////////////////////////////p6ioGx0dGx0dGx0dQ0ZGuru75eXlfX5+Gx0dGx0dLjAwrK2t////////////Y2VlGx0dGx0dGx0dHB4e3d3d////+/v7NTc3Gx0dGx0dGx0dMDEx+fn5////////Sk1NGx0dGx0dGx0dHyEh6urq////////a21tGx0dGx0dGx0dGx0d0dHR////////////a21tGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dQkREysvL////////3t7eHB4eGx0dGx0dGx0dWVlZ////////////SElJGx0dGx0dGx0dHiAg6Ojo////////////aWlpGx0dGx0dGx0dGx0dGx0dGx0du7y8////////7e3tMDAwGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dTlBQ09TU////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////z8z5ZF3rHhXjGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiPzbn9fX+////////////////////////////////////4uH7GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiysj4////////////////////////////////////QkREGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0ddHZ2/Pz8////zMzMGx0dGx0dGx0dGx0ddXd3////////m5ycGx0dGx0dGx0dGx0dpaWl////////tbW1Gx0dGx0dGx0dGx0dh4iI////////1dXVGx0dGx0dGx0dGx0dZ2ho////////8fHxHB4eGx0dGx0dGx0dGx0dOz4+V1hYJScnGx0dGx0dGx0dHR8fmJmZ////////ZWdnGx0dGx0dGx0dGx0d1dXV////////sbKyGx0dGx0dGx0dGx0dhIWF////////////hYaGGx0dGx0dGx0dGx0dGx0dGx0daWlp////////mJmZGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dHyEhnp+f////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/////////////////////v7/hoDwGxHhGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiZmDs/Pz/////////////////////////////////////HBLhGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiX1jr////////////////////////////////////JykpGx0dGx0dGx0dGx0dfX5+6Ojo0NDQcHFxGx0dGx0dGx0dGx0dcnNz////////UVFRGx0dGx0dGx0dISMj6uvr////9PT0KCoqGx0dGx0dGx0dPT8//f39/////f39Oz4+Gx0dGx0dGx0dJykp9PT0////////WlxcGx0dGx0dGx0dHR8f4eHh////4ODgGx0dGx0dGx0dGx0dPkBA/Pz8////8vPzfX5+UlJSaGlpfH5+k5SU6enp////z8/PGx0dGx0dGx0dGx0dbG5u/////////Pz8OTo6Gx0dGx0dGx0dKCgo8vPz////////zs7OGx0dGx0dGx0dGx0dNzg4u7y8oKGh////////dnh4Gx0dGx0dGx0dGx0dWFlZ3NzcxMXFV1hYGx0dGx0dGx0dGx0dlZaW////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////fXfvGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiYVnr8fD9////////////////////////////4N/7GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGxHh29r6////////////////////////////////RkhIGx0dGx0dGx0dGx0d3d3d////////////oKGhHyEhOj09VVdXcnNz39/f////uru7Gx0dGx0dGx0dGx0diYmJ////////iImJGx0dGx0dGx0dGx0dt7e3////////pKWlGx0dGx0dGx0dGx0dmJmZ////////xMXFGx0dGx0dGx0dGx0dent7////9fX1HiAgGx0dGx0dGx0dSElJ////////////////////////////////////////////U1VVGx0dGx0dGx0dHiAg5OTk////////oaKiGx0dGx0dGx0dGx0dlpeX////////////REdHGx0dGx0dGx0dICIi7+/v////////////i4yMGx0dGx0dGx0dGx0dpqam/////////v7+bnBwGx0dGx0dGx0dGx0duru7////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////qqb0GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiHhThSUHoenTurqv1wb73rqv1lI/xb2jtSEDoIRfiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiMyrkq6j0+/r+////////////////+fj+XFTqGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDic23t////////////////////////////////lZaWGx0dGx0dGx0dGx0dr7Cw/////////////////////////////////////////v7+QEBAGx0dGx0dGx0dKSsr9PT0////6urqICIiGx0dGx0dGx0dTlBQ////////+Pj4MDAwGx0dGx0dGx0dMzY2+vr6////////SkxMGx0dGx0dGx0dISMj7e3t////VFdXGx0dGx0dGx0dHB4eNzg4Nzg4Nzg4Nzg4Nzg4Nzg4Nzg4Nzg4Nzg4dnh4////vb29Gx0dGx0dGx0dGx0df4GB////////9/f3LjAwGx0dGx0dGx0dMTMz+vr6////////ra2tGx0dGx0dGx0dGx0dkZKS////////////yMnJGx0dGx0dGx0dGx0dent7////////////9vb2NTc3Gx0dGx0dGx0dMTMz9/f3////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////5OP8JBniGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiLCPjcGvsurf2+fj+/////Pz/0M75mpXyYVnrJhvjGhDiGhDiGhDiGhDiGhDiGhDiGhDiLiXlb2jtmZTyo5/zh4HwNy7mGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiHhbj6ej8////////////////////////////6+zsJScnGx0dGx0dGx0dS05O////////////////////////////////////////////p6ioGx0dGx0dGx0dGx0dnZ6e////////dXd3Gx0dGx0dGx0dGx0dxMXF////////kpOTGx0dGx0dGx0dGx0dqKmp////////tLW1Gx0dGx0dGx0dGx0di4yM////t7i4Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dHiAg6urq/v7+QkREGx0dGx0dGx0dJCYm5+fn////////kZKSGx0dGx0dGx0dGx0dqaqq////////+/v7MzY2Gx0dGx0dGx0dLzAw+Pj4/////////v7+QUFBGx0dGx0dGx0dKCgo8fHx////////////o6SkGx0dGx0dGx0dGx0dnJ2d////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////ZF3rGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiJx/keHLu0M75////////////+fj+vbr3dG7tKiLjGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDihoDw////////////////////////////////jY6OGx0dGx0dGx0dGx0dpqam////////////////9/f3////////////////////+vr6MTMzGx0dGx0dGx0dNjg4+/v7////3NzcHB4eGx0dGx0dGx0dQkRE+fn5////7OzsHyEhGx0dGx0dGx0dMDIy8fHx/////f39MDIyGx0dGx0dGx0dLC4u9fX1/v7+TlBQGx0dGx0dGx0dGx0df4CAm5ycm5ycm5yccnNzGx0dGx0dGx0dGx0doKGh////rK2tGx0dGx0dGx0dGx0damtr////////6urqHR8fGx0dGx0dGx0dQUFB/v7+////////l5iYGx0dGx0dGx0dGx0dpKWl////////////vr6+Gx0dGx0dGx0dGx0deHl5////////////7+/vGx0dGx0dGx0dGx0dR0hI////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////09H5GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiS0Tnrqv1+/v/////////////+vn+tLD1XFXqHBLhGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiJx3k9PT+////////////////////////////9/f3QkREGx0dGx0dGx0dHiAgra2t////////////SkxMJykpREdHYmJifn9/+/v7////lpeXGx0dGx0dGx0dGx0dr6+v////////Y2RkGx0dGx0dGx0dGx0dWlxc4ODg9PT0KSsrGx0dGx0dGx0dGx0dSUlJ0tPT9vb2PT8/Gx0dGx0dGx0dGx0dpaWl////4ODgJigoGx0dGx0dGx0dUVFR9vb2////////2tvbGx0dGx0dGx0dGx0dbW9v////+/v7NTc3Gx0dGx0dGx0dGx0ddHZ26urq7e3tISMjGx0dGx0dGx0dGx0dw8TE////////8/PzJykpGx0dGx0dGx0dPT8//f39////////////fH19Gx0dGx0dGx0dGx0djo+P/f39////+Pj4HyEhGx0dGx0dGx0dHR8f+Pj4////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////bGXsGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiNizmop7z+vn+////////////////4+L7gXzvJxzkGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDimJPy////////////////////////////////4+TkOTk5Gx0dGx0dGx0dGx0dT1BQiImJa21tGx0dGx0dGx0dGx0dGx0d8fHx////8vPzJykpGx0dGx0dGx0dRkhI////////y8zMGx0dGx0dGx0dGx0dGx0dGx0dHiAgGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dV1hY////////xMXFIiUlGx0dGx0dGx0dSElJwMHB6enpmJmZGx0dGx0dGx0dGx0dWlxc////////mZqaGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0ddHV1////wMHBGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dLzAw+Pj4/Pz8a21tGx0dGx0dGx0dGx0dQUFBfX5+UVFRGx0dGx0dGx0dGx0dGx0d8/Pz////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////9PT+IxjiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiMyrkqaX0/f3/////////////////8vL9mJPyMCblGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiMink+/r+////////////////////////////////6urqU1ZWGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dLS8v////////////hYaGVVdX1dXVtLW1QUFBwcLC////////UFFRGx0dGx0dGx0dGx0dHR8fGx0dGx0dGx0dGx0dGx0dGx0dISMjHiAgGx0dGx0dGx0dGx0dGx0dGx0dNzg4////////////0dHRODg4Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dgoOD////////9PT0KCoqGx0dGx0dGx0dKCoqHB4eGx0dGx0dGx0dGx0dGx0dGx0dUlJS/////v7+QkVFGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dpaWl/////Pz8i4yMHB4eGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dQUFB////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////AAAA////t7T2GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiQjnmxsP4////////////////////9/f+k4/xKiLjGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiq6j0/////////////////////////////////////f39o6SkMDIyGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dpKWl////////////6OjopKWl////////9vb2iYmJ////////ubq6Gx0dGx0dGx0dGx0dl5iYQUFBGx0dGx0dGx0dGx0dGx0daGlp0dLSSUlJGx0dGx0dGx0dGx0dGx0dXF9f////////////////8vPzgoODIiUlGx0dGx0dGx0dGx0dGx0dGx0dGx0dODg46urq////////////h4iIGx0dGx0dGx0dKCgouLm5PkBAGx0dGx0dGx0dGx0dGx0ddHZ2////////rK2tGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dPkBA/f39////////0dLSVFdXGx0dGx0dGx0dGx0dGx0dGx0dGx0dJCYmw8TE////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////AAAA////f3nvGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiZ2Hs6en8////////////////////9PT+iILwIBfjGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiQjjm/v7/////////////////////////////////////////+vr6vL29hYaGYWFhUVFRTE9PWlxcf4GB0NDQ////////////////////6+zs////////////6urq/v7+/////f39kpOTjY6OjY6OjY6Ov7+//f39t7i4c3R0UlRUUlJSdnd36enp/////v7+u7y8dHV1UlRUT1BQe3x86uvr////////////////////////8vLyqqurdHV1V1hYSUlJU1VVaWlpnp6e9PT0////////////////6uvrjY6OjY6OjY6OjY6O2dnZ+/v7tbW1cXFxU1VVUVFRhoeH8/Pz////////+vr6jo+Ph4iIHB4eGx0dGx0dGx0dMDIyjY6OjY6O6urq////////////////3d3dlJWVaWlpUlJSTlBQYmJilJWV5OTk////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////AAAA////VE3pGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiJx3kpKD0/v7/////////////////////4eD7ZV/sGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDivbv3////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////X2BgGx0dGx0dGx0dHB4e3Nzc////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////AAAA////MSjkGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiWFHq5+b8////////////////////////w8D3OTHmGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiVE3p////////////////////////8PDwjY6OW11dU1ZWZWdnjY6Ozs7O////29zcjY6OjY6OjY6OjY6O5OTk////////////w8TEiImJkpOT////////////0NDQqqur7Ozs/////////////v7+kpOTjY6OjY6OjY6OkpOT/f39////////////mpubjY6OjY6OjY6OjY6OxsbG////////uLm5amtrU1VVXF5ednh4rq6u9PT0////m5ycjY6OjY6OjY6Ot7i4////////lZaWjY6OjY6OjY6OlZaW////////////////////8fHxnJ2damtrU1VVU1VVYGFhdnh4pKWl5OTk////////ycrKICIiGx0dGx0dGx0ddHZ2////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////IBfj
+GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiJx3ks6/1////////////////////////9/f+hoDwHhThGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDi0M75////////////////////WlxcGx0dGx0dGx0dGx0dGx0dGx0dS05OjY6OGx0dGx0dGx0dGx0dvr6+////////i4yMGx0dGx0dGx0ddHV16enp/v7+eHl5Gx0dISMjeXl57u7u////////c3R0Gx0dGx0dGx0dGx0dtbW1////////////JykpGx0dGx0dGx0dGx0doqOj////u7y8Gx0dGx0dGx0dGx0dGx0dGx0dKCoqkJGROTs7Gx0dGx0dGx0dYGFh////////eXl5Gx0dGx0dGx0dGx0dwcLC////////////7OzsODg4Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dYmJi3Nzc////7e3tlpeXOTk5Gx0dHyEh6enp////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////GhDiGhDiGhDiGhDiGhDiGhDiGhDi
+GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDidW/t9/f+////////////////////////1NL6QjjmGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiZmDs////////////////////KSsrGx0dGx0dGx0dGx0dGx0dICIiGx0dGx0dGx0dGx0dGx0dGx0dent7////////LC4uGx0dGx0dGx0dGx0dHB4eOTk5HiAgGx0dGx0dGx0dNjg439/f////2tvbGx0dGx0dGx0dGx0dTE9P////////////HR8fGx0dGx0dGx0dGx0dv7+/////jY6OGx0dGx0dGx0dGx0dGx0dISMjGx0dGx0dGx0dGx0dGx0dGx0dJykp9vb2////4ODgHB4eGx0dGx0dGx0dWFlZ////////////iouLGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dHyEhoaKi/////////f39vr6+X2BgiImJ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDi
+GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiQjrm4N77////////////////////////+fj+gXzvGxHhGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiHBLh4N/7////////////////WFlZGx0dGx0dGx0dGx0dsLGx////19fXa21tGx0dGx0dGx0dGx0dKCgo8vPz////JykpGx0dGx0dGx0dGx0dwMHB////8vPzf4CAGx0dGx0dGx0dNjg48PDw////X2BgGx0dGx0dGx0dGx0dwMHB////+Pj4Gx0dGx0dGx0dGx0dGx0d29zc////u7y8Gx0dGx0dGx0dGx0dUVFR/v7+8vLyoaKiKi0tGx0dGx0dGx0dGx0doaKi////////ZWdnGx0dGx0dGx0dGx0d1NTU////////W11dGx0dGx0dGx0dGx0dgYGB4uPjxsbGYWFhGx0dGx0dHR8fMDAwqKmp////////////////8PDw////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////HhXjGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDi
+GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiJx/kvLn2////////////////////////////xsT4MSjkGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDieXPt////////////////yMjIGx0dGx0dGx0dGx0damtr/Pz8////////jI2NGx0dGx0dGx0dGx0dl5iY////+Pj44+Tkzs7Oubq6o6Sk+fn5////////1dXVGx0dGx0dGx0dGx0dgYGB////yMnJGx0dGx0dGx0dGx0dHyEhjY6O6urqGx0dGx0dGx0dGx0dGx0d+Pj4/////f39R0hIGx0dGx0dGx0dJykp3d3d////////3t7eKSsrGx0dGx0dGx0dOTs7/f39////0NDQGx0dGx0dGx0dGx0da2xs////////ZGZmGx0dGx0dGx0dGx0d1tbW////////////2tvb6urq/Pz8////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////MyrkGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDi
+GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiHBLhl5Ly////////////////////////////7ez9W1PpGhDiGhDiGhDiGhDiGhDiGhDiGhDiIBfj7ez9////////////////lZaWGx0dGx0dGx0dGx0dQEBAkpOTz8/P+vr6QUJCGx0dGx0dGx0dMzY2+/v7////////////////39/fnp+fa21tOTk5Gx0dGx0dGx0dGx0dGx0dNjg4////////S05OGx0dGx0dGx0dGx0dGx0dOj09Gx0dGx0dGx0dGx0dMDIy////////////4ODgMzY2Gx0dGx0dGx0dIiUlcnNztra27+/vnJ2dGx0dGx0dGx0dGx0dtLW1////////U1VVGx0dGx0dGx0dHiAg4+Tk////mJmZGx0dGx0dGx0dGx0daWlpjY6OjY6OjY6OjY6OjY6OjY6OjY6OjY6Ojo+P+/v7////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////T0fpGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDi
+GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDicWzt+vn+/////////////////////////v7/k4/xHBLhGhDiGhDiGhDiGhDiGhDiGhDijIfw////////////////////u7y8Q0ZGGx0dGx0dGx0dGx0dGx0dKi0tOTk5Gx0dGx0dGx0dGx0drK2t/////////v7+aWlpGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dPkBA////////tbW1Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dTlBQ////////////////6uvrcnNzHyEhGx0dGx0dGx0dGx0dHR8fREdHGx0dGx0dGx0dGx0dSkxM////////vb29Gx0dGx0dGx0dGx0dfX5+////6OjoHiAgGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0ds7S0////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////dG7tGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhHSGhaEGxpSGxtBGxpOGxd8GhLKGhDi
+GhDiGhDiGhDiGhDiGhDiWFHq8vH9////////////////////////////w8D3KSHjGhDiGhDiGhDiGhDiGhDiKiLj9/f+////////////////////////2dnZoKGhdHV1SkxMICIiGx0dGx0dGx0dGx0dGx0dGx0dQkVF/v7+////0dLSGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dKSsrvb29/////////f39Oj09Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0da2xs////////////////////////8vLytbW1hYaGW11dMDIyGx0dGx0dGx0dGx0dGx0dGx0dGx0dxsbG/////v7+QUJCGx0dGx0dGx0dJScn7+/v////fH19Gx0dGx0dGx0dGx0dLzAwREdHREdHREdHREdHHR8fGx0dGx0dGx0dWlxc////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////n5vzGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhSeGxwnGx0dGx0dGx0dGx0dGx0dGx0hGhaLGhDiGhDiGhDiGhDiGhDiGhDi
+Qzvn7Ov9////////////////////////////4uH7QzvnGhDiGhDiGhDiGhDiGhDin5vz////////////////////////////////+/v77e3t+/v7z8/Pk5SUR0hIGx0dGx0dGx0dGx0dwsPD////2NjYGx0dGx0dGx0dGx0dHB4eSUpKcnNzmJmZwsPD+fn5////////////////oqOjGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dZWdn/Pz8////////////////////////////////7Ozs+/v75eXlra2tbG5uHyEhGx0dGx0dGx0dXV9f////////qqurGx0dGx0dGx0dGx0dkJGR////7+/vNTc3Gx0dGx0dGx0dOj099PT0////////////SElJGx0dGx0dGx0dHyEh+/v7////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////1dP6GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhSjGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhaJGhDiGhDiGhDiGhDiGhDiGhDiOTLl5uX8////////////
+////////////////9vb+ZmDsGhDiGhDiGhDiGhDiOC/m/Pz/////////////////r6+vSk1NMDExHB4eHiAgra2t////////4uPjGx0dGx0dGx0dGx0dcXFx////////QkREGx0dGx0dGx0ddXd3////////7OzsgoODlZaWqqurvr6+4eHh////9/f3LjAwGx0dGx0dGx0dIiUlfn9/HR8fGx0dGx0dGx0dS05O29zc////////////8PDwWlpaOj09ICIiGx0dXV9f8vPz////////YGFhGx0dGx0dGx0dHR8f8PDw////+vr6MjU1Gx0dGx0dGx0dLzAw9/f3////0dHRKCgoGx0dGx0dGx0dUlRU5+fn////////UVFRGx0dGx0dGx0dGx0d4ODg////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/////f3/KSHjGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhHXGxwsGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0hGhLIGhDiGhDiGhDiGhDiGhDiGhDiMSjk3dv7/////////////////////////////v7/
+hoDwGhDiGhDiGhDiGhDisq71////////////////9/f3Sk1NGx0dGx0dGx0dGx0dOTk5XF9fRkhIGx0dGx0dGx0dGx0dSUpK////////zs7OIiUlGx0dGx0dHyEhfX5+p6ioY2VlGx0dGx0dGx0dGx0dcXFx////////kJGRGx0dGx0dGx0dGx0dlZaWw8TEMDAwGx0dGx0dGx0dICIim5yc/f39////////pqamGx0dGx0dGx0dGx0dJCYmU1ZWW11dISMjGx0dGx0dGx0dGx0dysvL////////l5iYGx0dGx0dGx0dGx0dpKWl////////zs7OMDAwGx0dGx0dGx0dISMjWVlZSElJGx0dGx0dGx0dGx0dGx0d6+zs////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////bmftGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhWVGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGxd6GhDiGhDiGhDiGhDiGhDiGhDiGhDiLCPj1NL6////////////////////////////////pqL0HhXjGhDiGhDiSEDo
+////////////////////8vLyYmJiGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dXV9f////////////y8zMODg4Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dn6Cg////////7u7uJScnGx0dGx0dGx0dMDEx+vr66urqUlRUGx0dGx0dGx0dGx0dUVFR3t7e////////rK2tJigoGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0d4ODg////////8vPzJykpGx0dGx0dGx0dOz4+/f39////////6OjoYGFhGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dYmJi////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////t7T2GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGxhmGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGxpMGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiJxzk19X6////////////////////////////////wL33JBniGhDiGhDixMH3////////////////////
+////xMXFaWlpLS8vGx0dGx0dGx0dGx0dGx0dHiAgXF9f4ODg////////////////9PT0m5ycSk1NHyEhGx0dGx0dGx0dGx0dISMjdnd3+vr6////////////fH19Gx0dGx0dGx0dGx0dpqen/////Pz8iYmJJykpJykpJykpJykpMDIyqqur////////6+zsi4yMQkVFHR8fGx0dGx0dGx0dGx0dGx0dOj09paWl////////////////hIWFGx0dGx0dGx0dGx0dtbW1////////////////y8zMbnBwLS8vGx0dGx0dGx0dGx0dKi0te3x89fX1////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////+vn+KiLjGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGxlbGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGxtAGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiLCPj19X6////////////////////////////////z835LCPjGhDiW1Pp////////////////////////////////////7u7u2tvb
+1NTU2tvb5+fn/Pz8////////////////////////////////////+/v74+Tk2NjY2dnZ5OTk+/v7////////////////////4uPjHiAgGx0dGx0dGx0dP0BA/v7+////////////////////////////////////////////////////+fn54uPj1NTU1dXV4uPj9PT0////////////////////////6OjoHiAgGx0dGx0dGx0dTE9P////////////////////////////6uvr19fX19fX6enp////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////fXfvGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGxhtGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGxlSGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiLCPj19X6////////////////////////////////3dv7NizmGhDi19X6////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////amtrGx0dGx0dGx0dGx0duru7////////////////////////////////////////////////////////////////////////////////////////////////////////c3R0Gx0dGx0dGx0dGx0dycrK////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////3tz7GxHhGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhSjGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhaHGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiLCPj2dj6////////////////////////////////5uX8OzTlbWbs////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////0dLSGx0dGx0dGx0dGx0dUFFR////////////////////////////////////////////////////////////////////////////////////////////////////////2draGx0dGx0dGx0dGx0dX2Bg////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////XFXqGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDfGxs8Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGxwrGhHWGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiMSjk4uH7////////////////////////////////7Ov9RT7o5eT8////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////V1hYGx0dGx0dGx0dGx0dzMzM////////////////////////////////////////////////////////////////////////////////////////////////////////X2BgGx0dGx0dGx0dGx0d2tvb////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////zcv5GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhK+GxwnGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0gGhSqGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiOjPl7Ov9////////////////////////////////7ez9sq71////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////ysvLcHFxcHFxcHFxcHFxq6ys////////////////////////////////////////////////////////////////////////////////////////////////////////0dHRcHFxcHFxcHFxcHFxtLW1////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////WlPpGhHZGhSgGxd7Gxd4GhWQGhLJGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhK/GxtBGx0dGx0dGx0dGx0dGx0dGxs2GhOwGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiSUHo8/P+/////////////////////////////////f3/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////ycftGxwtGx0dGx0dGx0dGx0dGx0eGxhmGhHXGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDgGhSsGxd6GxhnGxd2GhSlGhDdGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiVlDq+vn+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////PTpxGx0dGx0dGx0dGx0dGx0dGx0dGxtAGhHWGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiZ2Hs/v7/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////2trrHB0qGx0dGx0dGx0dGx0dGx0dGx0dGxhkGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDihoDw////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////a2mdGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhLFGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDipqL0////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/////////////////////////////Pz+JydQGx0dGx0dGx0dGx0dGx0dGx0dGhaLGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiHhXjw8D3////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////xcTeGxwlGx0dGx0dGx0dGx0dGx0dGxdzGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiJx3k2tn6////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////c3GkGx0dGx0dGx0dGx0dGx0dGxd7GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiOTDm7+79////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////NzZmGx0dGx0dGx0dGx0dGhSeGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiVU/q/Pz/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////6ejyICA8Gx0dGx0dGxwpGhHaGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhSqGxlXGxwvGxwsGxpMGhWXGhDgGhDiGhDiGhDiGhDiGhDiGhDif3nv////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////wL/bHB0qGx0dGhWQGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhHWGxd+Gxs6Gx0fGx0jGxpMGhWcGhDhGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDhGxdwGx0dGx0dGx0dGx0dGx0dGx0dGxlUGhHaGhDiGhDiGhDiGhDiGhDiGhDiqqb0////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////kpC8HBh9GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhLHGxs3Gx0dGx0dGx0dGx0dGx0dGx0dGxleGhDdGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhaOGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGxhpGhDiGhDiGhDiGhDiGhDiGhDiHhbjzsv5////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////nprzGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDdGxs8Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGxd0GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDeGxwsGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0eGhLIGhDiGhDiGhDiGhDiGhDiGhDiMSjk6+r8////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////hYDwGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhWSGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0fGhHMGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhO4Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhWSGhDiGhDiGhDiGhDiGhDiGhDiGhDiVE3p/Pz/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/////////////////////////////////////////////////////////v7/cGvsGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGxlXGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhWTGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhSoGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhaCGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDihYDw////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/////////////////////////////////////////////////////////////Pz/a2TsGhDiGhDiGhDiGhDiGhDiGhDiGhDiGxtBGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGxd7GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhK+Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhWYGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDit7T2////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/////////////////////////////////////////////////////////////////Pz/a2TsGhDiGhDiGhDiGhDiGhDiGhDiGxpLGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhaIGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDhGxs0Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0hGhHPGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiJxzk3tz7////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/////////////////////////////////////////////////////////////////////Pz/bmftGhDiGhDiGhDiGhDiGhDiGxd8Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhO4GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhSiGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGxd+GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiQzvn+Pj+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/////////////////////////////////////////////////////////////////////////v7/e3XuGhDiGhDiGhDiGhDiGhHPGxwlGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGxpPGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhaNGx0fGx0dGx0dGx0dGx0dGx0dGxhtGhDgGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDidnHu////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////ko7xGhDiGhDiGhDiGhDiGhSjGx0hGx0dGx0dGx0dGx0dGx0dGx0dGxs0GhHMGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhLDGxd0GxpLGxpHGxhpGhO0GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDisK31////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////rar1HxfjGhDiGhDiGhDiGhO1GxpGGx0dGx0dGx0dGx0gGxhlGhHRGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiJRri3tz7////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////zcv5LyblGhDiGhDiGhDiGhDiGhLJGhSrGhOyGhHWGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiRT7o+fj+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////5+b8TEXoGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDifXfv////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////+vn+fHbuGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDivbv3////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////ubb2KiLjGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiLSTj6un8////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////
+////////////////////////////////////////////////////////////////////////////////////////////6Of8XFXqGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiW1Pp/v7/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////pqL0JxzkGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDimpXy////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////6ej8Z2HsGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiHhbj1dP6////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////wL33QDfnGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhHPGhSsGhSsGhHPGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiPjXn9vb+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////+/v/n5vzLCPjGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhLLGxlZGx0eGx0dGx0dGx0eGxlZGhHMGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDidnHu////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////9PT+j4rxJx3kGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhLJGxwvGx0dGx0dGx0dGx0dGx0dGx0dGxwwGhLJGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDit7T2////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8fD9ko7xKiLj
+GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGxpPGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGxpQGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiKSHj5+b8////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9/f+o57zQjnmGhDiGhDiGhDiGhDi
+GhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhLCGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhLDGhDiGhDiGhDiGhDiGxHhcGvszMr5PDXmGhDiGhDiGhDiYlvq////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////yMb4dG7tJx3kGhDiGhDiGhDiGhDiGhDiGhDiGhDi
+GhDiGhDiGhDiGhDiGhWcGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhWcGhDiGhDiHRPhaGLr2dj6////////8O/9UknoGhDiGhDiGxHh29r6////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////+fj+uLX2dG7tMCflGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhDiGhWZGx0d
+Gx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGx0dGhWaPDXmj4rx5uX8////////////////////+vn+bWbsGhDiGhDidG7t////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v7/2tn6pKD0cWztSUHoJBniGhDiGhDiGhDiGhO7Gx0dGx0dGx0dGx0dGx0dGx0dGx0e
+HyA1MzJhZGKXzMvo/////////////////////////////////////v7/ioXwGhDiHxfj6un8////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v7/6Of8z8z5u7j2qqb0c3GhZWOYdHKjeXenlJK8ubjW7e31////////////////////////
+////////////////////////////////////qqb0HhXjiIPw////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////xMH3OTDm9fX+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////2tn6
+u7j2////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AAAA</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>72095866-3737-4dd5-ac64-1bb60d539285</rd:ReportID>
+</Report>
