@@ -8,20 +8,10 @@ using AskalePortal.Data.ResponseParams;
 using AskalePortal.Data.SAP.InputParams;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Primitives;
-using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 using SapNwRfc;
-using System;
-using System.Collections.Generic;
-using System.IO.Pipelines;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using static AskalePortal.BLL.BLLActions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace AskalePortal.BLL
@@ -710,14 +700,14 @@ namespace AskalePortal.BLL
                                         + DateTime.Now.ToString("yyyy_MM_dd_HH__mm_ss_SSS") + ".txt";
 
                                 string directoryPath = Path.Combine(
-     _env.IsDevelopment() ? _configuration["spring:sevlet:fileLocation:local"]! :
-     _env.IsProduction() ? _configuration["spring:sevlet:fileLocation:server"]! :
-                            _configuration["spring:sevlet:fileLocation:test"]!,
-     "banka",
-     "odeme",
-     "yuklenen",
-     DateTime.Now.ToString("dd.MM.yyyy")
- );
+                                             _env.IsDevelopment() ? _configuration["spring:sevlet:fileLocation:local"]! :
+                                             _env.IsProduction() ? _configuration["spring:sevlet:fileLocation:server"]! :
+                                                                    _configuration["spring:sevlet:fileLocation:test"]!,
+                                             "banka",
+                                             "odeme",
+                                             "yuklenen",
+                                             DateTime.Now.ToString("dd.MM.yyyy")
+                                            );
                                 if (!Directory.Exists(directoryPath))
                                 {
                                     Directory.CreateDirectory(directoryPath);
@@ -828,12 +818,12 @@ namespace AskalePortal.BLL
                                 else
                                 {
                                     _server.SendFileWithRetry(
-                                  _configuration["sftp:host"] ?? "",
-                                  _configuration["sftp:askalecimento:username"] ?? "",
-                                  _configuration["sftp:askalecimento:password"] ?? "",
-                                  pathFile,
-                                  $"askalecimentotos/{filename}"
-                              );
+                                    _configuration["sftp:host"] ?? "",
+                                    _configuration["sftp:askalecimento:username"] ?? "",
+                                    _configuration["sftp:askalecimento:password"] ?? "",
+                                    pathFile,
+                                    $"askalecimentotos/{filename}"
+                                );
 
 
                                 }
@@ -852,7 +842,7 @@ namespace AskalePortal.BLL
                     {
                         try
                         {
-                          
+
                             Data.Models.AccountPaymentKalemSAPTable? accountPaymentKalemSAPTable = GetByID(id);
                             if (accountPaymentKalemSAPTable != null)
                             {
@@ -903,7 +893,7 @@ namespace AskalePortal.BLL
 
 
                                     EmailMessage emailMessage = new EmailMessage();
-                                    BLLActions.AccountPaymentSAPTable bllAccountPaymentSAPTable = new BLLActions.AccountPaymentSAPTable(_configuration, _env, _mapper,_server );
+                                    BLLActions.AccountPaymentSAPTable bllAccountPaymentSAPTable = new BLLActions.AccountPaymentSAPTable(_configuration, _env, _mapper, _server);
                                     Data.Models.AccountPaymentSAPTable? accountPaymentSAPTable = bllAccountPaymentSAPTable.GetByOENUM(accountPaymentKalemSAPTable.oenum);
                                     emailMessage.subject = accountPaymentSAPTable?.oenum + " Nolu ödeme onayı hk.";
                                     emailMessage.toAddress = "finans@askalecimento.com.tr";
@@ -1037,7 +1027,7 @@ namespace AskalePortal.BLL
 
             public List<AccountPaymentKalemActiveDto> listFilterByCompanyIdAndVendorCode(FilterParam<AccountPaymentKalemActiveDtoParameter> filterParam)
             {
-                string name1 = filterParam?.liste?.name1 ??"";
+                string name1 = filterParam?.liste?.name1 ?? "";
                 var query = from a in dal.dB.AccountPaymentKalemSAPTable
                             join b in dal.dB.AccountPaymentSAPTable
                                 on a.oenum equals b.oenum
