@@ -112,7 +112,7 @@ namespace AskalePortal.BLL
                               && b.enabled
                               && c.userId == userId
                               && (
-                                    a.name1.Contains(name1) ||
+                                    (a.name1 != null && a.name1.Contains(name1)) ||
                                     (name1 == "" && a.name1 == null)
                                  )
                         orderby a.oenum descending
@@ -149,7 +149,7 @@ namespace AskalePortal.BLL
                && a.enabled == true
                && b.enabled == true
                && (
-                     a.name1.Contains(name1) || (name1 == "" && a.name1 == null)
+                     (a.name1 != null && a.name1.Contains(name1)) || (name1 == "" && a.name1 == null)
                   )
          orderby a.oenum descending
          select new AccountPaymentKalemActiveDto

@@ -26,6 +26,16 @@ namespace AskalePortal.API.Controllers
             _server = server;
         }
 
+        private int GetCurrentUserId()
+        {
+            string? claimValue =
+                User.FindFirst("userId")?.Value ??
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                User.FindFirst("sub")?.Value;
+
+            return int.TryParse(claimValue, out int userId) ? userId : 0;
+        }
+
         #region listFilterByName1 
         [HttpPost("listFilterByName1")]
         public ActionResult<List<TransferPaymentKalemActiveDto>> listFilterByCompanyIdAndVendorCode([FromForm] FilterParam<TransferPaymentKalemActiveDtoParameter> filterParam)
@@ -50,12 +60,7 @@ namespace AskalePortal.API.Controllers
         [HttpPost("completed")]
         public ActionResult<PageReturn<TransferPaymentKalemActiveDto>> completed([FromForm] FilterPageParam<TransferPaymentKalemMyListDtoParameter> filterPageParam)
         {
-            int userId = 0;
-            if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
-            {
-                userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
-
-            }
+            int userId = GetCurrentUserId();
             BLLActions.TransferPaymentKalemSAPTable bllTransferPaymentKalemSAPTable = new BLLActions.TransferPaymentKalemSAPTable(_configuration, _env, _mapper, _server);
             PageReturn<TransferPaymentKalemActiveDto> page = bllTransferPaymentKalemSAPTable.completed(filterPageParam, userId);
             return Ok(page);
@@ -63,8 +68,8 @@ namespace AskalePortal.API.Controllers
         #endregion
 
         #region mylistdetail 
-        [HttpPost("mylistdetail")]
-        public ActionResult<TransferPaymentKalemMyListDetailDto> mylistdetail([FromForm] int id)
+        [HttpPost("mylistdetail/{id:int}")]
+        public ActionResult<TransferPaymentKalemMyListDetailDto> mylistdetail([FromRoute] int id)
         {
             BLLActions.TransferPaymentKalemSAPTable bllTransferPaymentKalemSAPTable = new BLLActions.TransferPaymentKalemSAPTable(_configuration, _env, _mapper, _server);
             TransferPaymentKalemMyListDetailDto dto = bllTransferPaymentKalemSAPTable.mylistdetail(id);

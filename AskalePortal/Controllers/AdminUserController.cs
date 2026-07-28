@@ -1,4 +1,6 @@
+using AskalePortal.API.Security;
 using AskalePortal.BLL;
+using AskalePortal.Data.Functions;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.RequestModel;
 using AskalePortal.Data.RequestParams;
@@ -6,17 +8,14 @@ using AskalePortal.Data.ResponseModels;
 using AskalePortal.Data.ResponseParams;
 using AskalePortal.Data.SAP.Models;
 using AutoMapper;
-using AskalePortal.API.Security;
-using AskalePortal.Data.Functions;
-
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 
 namespace AskalePortal.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AdminUserController : ControllerBase
     {
 

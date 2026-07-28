@@ -1,14 +1,14 @@
-using AskalePortal.API.Infrastructure.Serialization;
 using AskalePortal.API.Extensions;
 using AskalePortal.API.Infrastructure.Errors;
+using AskalePortal.API.Infrastructure.Serialization;
 using AskalePortal.API.Mapper;
 using AskalePortal.API.Security.Auth;
 using AskalePortal.API.Security.Auth.Cleanup;
+using AskalePortal.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-
 using System.Globalization;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -65,22 +65,7 @@ builder.Services
     .AddNewtonsoftJson();
 
 // Model validation cevapları
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-{
-    options.InvalidModelStateResponseFactory = context =>
-    {
-        var errors = ApiValidation.ToErrors(context.ModelState);
 
-        var response = ApiErrorWriter.Create(
-            context.HttpContext,
-            StatusCodes.Status400BadRequest,
-            "VALIDATION_ERROR",
-            "Gönderilen bilgiler geçersiz.",
-            errors);
-
-        return new BadRequestObjectResult(response);
-    };
-});
 
 // Dil ve bölge ayarları
 builder.Services.Configure<RequestLocalizationOptions>(options =>
@@ -99,7 +84,34 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedUICultures =
         new List<CultureInfo> { cultureInfo };
 });
+builder.Services.AddScoped<ISftpServer, SftpServer>();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        foreach (var modelState in context.ModelState)
+        {
+            foreach (var error in modelState.Value.Errors)
+            {
+                Console.WriteLine(
+                    $"MODEL BINDING ERROR | {modelState.Key} | " +
+                    $"{error.ErrorMessage} | " +
+                    $"{error.Exception?.Message}");
+            }
+        }
 
+        var errors = ApiValidation.ToErrors(context.ModelState);
+
+        var response = ApiErrorWriter.Create(
+            context.HttpContext,
+            StatusCodes.Status400BadRequest,
+            "VALIDATION_ERROR",
+            "Gönderilen bilgiler geçersiz.",
+            errors);
+
+        return new BadRequestObjectResult(response);
+    };
+});
 // CORS
 const string corsPolicyName = "CorsPolicy";
 

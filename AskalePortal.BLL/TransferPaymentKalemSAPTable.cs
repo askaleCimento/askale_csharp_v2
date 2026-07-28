@@ -88,7 +88,7 @@ namespace AskalePortal.BLL
            c.approved == null &&
            c.enabled == true &&
            (
-               a.firma.Contains(firma) ||
+               (a.firma != null && a.firma.Contains(firma)) ||
                (firma == "" && a.firma == null)
            )
        orderby a.henum descending
@@ -130,7 +130,7 @@ namespace AskalePortal.BLL
            c.enabled == true &&
            a.currentUserId == userId &&
            (
-               a.firma.Contains(firma) ||
+               (a.firma != null && a.firma.Contains(firma)) ||
                (firma == "" && a.firma == null)
            )
        orderby a.henum descending
@@ -196,7 +196,37 @@ namespace AskalePortal.BLL
 
             public TransferPaymentKalemMyListDetailDto mylistdetail(int id)
             {
-                TransferPaymentKalemMyListDetailDto transferPaymentKalemMyListDetailDto = mylistdetail(id);
+                TransferPaymentKalemMyListDetailDto? transferPaymentKalemMyListDetailDto =
+                    (from paymentItem in dal.dB.TransferPaymentKalemSAPTable
+                     join payment in dal.dB.TransferPaymentSAPTable
+                         on paymentItem.henum equals payment.henum
+                     where paymentItem.enabled == true
+                           && payment.enabled == true
+                           && paymentItem.Id == id
+                     orderby paymentItem.henum descending
+                     select new TransferPaymentKalemMyListDetailDto
+                     {
+                         id = paymentItem.Id,
+                         henum = paymentItem.henum,
+                         posnr = paymentItem.posnr,
+                         lifnr = paymentItem.lifnr,
+                         firma = paymentItem.firma,
+                         wrbtr = paymentItem.wrbtr,
+                         usnam = payment.usnam,
+                         currentStateId = paymentItem.currentStateId,
+                         aenam = payment.aenam,
+                         cpudt = payment.cpudt,
+                         iban = paymentItem.iban,
+                         banka = paymentItem.banka,
+                         brnch = paymentItem.brnch,
+                         bankn = paymentItem.bankn
+                     })
+                    .FirstOrDefault();
+
+                if (transferPaymentKalemMyListDetailDto == null)
+                {
+                    throw new InvalidOperationException("Havale ödeme detayı bulunamadı.");
+                }
 
                 BLLActions.ActiveTransferDetails bllActiveTransferDetails = new BLLActions.ActiveTransferDetails(_configuration, _env);
                 List<ActiveTransferDetail> listActiveTransferDetails = bllActiveTransferDetails.GetByAccountTransferId(id);
