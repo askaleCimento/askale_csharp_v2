@@ -8,7 +8,7 @@ namespace AskalePortal.Data.SAP.InputParams
 {
     public class RoleListParameter
     {
-        public string? title { get; set; }
+        public string? filterTitle { get; set; }
         public string? description { get; set; }
     }
 }

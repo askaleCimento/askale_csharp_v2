@@ -1,4 +1,4 @@
-﻿using AskalePortal.Data.RequestParams;
+using AskalePortal.Data.RequestParams;
 using AskalePortal.Data.ResponseModels;
 using AskalePortal.Data.SAP.InputParams;
 using AutoMapper;
@@ -34,7 +34,7 @@ namespace AskalePortal.BLL
 
             public List<RoleDto> getAllFilter(FilterParam<RoleListParameter> filterParam)
             {
-                string? title = filterParam?.liste?.title;
+                string? title = filterParam?.liste?.filterTitle;
                 string? description = filterParam?.liste?.description;
                 List<RoleDto> liste = dal.Get(u => u.enabled == true && (title != null ? u.title.Contains(title) : true) &&
                 (description != null ? u.description.Contains(description) : true)).OrderByDescending(u => u.Id).Select(u => new RoleDto()
@@ -46,7 +46,7 @@ namespace AskalePortal.BLL
                     createdDate = u.createdDate,
                     createdUserId = u.createdUserId,
                     enabled = u.enabled,
-                    Id = u.Id,
+                    id = u.Id,
                     updatedDate = u.updatedDate,
                     updatedUserId = u.updatedUserId,
                 }).ToList();

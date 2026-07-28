@@ -1,4 +1,4 @@
-using AskalePortal.BLL;
+﻿using AskalePortal.BLL;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.RequestModel;
 using AskalePortal.Data.RequestParams;
@@ -115,99 +115,188 @@ namespace AskalePortal.API.Controllers
         }
 
         [HttpPost("save")]
-        public async Task<ActionResult<AdminUserSaveDto>> save([FromForm] AdminUserSaveDto adminUserDto)
+        public async Task<ActionResult<AdminUserSaveDto>> save([FromForm] AdminUserSaveDto entity)
         {
-            if (adminUserDto.id == null)
+            if (entity.id == null)
             {
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                AdminUser adminUser = _mapper.Map<AdminUser>(adminUserDto);
+                AdminUser adminUser = _mapper.Map<AdminUser>(entity);
 
-                adminUser.password = BCrypt.Net.BCrypt.EnhancedHashPassword(adminUserDto.password);
-                if (adminUserDto.merni != String.Empty)
+                adminUser.password = BCrypt.Net.BCrypt.EnhancedHashPassword(entity.password);
+
+                if (!string.IsNullOrEmpty(entity.merni))
                 {
                     BLLActions.Personel bllPersonel = new BLLActions.Personel(_configuration, _env);
                     List<EmployeeSap>? list = bllPersonel.GetAllFromSAP(null);
-                    if (adminUser != null)
+                    EmployeeSap? employee = list?.FirstOrDefault(u => u.MERNI == entity.merni);
+
+                    if (employee != null)
                     {
-                        if (list != null)
+                        // SAP personel alanlarini AdminUser entity alanlarina aktar.
+                        adminUser.merni = employee.MERNI ?? entity.merni;
+                        adminUser.mandt = employee.MANDT;
+                        adminUser.pernr = employee.PERNR;
+                        adminUser.perNo = employee.PERNR;
+                        adminUser.ename = employee.ENAME;
+                        adminUser.werks = employee.WERKS;
+                        adminUser.name1 = employee.NAME1;
+                        adminUser.btrtl = employee.BTRTL;
+                        adminUser.btext = employee.BTEXT;
+                        adminUser.persg = employee.PERSG;
+                        adminUser.pgtxt = employee.PGTXT;
+                        adminUser.persk = employee.PERSK;
+                        adminUser.pktxt = employee.PKTXT;
+                        adminUser.orgeh = employee.ORGEH;
+                        adminUser.orgtx = employee.ORGTX;
+                        adminUser.plans = employee.PLANS;
+                        adminUser.plstx = employee.PLSTX;
+                        adminUser.stell = employee.STELL;
+                        adminUser.stltx = employee.STLTX;
+                        adminUser.kostl = employee.KOSTL;
+                        adminUser.cinsy = employee.CINSY;
+                        adminUser.sstxt = employee.SSTXT;
+                        adminUser.waers = employee.WAERS;
+                        adminUser.schem = employee.SCHEM;
+                        adminUser.bankl = employee.BANKL;
+                        adminUser.bankn = employee.BANKN;
+                        adminUser.iban = employee.IBAN;
+                        adminUser.slstext = employee.SL_STEXT;
+                        adminUser.kidem = employee.KIDEM;
+                        adminUser.eindt = employee.EINDT;
+                        adminUser.bldgr = employee.BLDGR;
+                        adminUser.mrsta = employee.MRSTA;
+                        adminUser.numch = employee.NUMCH;
+                        adminUser.brpcl = employee.BRPLC;
+                        adminUser.adrfr = employee.ADRFR;
+                        adminUser.stat2 = employee.STAT2;
+                        adminUser.statx = employee.STATX;
+
+                        adminUser.bdate = DateTime.TryParse(employee.BDATE, out DateTime birthDate)
+                            ? birthDate
+                            : null;
+
+                        adminUser.fredk = DateTime.TryParse(employee.FREDT, out DateTime fredDate)
+                            ? fredDate
+                            : null;
+
+                        if (!string.IsNullOrWhiteSpace(employee.SYSUNAME))
                         {
-                            EmployeeSap? employee = list.Where(u => u.MERNI == adminUserDto.merni).FirstOrDefault();
-                            if (employee != null)
-                            {
-                                DateTime dt;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.btext = employee.BTEXT;
-                                adminUser.adrfr = employee.ADRFR;
-                                adminUser.plans = employee.PLANS;
-                                adminUser.numch = employee.NUMCH;
-                                adminUser.name1 = employee.NAME1;
-                                adminUser.stell = employee.STELL;
-                                adminUser.bankn = employee.BANKN;
-                                DateTime.TryParse(employee.BDATE, out dt);
-                                adminUser.bdate = dt;
-                                adminUser.bldgr = employee.BLDGR;
-                                adminUser.brpcl = employee.BRPLC;
-                                adminUser.btrtl = employee.BTRTL;
-                                adminUser.cinsy = employee.CINSY;
-                                adminUser.eindt = employee.EINDT;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-
-
-                                adminUser.bankl = employee.BANKL;
-
-                                adminUser.bankl = employee.BANKL;
-
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                                adminUser.bankl = employee.BANKL;
-                            }
+                            adminUser.sapUser = employee.SYSUNAME;
                         }
                     }
-
                 }
 
-                AdminUser? returnAdminUser = await bllAdminUsers.Add(adminUser!);
+                AdminUser? returnAdminUser = await bllAdminUsers.Add(adminUser);
                 AdminUserSaveDto adminUserDto1 = _mapper.Map<AdminUserSaveDto>(returnAdminUser);
                 return Ok(adminUserDto1);
             }
             else
             {
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                AdminUser adminUser = _mapper.Map<AdminUser>(adminUserDto);
+                AdminUser adminUser = _mapper.Map<AdminUser>(entity);
+
                 if (!adminUser.password.StartsWith("$2"))
                 {
-                    adminUser.password = BCrypt.Net.BCrypt.EnhancedHashPassword(adminUserDto.password);
+                    adminUser.password = BCrypt.Net.BCrypt.EnhancedHashPassword(entity.password);
                 }
 
                 AdminUser returnAdminUser = await bllAdminUsers.Update(adminUser);
                 AdminUserSaveDto adminUserDto1 = _mapper.Map<AdminUserSaveDto>(returnAdminUser);
                 return Ok(adminUserDto1);
             }
-
         }
+
+        #region delete
+        [HttpPost("delete")]
+        public ActionResult<int> delete([FromForm] int id)
+        {
+            try
+            {
+                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
+                bllAdminUsers.Delete(id);
+                return Ok(1);
+            }
+            catch
+            {
+                return Ok(0);
+            }
+        }
+        #endregion
+
+        #region upload
+        [HttpPost]
+        [Route("upload")]
+        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
+        public async Task<ActionResult> upload()
+        {
+            IFormFileCollection files = Request.Form.Files;
+
+            if (!int.TryParse(Request.Form["targetId"].ToString(), out int targetId))
+            {
+                return BadRequest("targetId geçersiz veya boş.");
+            }
+
+            if (files.Count == 0)
+            {
+                return BadRequest("Yüklenecek dosya bulunamadı.");
+            }
+
+            BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
+            AdminUser? adminUser = bllAdminUsers.GetByID(targetId);
+
+            if (adminUser == null)
+            {
+                return NotFound($"AdminUser bulunamadı. Id: {targetId}");
+            }
+
+            string filePath = Path.Combine(
+                _env.IsDevelopment()
+                    ? _configuration["FilePath:local"]!
+                    : _env.IsProduction()
+                        ? _configuration["FilePath:server"]!
+                        : _configuration["FilePath:test"]!,
+                "adminusers\\images\\");
+
+            Directory.CreateDirectory(filePath);
+
+            long size = files.Sum(f => f.Length);
+            string? lastUploadedFileName = null;
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length <= 0)
+                {
+                    continue;
+                }
+
+                string originalFileName = Path.GetFileName(formFile.FileName);
+                string fileName =
+                    Path.GetFileNameWithoutExtension(originalFileName) +
+                    "-" +
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds() +
+                    Path.GetExtension(originalFileName);
+
+                string fileFull = Path.Combine(filePath, fileName);
+
+                using (var stream = System.IO.File.Create(fileFull))
+                {
+                    await formFile.CopyToAsync(stream);
+                }
+
+                lastUploadedFileName = fileName;
+            }
+
+            // Profil resmi AdminUser.imageUrl alanından okunuyor.
+            // Bu nedenle yüklenen dosyanın adını doğrudan kullanıcı kaydına yazıyoruz.
+            if (!string.IsNullOrEmpty(lastUploadedFileName))
+            {
+                adminUser.imageUrl = lastUploadedFileName;
+                await bllAdminUsers.Update(adminUser);
+            }
+
+            return Ok(new { count = files.Count, size });
+        }
+        #endregion
 
         [HttpPost("getAll")]
         public ActionResult<List<AdminUserSaveDto>> getAll()

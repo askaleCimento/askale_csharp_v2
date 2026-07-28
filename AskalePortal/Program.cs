@@ -24,6 +24,7 @@ builder.Services.AddEducationModule(
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddProblemDetails();
 builder.Services.AddScoped<DetachedEntityResultFilter>();
+builder.Services.AddScoped<PaginationResultFilter>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // JWT ayarları
@@ -56,7 +57,11 @@ if (refreshTokenCleanupEnabled)
 
 // Controller ve JSON ayarları
 builder.Services
-    .AddControllers(options => options.Filters.Add<DetachedEntityResultFilter>())
+    .AddControllers(options =>
+    {
+        options.Filters.Add<PaginationResultFilter>();
+        options.Filters.Add<DetachedEntityResultFilter>();
+    })
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler =

@@ -1,4 +1,5 @@
 using AskalePortal.BLL;
+using AskalePortal.Constants;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.RequestModel;
 using AskalePortal.Data.RequestParams;
@@ -84,38 +85,52 @@ namespace AskalePortal.API.Controllers
 
         #region Save
         [HttpPost("save")]
-        public async Task<ActionResult<object>> save([FromForm] CompanySaveDto? entity)
+        public async Task<ActionResult<CompanySaveDto>> save([FromForm] CompanySaveDto? entity)
         {
-
-            if (entity != null)
+            if (entity == null)
             {
-                int userId = 0;
-                if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
-                {
-                    userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
-
-                }
-                BLLActions.Companies bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
-
-                if (entity?.id != null)
-                {
-
-                    entity.updateDate = DateTime.Now;
-                    entity.updatedUserId = userId == 0 ? null : userId;
-                    await bllCompanies.Update(_mapper.Map<Data.Models.Company>(entity));
-                    return Ok(entity);
-                }
-                else
-                {
-
-                    entity!.createdDate = DateTime.Now;
-                    entity.createdUserId = userId == 0 ? null : userId; ;
-                    entity.enabled = true;
-                    await bllCompanies.Add(_mapper.Map<Data.Models.Company>(entity));
-                    return Ok(entity);
-                }
+                return BadRequest();
             }
-            return Ok(null);
+
+            int userId = 0;
+            if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
+            {
+                userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
+            }
+
+            BLLActions.Companies bllCompanies =
+                new BLLActions.Companies(_configuration, _env, _mapper);
+
+            if (entity.id != null)
+            {
+                entity.updateDate = DateTime.Now;
+                entity.updatedUserId = userId == 0 ? null : userId;
+
+                Company updatedCompany = await bllCompanies.Update(
+                    _mapper.Map<Data.Models.Company>(entity));
+
+                CompanySaveDto returnDto =
+                    _mapper.Map<CompanySaveDto>(updatedCompany);
+
+                return Ok(returnDto);
+            }
+
+            entity.createdDate = DateTime.Now;
+            entity.createdUserId = userId == 0 ? null : userId;
+            entity.enabled = true;
+
+            Company? addedCompany = await bllCompanies.Add(
+                _mapper.Map<Data.Models.Company>(entity));
+
+            if (addedCompany == null)
+            {
+                return BadRequest();
+            }
+
+            CompanySaveDto addedCompanyDto =
+                _mapper.Map<CompanySaveDto>(addedCompany);
+
+            return Ok(addedCompanyDto);
         }
         #endregion
 
@@ -128,6 +143,93 @@ namespace AskalePortal.API.Controllers
             return Ok(list);
 
         }
+
+        #region upload
+        [HttpPost]
+        [Route("upload")]
+        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = int.MaxValue)]
+        public async Task<ActionResult> upload()
+        {
+            IFormFileCollection files = Request.Form.Files;
+
+            if (!int.TryParse(Request.Form["targetId"].ToString(), out int targetId))
+            {
+                return BadRequest("targetId geçersiz veya boş.");
+            }
+
+            if (files.Count == 0)
+            {
+                return BadRequest("Yüklenecek dosya bulunamadı.");
+            }
+
+            BLLActions.Companies bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
+            Company? company = bllCompanies.GetByID(targetId);
+
+            if (company == null)
+            {
+                return NotFound($"Company bulunamadı. Id: {targetId}");
+            }
+
+            string basePath = _env.IsDevelopment()
+                ? _configuration["FilePath:local"]!
+                : _env.IsProduction()
+                    ? _configuration["FilePath:server"]!
+                    : _configuration["FilePath:test"]!;
+
+            string directoryPath = Path.Combine(basePath, "documents", "company");
+            Directory.CreateDirectory(directoryPath);
+
+            int userId = 0;
+            if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
+            {
+                userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
+            }
+
+            BLLActions.AttachedFiles bllAttachedFiles =
+                new BLLActions.AttachedFiles(_configuration, _env);
+
+            long size = files.Sum(f => f.Length);
+            int uploadedCount = 0;
+
+            foreach (var formFile in files)
+            {
+                if (formFile.Length <= 0)
+                {
+                    continue;
+                }
+
+                string originalFileName = Path.GetFileName(formFile.FileName);
+                string fileName =
+                    Path.GetFileNameWithoutExtension(originalFileName) + "-" +
+                    DateTimeOffset.Now.ToUnixTimeMilliseconds() +
+                    Path.GetExtension(originalFileName);
+
+                string fileFull = Path.Combine(directoryPath, fileName);
+
+                using (var stream = System.IO.File.Create(fileFull))
+                {
+                    await formFile.CopyToAsync(stream);
+                }
+
+                AttachedFile attachedFile = new AttachedFile
+                {
+                    moduleId = (int)CommonConstants.MODULES.SIRKETLER,
+                    targetId = targetId,
+                    createdUserId = userId,
+                    title = originalFileName,
+                    filePath = fileName,
+                    createdDate = DateTime.Now,
+                    enabled = true
+                };
+
+                await bllAttachedFiles.Add(attachedFile);
+                uploadedCount++;
+            }
+
+            return Ok(new { count = uploadedCount, size });
+        }
+        #endregion
+
         #region delete
         [HttpPost("delete")]
 

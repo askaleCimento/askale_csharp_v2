@@ -137,14 +137,24 @@ namespace AskalePortal.BLL
             public List<AskalePortal.Data.Models.AdminUser> GetAllWithPage(int? roleID, string name, string username, string email, string sapUser,
                                                          int activePage, int recordsPerPage, AdminUser a)
             {
-                var q = dal.Get(k => (k.roleId == roleID || roleID == null) &&
-                (a.roleId == 1 || a.role.companies.Contains("[" + k.company.vkorg + "]")) &&
-                                     (k.name.Contains(name) || string.IsNullOrEmpty(name)) &&
-                                     (k.username.Contains(username) || string.IsNullOrEmpty(username)) &&
-                                     (k.sapUser.Contains(sapUser) || string.IsNullOrEmpty(sapUser)) &&
-                                     (k.email.Contains(email) || string.IsNullOrEmpty(email)) &&
-                                     k.enabled == true).OrderBy(x => x.username).Skip(activePage * recordsPerPage).Take(recordsPerPage).ToList();
-                ;
+                name = name?.Trim() ?? string.Empty;
+                username = username?.Trim() ?? string.Empty;
+                email = email?.Trim() ?? string.Empty;
+                sapUser = sapUser?.Trim() ?? string.Empty;
+
+                var q = dal.Get(k =>
+                        k.enabled == true &&
+                        (roleID == null || k.roleId == roleID) &&
+                        (a.roleId == 1 || a.role.companies.Contains("[" + k.company.vkorg + "]")) &&
+                        (string.IsNullOrEmpty(name) || (k.name != null && k.name.Contains(name))) &&
+                        (string.IsNullOrEmpty(username) || (k.username != null && k.username.Contains(username))) &&
+                        (string.IsNullOrEmpty(sapUser) || (k.sapUser != null && k.sapUser.Contains(sapUser))) &&
+                        (string.IsNullOrEmpty(email) || (k.email != null && k.email.Contains(email))))
+                    .OrderBy(x => x.username)
+                    .Skip(activePage * recordsPerPage)
+                    .Take(recordsPerPage)
+                    .ToList();
+
                 return q;
             }
 
@@ -156,13 +166,21 @@ namespace AskalePortal.BLL
             public List<AskalePortal.Data.Models.AdminUser> GetAllWithPagePasif(int? roleID, string name, string username, string email,
                                                      int activePage, int recordsPerPage, AdminUser a)
             {
-                var q = dal.Get(k => (k.roleId == roleID || roleID == null) &&
-                (a.roleId == 1 || a.role.companies.Contains("[" + k.company.vkorg + "]")) &&
-                                     (k.name.Contains(name) || string.IsNullOrEmpty(name)) &&
-                                     (k.username.Contains(username) || string.IsNullOrEmpty(username)) &&
-                                     (k.email.Contains(email) || string.IsNullOrEmpty(email)) &&
-                                     k.enabled == false).OrderBy(x => x.username)
-                                     .Skip(activePage * recordsPerPage).Take(recordsPerPage).ToList();
+                name = name?.Trim() ?? string.Empty;
+                username = username?.Trim() ?? string.Empty;
+                email = email?.Trim() ?? string.Empty;
+
+                var q = dal.Get(k =>
+                        k.enabled == false &&
+                        (roleID == null || k.roleId == roleID) &&
+                        (a.roleId == 1 || a.role.companies.Contains("[" + k.company.vkorg + "]")) &&
+                        (string.IsNullOrEmpty(name) || (k.name != null && k.name.Contains(name))) &&
+                        (string.IsNullOrEmpty(username) || (k.username != null && k.username.Contains(username))) &&
+                        (string.IsNullOrEmpty(email) || (k.email != null && k.email.Contains(email))))
+                    .OrderBy(x => x.username)
+                    .Skip(activePage * recordsPerPage)
+                    .Take(recordsPerPage)
+                    .ToList();
 
                 return q;
             }
@@ -202,9 +220,17 @@ namespace AskalePortal.BLL
             #region GetByNameAndUserName
             public List<AdminUser> GetByNameAndUserName(string name, string username, int activePage, int recordsPerPage)
             {
-                return dal.Get(u => (u.name.Contains(name) || string.IsNullOrEmpty(name)) &&
-                (u.username.Contains(username) || string.IsNullOrEmpty(username)) &&
-                u.enabled == true).OrderBy(u => u.name).Skip(activePage * recordsPerPage).Take(recordsPerPage).ToList();
+                name = name?.Trim() ?? string.Empty;
+                username = username?.Trim() ?? string.Empty;
+
+                return dal.Get(u =>
+                        u.enabled == true &&
+                        (string.IsNullOrEmpty(name) || (u.name != null && u.name.Contains(name))) &&
+                        (string.IsNullOrEmpty(username) || (u.username != null && u.username.Contains(username))))
+                    .OrderBy(u => u.name)
+                    .Skip(activePage * recordsPerPage)
+                    .Take(recordsPerPage)
+                    .ToList();
             }
 
             public List<AdminUser> GetAllByID(List<int> ids)
@@ -219,28 +245,33 @@ namespace AskalePortal.BLL
 
             public PageReturn<UsersFilterDto>? FilterPageableDto(FilterPageParam<UserFilterDtoRequest> filterPageParam)
             {
-                PageReturn<UsersFilterDto>? result = new PageReturn<UsersFilterDto>();
+                PageReturn<UsersFilterDto> result = new PageReturn<UsersFilterDto>();
                 int pageSize = filterPageParam.size ?? 20;
                 int pageNumber = filterPageParam.page ?? 0;
 
-                string? name = filterPageParam.liste?.filterName;
+                string? name = filterPageParam.liste?.filterName?.Trim();
                 int? filterRol = filterPageParam.liste?.filterRol;
-                string? filterKullaniciAdi = filterPageParam.liste?.filterKullaniciAdi;
-                string? filterEmail = filterPageParam.liste?.filterEmail;
-                string? filterSapUser = filterPageParam.liste?.filterSapUserName;
+                string? filterKullaniciAdi = filterPageParam.liste?.filterKullaniciAdi?.Trim();
+                string? filterEmail = filterPageParam.liste?.filterEmail?.Trim();
+                string? filterSapUser = filterPageParam.liste?.filterSapUserName?.Trim();
                 int? filterCompany = filterPageParam.liste?.filterCompany;
-                IQueryable<AdminUser> query = dal.Get(u => u.enabled &&
-                name == null ? true :
-                u.name == name
-                && ((filterRol == null || filterRol == 0) ? true : u.roleId == filterRol)
-                && (filterKullaniciAdi == null || filterKullaniciAdi == "" ? true : u.username == filterKullaniciAdi)
-                && (filterEmail == null || filterEmail == "" ? true : u.email == filterEmail)
-                && (filterSapUser == null || filterSapUser == "" ? true : u.sapUser == filterSapUser)
-                && (filterCompany == null || filterCompany == 0 ? true : u.companyId == filterCompany)
-                ).Include(u => u.company).Include(u => u.role).OrderByDescending(u => u.Id);
-                result.content = query
-                  .Skip(pageSize * pageNumber).Take(pageSize)
 
+                IQueryable<AdminUser> query = dal.Get(u =>
+                        u.enabled &&
+                        (string.IsNullOrEmpty(name) || (u.name != null && u.name.Contains(name))) &&
+                        (!filterRol.HasValue || filterRol.Value == 0 || u.roleId == filterRol.Value) &&
+                        (string.IsNullOrEmpty(filterKullaniciAdi) || (u.username != null && u.username.Contains(filterKullaniciAdi))) &&
+                        (string.IsNullOrEmpty(filterEmail) || (u.email != null && u.email.Contains(filterEmail))) &&
+                        (string.IsNullOrEmpty(filterSapUser) || (u.sapUser != null && u.sapUser.Contains(filterSapUser))) &&
+                        (!filterCompany.HasValue || filterCompany.Value == 0 || u.companyId == filterCompany.Value))
+                    .Include(u => u.company)
+                    .Include(u => u.role)
+                    .OrderByDescending(u => u.Id);
+
+                result.totalElements = query.Count();
+                result.content = query
+                    .Skip(pageSize * pageNumber)
+                    .Take(pageSize)
                     .Select(u => new UsersFilterDto()
                     {
                         companyId = u.companyId,
@@ -253,12 +284,11 @@ namespace AskalePortal.BLL
                         sapUserName = u.sapUser,
                         userName = u.username,
                         vkorg = u.company.vkorg,
+                    })
+                    .ToList();
 
-                    }).ToList();
-                result.totalElements = query.Count();
                 result.number = result.content.Count();
                 result.size = pageSize;
-
                 return result;
             }
 
@@ -276,28 +306,33 @@ namespace AskalePortal.BLL
 
             public PageReturn<AdminUserDto> listPassivePageableDto(FilterPageParam<UserFilterDtoRequest> filterPageParam)
             {
-                PageReturn<AdminUserDto>? result = new PageReturn<AdminUserDto>();
+                PageReturn<AdminUserDto> result = new PageReturn<AdminUserDto>();
                 int pageSize = filterPageParam.size ?? 20;
                 int pageNumber = filterPageParam.page ?? 0;
 
-                string? name = filterPageParam.liste?.filterName;
+                string? name = filterPageParam.liste?.filterName?.Trim();
                 int? filterRol = filterPageParam.liste?.filterRol;
-                string? filterKullaniciAdi = filterPageParam.liste?.filterKullaniciAdi;
-                string? filterEmail = filterPageParam.liste?.filterEmail;
-                string? filterSapUser = filterPageParam.liste?.filterSapUserName;
+                string? filterKullaniciAdi = filterPageParam.liste?.filterKullaniciAdi?.Trim();
+                string? filterEmail = filterPageParam.liste?.filterEmail?.Trim();
+                string? filterSapUser = filterPageParam.liste?.filterSapUserName?.Trim();
                 int? filterCompany = filterPageParam.liste?.filterCompany;
-                IQueryable<AdminUser> query = dal.Get(u => u.enabled == false &&
-              name == null ? true :
-              u.name == name
-              && ((filterRol == null || filterRol == 0) ? true : u.roleId == filterRol)
-              && (filterKullaniciAdi == null || filterKullaniciAdi == "" ? true : u.username == filterKullaniciAdi)
-              && (filterEmail == null || filterEmail == "" ? true : u.email == filterEmail)
-              && (filterSapUser == null || filterSapUser == "" ? true : u.sapUser == filterSapUser)
-              && (filterCompany == null || filterCompany == 0 ? true : u.companyId == filterCompany)
-              ).Include(u => u.company).Include(u => u.role);
-                result.content = query
-                  .Skip(pageSize * pageNumber).Take(pageSize)
 
+                IQueryable<AdminUser> query = dal.Get(u =>
+                        u.enabled == false &&
+                        (string.IsNullOrEmpty(name) || (u.name != null && u.name.Contains(name))) &&
+                        (!filterRol.HasValue || filterRol.Value == 0 || u.roleId == filterRol.Value) &&
+                        (string.IsNullOrEmpty(filterKullaniciAdi) || (u.username != null && u.username.Contains(filterKullaniciAdi))) &&
+                        (string.IsNullOrEmpty(filterEmail) || (u.email != null && u.email.Contains(filterEmail))) &&
+                        (string.IsNullOrEmpty(filterSapUser) || (u.sapUser != null && u.sapUser.Contains(filterSapUser))) &&
+                        (!filterCompany.HasValue || filterCompany.Value == 0 || u.companyId == filterCompany.Value))
+                    .Include(u => u.company)
+                    .Include(u => u.role)
+                    .OrderByDescending(u => u.Id);
+
+                result.totalElements = query.Count();
+                result.content = query
+                    .Skip(pageSize * pageNumber)
+                    .Take(pageSize)
                     .Select(u => new AdminUserDto()
                     {
                         companyId = u.companyId,
@@ -310,10 +345,9 @@ namespace AskalePortal.BLL
                         sapUserName = u.sapUser,
                         userName = u.username,
                         vkorg = u.company.vkorg,
+                    })
+                    .ToList();
 
-
-                    }).ToList();
-                result.totalElements = query.Count();
                 result.number = result.content.Count();
                 result.size = pageSize;
 
@@ -384,13 +418,14 @@ namespace AskalePortal.BLL
                 RoleDetail? roleDetail = bllRoleDetails.GetByRoleIDAndModuleID(user!.roleId, (int)CommonConstants.MODULES.HR_EXPENSE_CONTROL);
                 string? companies = user?.role?.companies;
                 string[] listCompanies = companies?.Replace("\\[|\\]", "").Split(",") ?? [];
-                string? name = filterPageParam.liste?.filterName;
-                string? filterKullaniciAdi = filterPageParam.liste?.filterUsername;
+                string? name = filterPageParam.liste?.filterName?.Trim();
+                string? filterKullaniciAdi = filterPageParam.liste?.filterUsername?.Trim();
 
-                var query = from u in dal.Get(a => a.enabled
+                var query = from u in dal.Get(a =>
+     a.enabled
      && (a.roleId != 1083 || (a.roleId == 1083 && (a.company.vkorg.Contains("AC20") || a.company.vkorg.Contains("AC80"))))
-     && (filterKullaniciAdi == null || filterKullaniciAdi == "" ? true : a.username == filterKullaniciAdi)
-     && (name == null || name == "" ? true : a.name == name))
+     && (string.IsNullOrEmpty(filterKullaniciAdi) || (a.username != null && a.username.Contains(filterKullaniciAdi)))
+     && (string.IsNullOrEmpty(name) || (a.name != null && a.name.Contains(name))))
 
                                 // Departman için join
                             join d in dal.dB.HRDepartmanTable

@@ -1,3 +1,4 @@
+using AskalePortal.BLL;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.ResponseModels;
 using AutoMapper;
@@ -20,41 +21,54 @@ namespace AskalePortal.API.Controllers
             _mapper = mapper;
         }
 
-
         #region Save
         [HttpPost("save")]
-
-        public async Task<ActionResult<object>> save([FromForm] CompanySectionSaveDto? entity)
+        public async Task<ActionResult<CompanySectionSaveDto>> save(
+            [FromForm] CompanySectionSaveDto? entity)
         {
-
             if (entity != null)
             {
                 int userId = 0;
+
                 if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
                 {
-                    userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
-
+                    userId = int.Parse(
+                        claimsIdentity?.FindFirst("userId")?.Value ?? "0"
+                    );
                 }
-                BLL.BLLActions.CompanySection bllCompanySection = new BLL.BLLActions.CompanySection(_configuration, _env);
 
-                if (entity?.id != null)
+                BLLActions.CompanySection bllCompanySection =
+                    new BLLActions.CompanySection(_configuration, _env);
+
+                if (entity.id != null)
                 {
-
                     entity.updateDate = DateTime.Now;
                     entity.updatedUserId = userId == 0 ? null : userId;
-                    await bllCompanySection.Update(_mapper.Map<CompanySection>(entity));
+
+                    await bllCompanySection.Update(
+                        _mapper.Map<CompanySection>(entity)
+                    );
+
                     return Ok(entity);
                 }
                 else
                 {
-
-                    entity!.createdDate = DateTime.Now;
-                    entity.createdUserId = userId == 0 ? null : userId; ;
+                    entity.createdDate = DateTime.Now;
+                    entity.createdUserId = userId == 0 ? null : userId;
                     entity.enabled = true;
-                   await bllCompanySection.Add(_mapper.Map<CompanySection>(entity));
-                    return Ok(entity);
+
+                    CompanySection? addedCompanySection =
+                        await bllCompanySection.Add(
+                            _mapper.Map<CompanySection>(entity)
+                        );
+
+                    CompanySectionSaveDto returnDto =
+                        _mapper.Map<CompanySectionSaveDto>(addedCompanySection);
+
+                    return Ok(returnDto);
                 }
             }
+
             return Ok(null);
         }
         #endregion
@@ -66,7 +80,7 @@ namespace AskalePortal.API.Controllers
         {
             try
             {
-                BLL.BLLActions.CompanySection bllCompanySection = new BLL.BLLActions.CompanySection(_configuration, _env);
+                BLLActions.CompanySection bllCompanySection = new BLLActions.CompanySection(_configuration, _env);
                 bllCompanySection.Delete(id);
                 return Ok(1);
             }
@@ -83,7 +97,7 @@ namespace AskalePortal.API.Controllers
 
         public ActionResult<object> getById([FromForm] int id)
         {
-            BLL.BLLActions.CompanySection bllCompanySection = new BLL.BLLActions.CompanySection(_configuration, _env);
+            BLLActions.CompanySection bllCompanySection = new BLLActions.CompanySection(_configuration, _env);
 
             CompanySection companySection = bllCompanySection.GetByID(id);
             if (companySection == null)
@@ -102,7 +116,7 @@ namespace AskalePortal.API.Controllers
 
         public ActionResult<object> getAll()
         {
-            BLL.BLLActions.CompanySection bllCompanySection = new BLL.BLLActions.CompanySection(_configuration, _env);
+            BLLActions.CompanySection bllCompanySection = new BLLActions.CompanySection(_configuration, _env);
 
             List<CompanySection>? listCompanySection = bllCompanySection.GetAll();
             return Ok(listCompanySection);
@@ -111,11 +125,11 @@ namespace AskalePortal.API.Controllers
         #endregion
 
 
-        #region getAll
+        #region listGraph
         [HttpPost("listGraph")]
         public ActionResult<object> listGraph()
         {
-            BLL.BLLActions.CompanySection bllCompanySection = new BLL.BLLActions.CompanySection(_configuration, _env);
+            BLLActions.CompanySection bllCompanySection = new BLLActions.CompanySection(_configuration, _env);
             List<CompanySection>? listCompanySection = bllCompanySection.listGraph();
             return Ok(listCompanySection);
         }

@@ -78,9 +78,9 @@ namespace AskalePortal.API.Controllers
                 }
                 BLLActions.Roles bllRoles = new BLLActions.Roles(_configuration, _env, _mapper);
 
-                if (entity?.Id != null)
+                if (entity?.id != null)
                 {
-
+                    entity.enabled = true;
                     entity!.updatedDate = DateTime.Now;
                     entity.updatedUserId = userId == 0 ? null : userId;
                     await bllRoles.Update(_mapper.Map<Data.Models.Role>(entity));

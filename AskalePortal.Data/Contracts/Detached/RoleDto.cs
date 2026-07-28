@@ -4,7 +4,7 @@ namespace AskalePortal.Data.Contracts.Detached;
 
 public sealed class RoleDto
 {
-    public int Id { get; set; }
+    public int id { get; set; }
 
     public string title { get; set; }
 

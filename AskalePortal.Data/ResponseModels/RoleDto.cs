@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +8,7 @@ namespace AskalePortal.Data.ResponseModels
 {
     public class RoleDto
     {
-        public int? Id { get; set; }
+        public int? id { get; set; }
 
         public string? title { get; set; }
 
