@@ -31,26 +31,32 @@ namespace AskalePortal.API.Controllers
             _mapper = mapper;
             _server = server;
         }
+
+        private int GetCurrentUserId()
+        {
+            string? claimValue =
+                User.FindFirst("userId")?.Value ??
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                User.FindFirst("sub")?.Value;
+
+            return int.TryParse(claimValue, out int userId) ? userId : 0;
+        }
         #region completed 
         [HttpPost("completed")]
         //[Authorize(Roles = "ROLE_74_SEE")]
         public ActionResult<PageReturn<AccountPaymentKalemActiveDto>> completed([FromForm] FilterPageParam<AccountPaymentKalemCompletedDtoParameter> filterPageParam)
         {
             BLLActions.AccountPaymentKalemSAPTable bllAccountPaymentKalemSAPTable = new BLLActions.AccountPaymentKalemSAPTable(_configuration, _env, _mapper, _server);
-            int userId = 0;
-            if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
-            {
-                userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
-            }
+            int userId = GetCurrentUserId();
             PageReturn<AccountPaymentKalemActiveDto> page = bllAccountPaymentKalemSAPTable.completed(filterPageParam, userId);
             return Ok(page);
         }
         #endregion
 
         #region mylistdetail 
-        [HttpPost("mylistdetail")]
+        [HttpPost("mylistdetail/{id:int}")]
         //[Authorize(Roles = "ROLE_74_SEE")]
-        public ActionResult<AccountPaymentKalemMyListDetailDto> mylistdetail([FromForm] int id)
+        public ActionResult<AccountPaymentKalemMyListDetailDto> mylistdetail([FromRoute] int id)
         {
             BLLActions.AccountPaymentKalemSAPTable bllAccountPaymentKalemSAPTable = new BLLActions.AccountPaymentKalemSAPTable(_configuration, _env, _mapper, _server);
 
