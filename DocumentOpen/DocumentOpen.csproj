@@ -46,11 +46,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GleamTech.Core">
-      <HintPath>packages\GleamTech.Core.1.9.1\lib\net40\GleamTech.Core.dll</HintPath>
+    <Reference Include="GleamTech.Core, Version=1.5.0.0, Culture=neutral, PublicKeyToken=a05198837413a6d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLS\GleamTech.Core.dll</HintPath>
     </Reference>
-    <Reference Include="GleamTech.DocumentUltimate">
-      <HintPath>packages\DocumentUltimate.3.2.1\lib\net40\GleamTech.DocumentUltimate.dll</HintPath>
+    <Reference Include="GleamTech.DocumentUltimate, Version=3.1.0.0, Culture=neutral, PublicKeyToken=a05198837413a6d8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLS\GleamTech.DocumentUltimate.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -149,6 +151,8 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
+    <Content Include="DLLS\GleamTech.Core.dll" />
+    <Content Include="DLLS\GleamTech.DocumentUltimate.dll" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
