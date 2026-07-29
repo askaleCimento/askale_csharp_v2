@@ -1,3 +1,4 @@
+using AskalePortal.BLL;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.RequestModel;
 using AskalePortal.Data.RequestParams;
@@ -25,44 +26,52 @@ namespace AskalePortal.API.Controllers
         }
 
 
-        #region Save
         [HttpPost("save")]
-
-        public async Task<ActionResult<object>> save([FromForm] HelpDeskStatusSaveDto entity)
+        public async Task<ActionResult<HelpDeskStatusSaveDto>> save(
+          [FromForm] HelpDeskStatusSaveDto entity)
         {
+            if (entity == null)
+                return BadRequest();
 
-            if (entity != null)
+            int userId = 0;
+
+            if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
             {
-                int userId = 0;
-                if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
-                {
-                    userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
-
-                }
-                BLL.BLLActions.HelpDeskStatuses bllHelpDeskStatuses = new BLL.BLLActions.HelpDeskStatuses(_configuration, _env);
-
-                if (entity?.id != 0)
-                {
-
-                    entity!.updateDate = DateTime.Now;
-                    entity.updatedUserId = userId == 0 ? null : userId;
-                    await bllHelpDeskStatuses.Update(_mapper.Map< HelpDeskStatus >(entity));
-                    return Ok(entity);
-                }
-                else
-                {
-
-                    entity!.createdDate = DateTime.Now;
-                    entity.createdUserId = userId == 0 ? null : userId; ;
-                    entity.enabled = true;
-                    await bllHelpDeskStatuses.Add(_mapper.Map<HelpDeskStatus>(entity));
-                    return Ok(entity);
-                }
+                userId = int.Parse(
+                    claimsIdentity.FindFirst("userId")?.Value ?? "0"
+                );
             }
-            return Ok(null);
-        }
-        #endregion
 
+            BLLActions.HelpDeskStatuses bllHelpDeskStatuses =
+                new BLLActions.HelpDeskStatuses(_configuration, _env);
+
+            HelpDeskStatus helpDeskStatus;
+
+            if (entity.id != null)
+            {
+                entity.updateDate = DateTime.Now;
+                entity.updatedUserId = userId == 0 ? null : userId;
+
+                helpDeskStatus = _mapper.Map<HelpDeskStatus>(entity);
+
+                await bllHelpDeskStatuses.Update(helpDeskStatus);
+            }
+            else
+            {
+                entity.createdDate = DateTime.Now;
+                entity.createdUserId = userId == 0 ? null : userId;
+                entity.enabled = true;
+
+                helpDeskStatus = _mapper.Map<HelpDeskStatus>(entity);
+
+                await bllHelpDeskStatuses.Add(helpDeskStatus);
+            }
+
+            HelpDeskStatusSaveDto result =
+                _mapper.Map<HelpDeskStatusSaveDto>(helpDeskStatus);
+
+            return Ok(result);
+        }
         #region delete
         [HttpPost("delete")]
 
@@ -70,7 +79,7 @@ namespace AskalePortal.API.Controllers
         {
             try
             {
-                BLL.BLLActions.HelpDeskStatuses bllHelpDeskStatuses = new BLL.BLLActions.HelpDeskStatuses(_configuration, _env);
+                BLLActions.HelpDeskStatuses bllHelpDeskStatuses = new BLLActions.HelpDeskStatuses(_configuration, _env);
                 bllHelpDeskStatuses.Delete(id);
                 return Ok(1);
             }
@@ -87,7 +96,7 @@ namespace AskalePortal.API.Controllers
 
         public ActionResult<object> getById([FromForm] int id)
         {
-            BLL.BLLActions.HelpDeskStatuses bllHelpDeskStatuses = new BLL.BLLActions.HelpDeskStatuses(_configuration, _env);
+            BLLActions.HelpDeskStatuses bllHelpDeskStatuses = new BLLActions.HelpDeskStatuses(_configuration, _env);
 
             HelpDeskStatus? helpDeskStatus = bllHelpDeskStatuses.GetByID(id);
             if (helpDeskStatus == null)
@@ -106,7 +115,7 @@ namespace AskalePortal.API.Controllers
 
         public ActionResult<object> getAll()
         {
-            BLL.BLLActions.HelpDeskStatuses bllHelpDeskStatuses = new BLL.BLLActions.HelpDeskStatuses(_configuration, _env);
+            BLLActions.HelpDeskStatuses bllHelpDeskStatuses = new BLLActions.HelpDeskStatuses(_configuration, _env);
 
             List<HelpDeskStatus>? listHelpDeskStatuses = bllHelpDeskStatuses.GetAll();
             return Ok(listHelpDeskStatuses);
@@ -119,7 +128,7 @@ namespace AskalePortal.API.Controllers
 
         public ActionResult<object> getAllFilter([FromForm] FilterParam<HelpDeskStatusListDtoParameter> filterParam)
         {
-            BLL.BLLActions.HelpDeskStatuses bllHelpDeskStatuses = new BLL.BLLActions.HelpDeskStatuses(_configuration, _env);
+            BLLActions.HelpDeskStatuses bllHelpDeskStatuses = new BLLActions.HelpDeskStatuses(_configuration, _env);
 
             List<HelpDeskStatus>? listHelpDeskStatuses = bllHelpDeskStatuses.GetAllFilter(filterParam);
             return Ok(listHelpDeskStatuses);
