@@ -5,6 +5,7 @@ using AskalePortal.API.Mapper;
 using AskalePortal.API.Security.Auth;
 using AskalePortal.API.Security.Auth.Cleanup;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,12 @@ builder.Services.AddProblemDetails();
 builder.Services.AddScoped<DetachedEntityResultFilter>();
 builder.Services.AddScoped<PaginationResultFilter>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
 // Reverse proxy / IIS üzerinden gelen protokol bilgisini kullan.
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
