@@ -1,14 +1,14 @@
+using AskalePortal.API.Infrastructure.Serialization;
 using AskalePortal.API.Extensions;
 using AskalePortal.API.Infrastructure.Errors;
-using AskalePortal.API.Infrastructure.Serialization;
 using AskalePortal.API.Mapper;
 using AskalePortal.API.Security.Auth;
 using AskalePortal.API.Security.Auth.Cleanup;
-using AskalePortal.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+
 using System.Globalization;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -58,7 +58,11 @@ if (refreshTokenCleanupEnabled)
 
 // Controller ve JSON ayarları
 builder.Services
-    .AddControllers(options => options.Filters.Add<DetachedEntityResultFilter>())
+    .AddControllers(options =>
+    {
+        options.Filters.Add<PaginationResultFilter>();
+        options.Filters.Add<DetachedEntityResultFilter>();
+    })
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler =
@@ -101,23 +105,6 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedUICultures =
         new List<CultureInfo> { cultureInfo };
 });
-builder.Services.AddScoped<ISftpServer, SftpServer>();
-builder.Services.Configure<ApiBehaviorOptions>(options =>
-{
-    options.InvalidModelStateResponseFactory = context =>
-    {
-        foreach (var modelState in context.ModelState)
-        {
-            foreach (var error in modelState.Value.Errors)
-            {
-                Console.WriteLine(
-                    $"MODEL BINDING ERROR | {modelState.Key} | " +
-                    $"{error.ErrorMessage} | " +
-                    $"{error.Exception?.Message}");
-            }
-        }
-
-        var errors = ApiValidation.ToErrors(context.ModelState);
 
         var response = ApiErrorWriter.Create(
             context.HttpContext,
@@ -129,27 +116,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
         return new BadRequestObjectResult(response);
     };
 });
-// Reverse proxy/IIS arkasında gerçek protokolün (X-Forwarded-Proto)
-// Request.IsHttps değerine yansımasını sağlar. Refresh cookie Secure/SameSite
-// ayarları bu bilgiye göre oluşturulur.
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-
-    // IIS/reverse proxy adresi ortama göre değişebildiği için forwarded header
-    // işleme proxy listesiyle sınırlandırılmaz. Dış erişimde proxy'nin bu
-    // header'ları temizleyip yeniden yazdığı doğrulanmalıdır.
-    options.KnownNetworks.Clear();
-    options.KnownProxies.Clear();
-});
-
 // CORS
 const string corsPolicyName = "CorsPolicy";
-
-var allowedOrigins = builder.Configuration
-    .GetSection("Cors:AllowedOrigins")
-    .Get<string[]>() ?? Array.Empty<string>();
 
 builder.Services.AddCors(options =>
 {
@@ -166,13 +134,9 @@ builder.Services.AddCors(options =>
             policy.SetIsOriginAllowed(_ => true);
         }
 
-        // Credential içeren CORS isteklerinde AllowAnyOrigin kullanılamaz.
-        // WithOrigins/SetIsOriginAllowed gerçek Origin değerini response'a
-        // yansıtır ve tarayıcının HttpOnly refresh cookie'yi kabul etmesini sağlar.
         policy
             .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+            .AllowAnyMethod();
     });
 });
 
