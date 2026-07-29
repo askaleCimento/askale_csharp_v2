@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -128,6 +129,21 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
         return new BadRequestObjectResult(response);
     };
 });
+// Reverse proxy/IIS arkasında gerçek protokolün (X-Forwarded-Proto)
+// Request.IsHttps değerine yansımasını sağlar. Refresh cookie Secure/SameSite
+// ayarları bu bilgiye göre oluşturulur.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+
+    // IIS/reverse proxy adresi ortama göre değişebildiği için forwarded header
+    // işleme proxy listesiyle sınırlandırılmaz. Dış erişimde proxy'nin bu
+    // header'ları temizleyip yeniden yazdığı doğrulanmalıdır.
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 // CORS
 const string corsPolicyName = "CorsPolicy";
 
@@ -150,8 +166,10 @@ builder.Services.AddCors(options =>
             policy.SetIsOriginAllowed(_ => true);
         }
 
+        // Credential içeren CORS isteklerinde AllowAnyOrigin kullanılamaz.
+        // WithOrigins/SetIsOriginAllowed gerçek Origin değerini response'a
+        // yansıtır ve tarayıcının HttpOnly refresh cookie'yi kabul etmesini sağlar.
         policy
-            .AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -272,6 +290,10 @@ app.UseStatusCodePages(async statusCodeContext =>
         code,
         message);
 });
+
+// Cookie üretilmeden ve HTTPS yönlendirmesi yapılmadan önce proxy
+// protokol/header bilgileri uygulanmalıdır.
+app.UseForwardedHeaders();
 
 app.UseHttpsRedirection();
 
