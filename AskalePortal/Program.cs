@@ -1,18 +1,17 @@
-using AskalePortal.API.Infrastructure.Serialization;
 using AskalePortal.API.Extensions;
 using AskalePortal.API.Infrastructure.Errors;
+using AskalePortal.API.Infrastructure.Serialization;
 using AskalePortal.API.Mapper;
 using AskalePortal.API.Security.Auth;
 using AskalePortal.API.Security.Auth.Cleanup;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-
 using System.Globalization;
 using System.Text;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +26,20 @@ builder.Services.AddProblemDetails();
 builder.Services.AddScoped<DetachedEntityResultFilter>();
 builder.Services.AddScoped<PaginationResultFilter>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+// Reverse proxy / IIS üzerinden gelen protokol bilgisini kullan.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
+
+    // IIS, Nginx veya başka bir reverse proxy arkasında çalışırken
+    // proxy adresleri ortam bazında sınırlandırılabiliyorsa
+    // KnownProxies / KnownNetworks kullanılmalıdır.
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 // JWT ayarları
 builder.Services
@@ -46,7 +59,6 @@ builder.Services
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-// Cleanup kapalıysa hosted service hiç oluşturulmaz.
 var refreshTokenCleanupEnabled =
     builder.Configuration.GetValue<bool>(
         $"{RefreshTokenCleanupOptions.SectionName}:Enabled");
@@ -100,24 +112,26 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
         new RequestCulture(cultureInfo);
 
     options.SupportedCultures =
-        new List<CultureInfo> { cultureInfo };
+        new List<CultureInfo>
+        {
+            cultureInfo
+        };
 
     options.SupportedUICultures =
-        new List<CultureInfo> { cultureInfo };
+        new List<CultureInfo>
+        {
+            cultureInfo
+        };
 });
 
-        var response = ApiErrorWriter.Create(
-            context.HttpContext,
-            StatusCodes.Status400BadRequest,
-            "VALIDATION_ERROR",
-            "Gönderilen bilgiler geçersiz.",
-            errors);
-
-        return new BadRequestObjectResult(response);
-    };
-});
 // CORS
 const string corsPolicyName = "CorsPolicy";
+
+var allowedOrigins =
+    builder.Configuration
+        .GetSection("Cors:AllowedOrigins")
+        .Get<string[]>()
+    ?? Array.Empty<string>();
 
 builder.Services.AddCors(options =>
 {
@@ -127,20 +141,27 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins(allowedOrigins);
         }
+        else if (builder.Environment.IsDevelopment())
+        {
+            // Yalnızca geliştirme ortamı için.
+            policy.SetIsOriginAllowed(_ => true);
+        }
         else
         {
-            // Geriye dönük geliştirme davranışı. Canlı ortamda AllowedOrigins
-            // mutlaka tanımlanmalıdır.
-            policy.SetIsOriginAllowed(_ => true);
+            throw new InvalidOperationException(
+                "Canlı ortamda Cors:AllowedOrigins tanımlanmalıdır.");
         }
 
         policy
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
-// Swagger
+// Swagger ayarlarınız varsa bu alanda kalmalı.
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen();
 
 // Authentication
 builder.Services
@@ -208,9 +229,17 @@ builder.Services.AddAutoMapper(
 
 var app = builder.Build();
 
+// Swagger middleware ayarlarınız varsa burada kalmalı.
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
+
+// Proxy bilgisinin HTTPS yönlendirmesinden önce uygulanması gerekir.
+app.UseForwardedHeaders();
+
 app.UseRequestLocalization();
-
-
 
 app.UseExceptionHandler();
 
@@ -254,10 +283,6 @@ app.UseStatusCodePages(async statusCodeContext =>
         code,
         message);
 });
-
-// Cookie üretilmeden ve HTTPS yönlendirmesi yapılmadan önce proxy
-// protokol/header bilgileri uygulanmalıdır.
-app.UseForwardedHeaders();
 
 app.UseHttpsRedirection();
 
