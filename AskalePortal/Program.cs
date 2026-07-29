@@ -115,14 +115,29 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 // CORS
 const string corsPolicyName = "CorsPolicy";
 
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? Array.Empty<string>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(corsPolicyName, policy =>
     {
+        if (allowedOrigins.Length > 0)
+        {
+            policy.WithOrigins(allowedOrigins);
+        }
+        else
+        {
+            // Geriye dönük geliştirme davranışı. Canlı ortamda AllowedOrigins
+            // mutlaka tanımlanmalıdır.
+            policy.SetIsOriginAllowed(_ => true);
+        }
+
         policy
-            .AllowAnyOrigin()
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 

@@ -47,6 +47,7 @@ public sealed class AuthService(
         CancellationToken cancellationToken)
     {
         var now = timeProvider.GetUtcNow().UtcDateTime;
+        if (string.IsNullOrWhiteSpace(request.RefreshToken)) return null;
         var tokenHash = HashToken(request.RefreshToken);
 
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);

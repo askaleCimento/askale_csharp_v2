@@ -2,6 +2,8 @@ using AskalePortal.API.Security.Auth;
 using AskalePortal.API.Infrastructure.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -9,12 +11,14 @@ namespace AskalePortal.API.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public sealed class AuthController(IAuthService authService) : ControllerBase
+public sealed class AuthController(
+    IAuthService authService,
+    IOptions<JwtOptions> options) : ControllerBase
 {
+    private readonly JwtOptions _options = options.Value;
+
     [AllowAnonymous]
     [HttpPost("login")]
-    [ProducesResponseType<TokenResponse>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ApiErrorResponse>(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromForm] LoginRequest request, CancellationToken cancellationToken)
     {
         var result = await authService.LoginAsync(
@@ -23,38 +27,97 @@ public sealed class AuthController(IAuthService authService) : ControllerBase
             Request.Headers.UserAgent.ToString(),
             cancellationToken);
 
-        return result is null
-            ? Unauthorized(ApiErrorWriter.Create(HttpContext, StatusCodes.Status401Unauthorized, "AUTH_INVALID_CREDENTIALS", "Kullanıcı adı veya parola hatalı."))
-            : Ok(result);
+        if (result is null)
+        {
+            return Unauthorized(ApiErrorWriter.Create(HttpContext, StatusCodes.Status401Unauthorized,
+                "AUTH_INVALID_CREDENTIALS", "Kullanıcı adı veya parola hatalı."));
+        }
+
+        SetNoStoreHeaders();
+        if (!request.UseRefreshCookie)
+        {
+            return Ok(result);
+        }
+
+        SetRefreshCookie(result.RefreshToken, result.RefreshTokenExpiresAtUtc);
+        return Ok(ToSignInResponse(result));
     }
 
     [AllowAnonymous]
     [HttpPost("refresh")]
-    [ProducesResponseType<TokenResponse>(StatusCodes.Status200OK)]
-    [ProducesResponseType<ApiErrorResponse>(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> Refresh([FromBody] RefreshRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Refresh(
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] RefreshRequest? request,
+        CancellationToken cancellationToken)
     {
+        var cookieMode = Request.Cookies.TryGetValue(
+            _options.RefreshCookieName,
+            out var cookieRefreshToken) &&
+            !string.IsNullOrWhiteSpace(cookieRefreshToken);
+
+        var refreshToken = cookieMode ? cookieRefreshToken : request?.RefreshToken;
+        if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            return Unauthorized(ApiErrorWriter.Create(HttpContext, StatusCodes.Status401Unauthorized,
+                "AUTH_REFRESH_TOKEN_MISSING", "Oturum yenileme bilgisi bulunamadı."));
+        }
+
+        var effectiveRequest = new RefreshRequest
+        {
+            RefreshToken = refreshToken,
+            Ip = request?.Ip,
+            DeviceId = request?.DeviceId
+        };
+
         var result = await authService.RefreshAsync(
-            request,
-            ResolveClientIp(request.Ip),
+            effectiveRequest,
+            ResolveClientIp(request?.Ip),
             Request.Headers.UserAgent.ToString(),
             cancellationToken);
 
-        return result is null
-            ? Unauthorized(ApiErrorWriter.Create(HttpContext, StatusCodes.Status401Unauthorized, "AUTH_INVALID_REFRESH_TOKEN", "Oturum yenilenemedi. Yeniden giriş yapın."))
-            : Ok(result);
+        if (result is null)
+        {
+            if (cookieMode) DeleteRefreshCookie();
+            return Unauthorized(ApiErrorWriter.Create(HttpContext, StatusCodes.Status401Unauthorized,
+                "AUTH_INVALID_REFRESH_TOKEN", "Oturum yenilenemedi. Yeniden giriş yapın."));
+        }
+
+        SetNoStoreHeaders();
+        if (!cookieMode)
+        {
+            return Ok(result);
+        }
+
+        SetRefreshCookie(result.RefreshToken, result.RefreshTokenExpiresAtUtc);
+        return Ok(ToSignInResponse(result));
     }
 
     [Authorize]
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout([FromBody] LogoutRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Logout(
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] LogoutRequest? request,
+        CancellationToken cancellationToken)
     {
         if (!TryGetIdentity(out var userId, out var sessionId))
         {
-            return Unauthorized(ApiErrorWriter.Create(HttpContext, StatusCodes.Status401Unauthorized, "AUTH_INVALID_SESSION", "Geçersiz oturum."));
+            return Unauthorized(ApiErrorWriter.Create(HttpContext, StatusCodes.Status401Unauthorized,
+                "AUTH_INVALID_SESSION", "Geçersiz oturum."));
         }
 
-        await authService.LogoutAsync(userId, sessionId, request, cancellationToken);
+        var refreshToken = Request.Cookies.TryGetValue(_options.RefreshCookieName, out var cookieRefresh)
+            ? cookieRefresh
+            : request?.RefreshToken;
+
+        await authService.LogoutAsync(
+            userId,
+            sessionId,
+            new LogoutRequest
+            {
+                RefreshToken = refreshToken,
+                AllSessions = request?.AllSessions ?? false
+            },
+            cancellationToken);
+
+        DeleteRefreshCookie();
         return NoContent();
     }
 
@@ -64,7 +127,8 @@ public sealed class AuthController(IAuthService authService) : ControllerBase
     {
         if (!TryGetIdentity(out var userId, out var sessionId))
         {
-            return Unauthorized(ApiErrorWriter.Create(HttpContext, StatusCodes.Status401Unauthorized, "AUTH_INVALID_SESSION", "Geçersiz oturum."));
+            return Unauthorized(ApiErrorWriter.Create(HttpContext, StatusCodes.Status401Unauthorized,
+                "AUTH_INVALID_SESSION", "Geçersiz oturum."));
         }
 
         var username = User.FindFirstValue("username") ?? string.Empty;
@@ -73,14 +137,52 @@ public sealed class AuthController(IAuthService authService) : ControllerBase
         return Ok(new SessionResponse(userId, username, name, sessionId, authorities));
     }
 
+    private SignInResponse ToSignInResponse(TokenResponse token) => new(
+        token.AccessToken,
+        token.AccessTokenExpiresAtUtc,
+        token.TokenType,
+        token.SessionId,
+        token.User);
+
+    private void SetRefreshCookie(string refreshToken, DateTime expiresAtUtc)
+    {
+        Response.Cookies.Append(
+            _options.RefreshCookieName,
+            refreshToken,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = Request.IsHttps,
+                SameSite = Request.IsHttps ? SameSiteMode.None : SameSiteMode.Lax,
+                Expires = new DateTimeOffset(DateTime.SpecifyKind(expiresAtUtc, DateTimeKind.Utc)),
+                IsEssential = true,
+                Path = _options.RefreshCookiePath
+            });
+    }
+
+    private void DeleteRefreshCookie()
+    {
+        Response.Cookies.Delete(
+            _options.RefreshCookieName,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = Request.IsHttps,
+                SameSite = Request.IsHttps ? SameSiteMode.None : SameSiteMode.Lax,
+                Path = _options.RefreshCookiePath
+            });
+    }
+
+    private void SetNoStoreHeaders()
+    {
+        Response.Headers.CacheControl = "no-store, no-cache";
+        Response.Headers.Pragma = "no-cache";
+    }
+
     private string? ResolveClientIp(string? reportedIp)
     {
         var normalized = reportedIp?.Trim();
-        if (!string.IsNullOrWhiteSpace(normalized) && normalized.Length <= 64)
-        {
-            return normalized;
-        }
-
+        if (!string.IsNullOrWhiteSpace(normalized) && normalized.Length <= 64) return normalized;
         return HttpContext.Connection.RemoteIpAddress?.ToString();
     }
 
