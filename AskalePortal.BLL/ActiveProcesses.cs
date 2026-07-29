@@ -6,22 +6,12 @@ using AskalePortal.Data.ResponseModels;
 using AskalePortal.Data.ResponseParams;
 using AskalePortal.Data.SAP.OutputParams;
 using AutoMapper;
-using Azure;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Reporting.Map.WebForms.BingMaps;
-using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
-using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using static AskalePortal.BLL.BLLActions;
 using static AskalePortal.Constants.CommonConstants;
 
 namespace AskalePortal.BLL
@@ -368,38 +358,43 @@ namespace AskalePortal.BLL
                             BLLActions.Customers bllCustomers = new BLLActions.Customers(_configuration, _env);
                             Data.SAP.Models.CustomerCredit? q2 = bllCustomers.getCustomerCredit(activeProcess.relatedDataId);
                             int deger;
-                            if (Convert.ToDouble(activeProcess.newValue) + double.Parse(q2?.SNLMT) <= 500000)
+                            if (q2 != null)
                             {
-                                deger = 1;
-                            }
-                            else if (Convert.ToDouble(activeProcess.newValue) + double.Parse(q2?.SNLMT) <= 1500000)
-                            {
-                                deger = 2;
-                            }
-                            else if (Convert.ToDouble(activeProcess.newValue) + double.Parse(q2?.SNLMT) <= 3500000)
-                            {
-                                deger = 3;
-                            }
-                            else
-                            {
-                                deger = 4;
-                            }
-                            ApprovalProcessDetail? approvalProcessDetailLast = bllApprovalProcessDetails
-                                    .findByProcessIdAndDataOrderAndEnabled(approvalProcessDetail.processId, deger, true);
-                            if (approvalProcessDetailLast != null)
-                            {
-                                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                                AdminUser userLast = bllAdminUsers.GetByID(approvalProcessDetailLast.userId)!;
-                                if (userLast.Id != userId)
-                                {
-                                    ApprovalProcessDetail? approvalProcessDetailNext = bllApprovalProcessDetails
-                                            .findByProcessIdAndDataOrderAndEnabled(approvalProcessDetail.processId,
-                                                    approvalProcessDetail.dataOrder + 1, true);
-                                    if (approvalProcessDetailNext != null)
-                                    {
-                                        nextUser = bllAdminUsers.GetByID(approvalProcessDetailNext.userId);
-                                    }
 
+
+                                if (Convert.ToDouble(activeProcess.newValue) + double.Parse(q2.SNLMT!) <= 500000)
+                                {
+                                    deger = 1;
+                                }
+                                else if (Convert.ToDouble(activeProcess.newValue) + double.Parse(q2.SNLMT!) <= 1500000)
+                                {
+                                    deger = 2;
+                                }
+                                else if (Convert.ToDouble(activeProcess.newValue) + double.Parse(q2.SNLMT!) <= 3500000)
+                                {
+                                    deger = 3;
+                                }
+                                else
+                                {
+                                    deger = 4;
+                                }
+                                ApprovalProcessDetail? approvalProcessDetailLast = bllApprovalProcessDetails
+                                        .findByProcessIdAndDataOrderAndEnabled(approvalProcessDetail.processId, deger, true);
+                                if (approvalProcessDetailLast != null)
+                                {
+                                    BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
+                                    AdminUser userLast = bllAdminUsers.GetByID(approvalProcessDetailLast.userId)!;
+                                    if (userLast.Id != userId)
+                                    {
+                                        ApprovalProcessDetail? approvalProcessDetailNext = bllApprovalProcessDetails
+                                                .findByProcessIdAndDataOrderAndEnabled(approvalProcessDetail.processId,
+                                                        approvalProcessDetail.dataOrder + 1, true);
+                                        if (approvalProcessDetailNext != null)
+                                        {
+                                            nextUser = bllAdminUsers.GetByID(approvalProcessDetailNext.userId);
+                                        }
+
+                                    }
                                 }
                             }
 
@@ -678,7 +673,10 @@ namespace AskalePortal.BLL
                         ApprovalProcessDetail? approvalProcessDetail = bllApprovalProcessDetails
                                 .findByProcessIdAndUserIdAndEnabled(activeProcess.approvalProcessId, userId, true);
                         AdminUser? nextUser = null;
-
+                        if (approvalProcessDetail == null || activeProcessDetail == null)
+                        {
+                            continue;
+                        }
                         BLLActions.HRVekaletTable bllHRVekaletTable = new BLLActions.HRVekaletTable(_configuration, _env);
                         Data.Models.HRVekaletTable activeProcessVekalet = bllHRVekaletTable.GetByAlanUserId(approvalProcessDetail.userId);
 
@@ -717,13 +715,13 @@ namespace AskalePortal.BLL
                                     }
                                     else
                                     {
-                                        int ZBD1T = int.Parse(customerDocumentDto.ZBD1T ??"0");
+                                        int ZBD1T = int.Parse(customerDocumentDto.ZBD1T ?? "0");
                                         int ZTERM = int.Parse(customerDocumentDto.ZTERM.Substring(1));
-                                        fark = ZBD1T- ZTERM;
+                                        fark = ZBD1T - ZTERM;
                                     }
 
                                 }
-                                catch 
+                                catch
                                 {
                                     fark = 0;
                                 }
@@ -762,7 +760,11 @@ namespace AskalePortal.BLL
                                 bllActiveProcessDetails.Delete(approvalProcessDetail.Id);
                                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
                                 AdminUser? createdUser = bllAdminUsers.GetByID(activeProcess.createdUserId);
-                                sendErrorEmail(activeProcess, createdUser, createdUser.Id);
+                                if (createdUser != null)
+                                {
+                                    sendErrorEmail(activeProcess, createdUser, createdUser.Id);
+                                }
+
                                 continue;
 
                             }
@@ -851,9 +853,9 @@ namespace AskalePortal.BLL
                                 }
                             }
                             BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                            AdminUser user = bllAdminUsers.GetByID(activeProcess.createdUserId);
-
-                            sendFinishedEmail(activeProcess, user, userId);
+                            AdminUser? user = bllAdminUsers.GetByID(activeProcess.createdUserId);
+                            if (user != null)
+                                sendFinishedEmail(activeProcess, user, userId);
 
                             activeProcessDetail.approved = true;
                             activeProcessDetail.replyDate = DateTime.Now;
@@ -874,18 +876,21 @@ namespace AskalePortal.BLL
                         activeProcess.currentStateId = (int)CommonConstants.PROCESS_STATES.DECLINED;
 
                         BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                        AdminUser user = bllAdminUsers.GetByID(activeProcess.createdUserId);
+                        AdminUser? user = bllAdminUsers.GetByID(activeProcess.createdUserId);
                         sendDeclinedEmail(activeProcess, user, userId);
                         await Update(activeProcess);
 
                         BLLActions.ActiveProcessDetails bllActiveProcessDetails = new BLLActions.ActiveProcessDetails(_configuration, _env);
-                        ActiveProcessDetail detail = bllActiveProcessDetails
+                        ActiveProcessDetail? detail = bllActiveProcessDetails
                                 .findByActiveProcessIdAndUserIdAndApprovedAndEnabled(activeProcess.Id, userId, null, true);
-                        detail.approved = false;
-                        detail.isReplied = true;
-                        detail.replyDate = DateTime.Now;
+                        if (detail != null)
+                        {
+                            detail.approved = false;
+                            detail.isReplied = true;
+                            detail.replyDate = DateTime.Now;
+                            await bllActiveProcessDetails.Update(detail);
+                        }
 
-                        await bllActiveProcessDetails.Update(detail);
 
                     }
                     return false;
@@ -896,11 +901,11 @@ namespace AskalePortal.BLL
     List<Data.Models.ActiveProcessChecks> listActiveProcessChecks)
             {
                 listActiveProcessInvoice = listActiveProcessInvoice
-                    .OrderBy(x => DateTime.Parse(x.faedt))
+                    .OrderBy(x => DateTime.Parse(x!.faedt!))
                     .ToList();
 
                 listActiveProcessChecks = listActiveProcessChecks
-                    .OrderBy(x => DateTime.Parse(x.netdt))
+                    .OrderBy(x => DateTime.Parse(x.netdt!))
                     .ToList();
 
                 List<FaturaGunFarkDto> resultList = new List<FaturaGunFarkDto>();
@@ -911,7 +916,7 @@ namespace AskalePortal.BLL
                 foreach (var fatura in listActiveProcessInvoice)
                 {
                     double faturaKalan = fatura.dmshb ?? 0;
-                    DateTime faturaVade = DateTime.Parse(fatura.faedt);
+                    DateTime faturaVade = DateTime.Parse(fatura.faedt!);
 
                     DateTime? kapanisCekTarihi = null;
 
@@ -1122,6 +1127,10 @@ namespace AskalePortal.BLL
                     string no_link = OkNoLinks.NO_LINK;
                     BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
                     AdminUser? user = bllAdminUsers.GetByID(userId);
+                    if (user == null)
+                    {
+                        return false;
+                    }
                     BLLActions.Companies bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
                     int companyId = bllCompanies.getByVkorgCompany(bukrs).Id;
                     ApprovalProcess? approvalProcess = new ApprovalProcess();
@@ -1139,12 +1148,22 @@ namespace AskalePortal.BLL
                                 (int)CommonConstants.APPROVAL_PROCESSES.DOCUMENT_EXPIRY_DATE, dagitimKanali,
                                 true);
                     }
+                    if (approvalProcess == null)
+                    {
+                        return false;
+                    }
                     BLLActions.ApprovalProcessDetails bllApprovalProcessDetails = new BLLActions.ApprovalProcessDetails(_configuration, _env, _mapper);
                     ApprovalProcessDetail? approvalProcessDetail = bllApprovalProcessDetails
                             .findByProcessIdAndDataOrderAndEnabled(approvalProcess.Id, 1, true);
-
+                    if (approvalProcessDetail == null)
+                    {
+                        return false;
+                    }
                     AdminUser? firstUser = bllAdminUsers.GetByID(approvalProcessDetail.userId);
-
+                    if (firstUser == null)
+                    {
+                        return false;
+                    }
                     BLLActions.ActiveProcessVekalet bllActiveProcessVekalet = new BLLActions.ActiveProcessVekalet(_configuration, _env);
                     Data.Models.ActiveProcessVekalet? activeProcessVekalet = bllActiveProcessVekalet.GetByAlanUserId(firstUser.Id);
                     ActiveProcess activeProcess = new ActiveProcess();
@@ -1180,9 +1199,9 @@ namespace AskalePortal.BLL
                     {
                         activeProcess.relatedColumn = "Vade Tarihi";
                     }
-                    ActiveProcess activeProcessSave = await Add(activeProcess);
+                    ActiveProcess? activeProcessSave = await Add(activeProcess);
                     ActiveProcessDetail activeProcessDetail = new ActiveProcessDetail();
-                    activeProcessDetail.activeProcessId = activeProcessSave.Id;
+                    activeProcessDetail.activeProcessId = activeProcessSave?.Id ?? 0;
                     if (activeProcessVekalet != null)
                     {
                         activeProcessDetail.vekaletId = activeProcessVekalet.VekaletAlanId;
@@ -1222,7 +1241,7 @@ namespace AskalePortal.BLL
 
                     return true;
                 }
-                catch 
+                catch
                 {
 
                     return false;
@@ -1242,22 +1261,22 @@ namespace AskalePortal.BLL
                 int? stateId = int.Parse(filterPageParam?.liste?.stateId?.ToString() ?? "");
                 string? typeString = filterPageParam?.liste?.type?.ToString().Replace("[", "").Replace("]", "").Replace(" ",
                         "");
-                string[] type = typeString.Split(",");
+                string[] type = typeString!.Split(",");
                 HashSet<int> typeIntegers = new HashSet<int>();
                 for (int i = 0; i < type.Length; i++)
                 {
                     int sayInteger = int.Parse(type[i]);
                     typeIntegers.Add(sayInteger);
                 }
-                int userId = int.Parse(filterPageParam.liste.userId.ToString());
+                int userId = int.Parse(filterPageParam?.liste?.userId?.ToString() ?? "0");
 
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                AdminUser user = bllAdminUsers.GetByID(userId);
+                AdminUser? user = bllAdminUsers.GetByID(userId);
 
                 BLLActions.RoleDetails bllRoleDetails = new BLLActions.RoleDetails(_configuration, _env, _mapper);
-                RoleDetail? roleDetail = bllRoleDetails.GetByRoleIDAndModuleID(user.roleId, (int)CommonConstants.MODULES.CUSTOMER_CREDITS);
+                RoleDetail? roleDetail = bllRoleDetails.GetByRoleIDAndModuleID(user?.roleId ?? 0, (int)CommonConstants.MODULES.CUSTOMER_CREDITS);
 
-                if (user.roleId == 1 || (roleDetail != null && roleDetail.canSee))
+                if (user?.roleId == 1 || (roleDetail != null && roleDetail.canSee))
                 {
                     IQueryable<ActiveProcess> query = dal.Get(u => u.enabled &&
                  type.Contains(u.approvalProcess.typeId.ToString()) &&
@@ -1306,7 +1325,7 @@ namespace AskalePortal.BLL
                     }
                     List<ActiveProcessDetail> allActiveProcessDetails = new List<ActiveProcessDetail>();
 
-                    if (!listActiveProcessId.IsNullOrEmpty() )
+                    if (!listActiveProcessId.IsNullOrEmpty())
                     {
                         int batchSize = 1000;
                         List<int> idList = new List<int>(listActiveProcessId);
@@ -1325,10 +1344,10 @@ namespace AskalePortal.BLL
 
                         foreach (ActiveProcessDto activeProcessDto in result.content)
                         {
-                            activeProcessDto.listActiveProcessDetail=allActiveProcessDetails.Where(detail=>detail.activeProcessId.Equals(activeProcessDto.id)).ToList();
+                            activeProcessDto.listActiveProcessDetail = allActiveProcessDetails.Where(detail => detail.activeProcessId.Equals(activeProcessDto.id)).ToList();
                         }
 
-                    
+
                     }
                     result.totalElements = query.Count();
                     result.number = result.content.Count();
@@ -1344,7 +1363,7 @@ namespace AskalePortal.BLL
                 (relatedDataDesc == null || relatedDataDesc == "" ? true : u.relatedDataDesc == relatedDataDesc) &&
                  (relatedDataPrimaryId == null || relatedDataPrimaryId == "" ? true : u.relatedDataPrimaryId == relatedDataPrimaryId) &&
                    (relatedDataPrimaryDesc == null || relatedDataPrimaryDesc == "" ? true : u.relatedDataPrimaryDesc == relatedDataPrimaryDesc) &&
-                   u.currentStateId == stateId && u.createdUserId==userId);
+                   u.currentStateId == stateId && u.createdUserId == userId);
                     result.content = query
                       .Skip(pageSize * pageNumber).Take(pageSize)
 
@@ -1403,18 +1422,18 @@ namespace AskalePortal.BLL
                 string? relatedDataPrimaryId = filterPageParam.liste?.relatedDataPrimaryId;
                 string? relatedDataPrimaryDesc = filterPageParam.liste?.relatedDataPrimaryDesc;
 
-                int stateId = int.Parse(filterPageParam.liste.stateId.ToString());
+                int stateId = int.TryParse(filterPageParam?.liste?.stateId.ToString(), out int tempStateId) ? tempStateId : 0;
 
-                string typeString = filterPageParam.liste.type 
+                string typeString = filterPageParam?.liste?.type?
                     .ToString()
                     .Replace("[", "")
                     .Replace("]", "")
-                    .Replace(" ", "");
+                    .Replace(" ", "") ?? "";
 
                 string[] type = typeString.Split(",");
                 HashSet<int> typeIntegers = type.Select(int.Parse).ToHashSet();
 
-                int userId = int.Parse(filterPageParam.liste.userId.ToString());
+                int.TryParse(filterPageParam?.liste?.userId.ToString(), out int userId);
 
                 IQueryable<ActiveProcess> query = dal.Get(u =>
                     u.enabled &&
@@ -1474,7 +1493,7 @@ namespace AskalePortal.BLL
 
                         belgeTutari = u.belgeTutari,
 
-                        avgDays = u.avg_days  ,
+                        avgDays = u.avg_days,
                         avgVade = u.avg_vade
                     })
                     .ToList();

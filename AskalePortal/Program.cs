@@ -1,4 +1,3 @@
-using AskalePortal.API.Infrastructure.Serialization;
 using AskalePortal.API.Extensions;
 using AskalePortal.API.Infrastructure.Errors;
 using AskalePortal.API.Infrastructure.Serialization;
@@ -10,7 +9,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-
 using System.Globalization;
 using System.Text;
 using System.Text.Json.Serialization;

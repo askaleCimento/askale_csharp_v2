@@ -4,14 +4,8 @@ using AskalePortal.Data.RequestModel;
 using AskalePortal.Data.RequestParams;
 using AskalePortal.Data.ResponseModels;
 using AskalePortal.Data.ResponseParams;
-using AskalePortal.Data.SAP.InputParams;
 using AutoMapper;
-using Azure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
-using System;
-using System.Diagnostics;
-using System.Drawing.Drawing2D;
 using System.Security.Claims;
 
 namespace AskalePortal.API.Controllers
@@ -142,7 +136,8 @@ namespace AskalePortal.API.Controllers
 
             }
             BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-            AdminUser user = bllAdminUsers.GetByID(userId);
+
+            AdminUser? user = bllAdminUsers.GetByID(userId);
             BLLActions.ActiveProcesses bllActiveProcesses = new BLLActions.ActiveProcesses(_configuration, _env, _mapper);
             string deger = bllActiveProcesses.reject(guid, user);
 
@@ -163,7 +158,7 @@ namespace AskalePortal.API.Controllers
             }
             BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
             AdminUser? username = bllAdminUsers.GetByID(userId);
-            string nameString = username?.username.ToUpper() ??"";
+            string nameString = username?.username.ToUpper() ?? "";
             nameString = nameString.Replace('İ', 'I').Replace('Ü', 'U').Replace('Ğ', 'G').Replace('Ö', 'O')
                     .Replace('Ç', 'C').Replace('Ş', 'S');
             BLLActions.ActiveProcesses bllActiveProcesses = new BLLActions.ActiveProcesses(_configuration, _env, _mapper);
