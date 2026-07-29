@@ -96,10 +96,10 @@ namespace AskalePortal.API.Controllers
             if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
             {
                 userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
-            }
 
-            BLLActions.Companies bllCompanies =
-                new BLLActions.Companies(_configuration, _env, _mapper);
+            }
+            BLLActions.Companies bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
+
 
             if (entity.id != null)
             {
@@ -114,25 +114,28 @@ namespace AskalePortal.API.Controllers
 
                 return Ok(returnDto);
             }
-
-            entity.createdDate = DateTime.Now;
-            entity.createdUserId = userId == 0 ? null : userId;
-            entity.enabled = true;
-
-            Company? addedCompany = await bllCompanies.Add(
-                _mapper.Map<Data.Models.Company>(entity));
-
-            if (addedCompany == null)
+            else
             {
-                return BadRequest();
+
+                entity.createdDate = DateTime.Now;
+                entity.createdUserId = userId == 0 ? null : userId;
+                entity.enabled = true;
+
+                Company? addedCompany = await bllCompanies.Add(
+                    _mapper.Map<Data.Models.Company>(entity));
+
+                if (addedCompany == null)
+                {
+                    return BadRequest();
+                }
+
+                CompanySaveDto addedCompanyDto =
+                    _mapper.Map<CompanySaveDto>(addedCompany);
+
+                return Ok(addedCompanyDto);
             }
-
-            CompanySaveDto addedCompanyDto =
-                _mapper.Map<CompanySaveDto>(addedCompany);
-
-            return Ok(addedCompanyDto);
+            #endregion
         }
-        #endregion
 
         [HttpPost("getAllFilter")]
         public ActionResult<List<CompanySaveDto>> getAllFilter([FromForm] FilterParam<CompanyFilterDto> filterParam)
@@ -154,12 +157,12 @@ namespace AskalePortal.API.Controllers
 
             if (!int.TryParse(Request.Form["targetId"].ToString(), out int targetId))
             {
-                return BadRequest("targetId geçersiz veya boş.");
+                return BadRequest("targetId ge�ersiz veya bo�.");
             }
 
             if (files.Count == 0)
             {
-                return BadRequest("Yüklenecek dosya bulunamadı.");
+                return BadRequest("Y�klenecek dosya bulunamad�.");
             }
 
             BLLActions.Companies bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
@@ -167,7 +170,7 @@ namespace AskalePortal.API.Controllers
 
             if (company == null)
             {
-                return NotFound($"Company bulunamadı. Id: {targetId}");
+                return NotFound($"Company bulunamad�. Id: {targetId}");
             }
 
             string basePath = _env.IsDevelopment()
@@ -260,4 +263,5 @@ namespace AskalePortal.API.Controllers
         }
         #endregion
     }
+
 }

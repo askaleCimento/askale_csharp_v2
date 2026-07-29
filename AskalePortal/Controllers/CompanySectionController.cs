@@ -21,11 +21,13 @@ namespace AskalePortal.API.Controllers
             _mapper = mapper;
         }
 
+
         #region Save
         [HttpPost("save")]
         public async Task<ActionResult<CompanySectionSaveDto>> save(
             [FromForm] CompanySectionSaveDto? entity)
         {
+
             if (entity != null)
             {
                 int userId = 0;
@@ -36,10 +38,9 @@ namespace AskalePortal.API.Controllers
                         claimsIdentity?.FindFirst("userId")?.Value ?? "0"
                     );
                 }
+                BLL.BLLActions.CompanySection bllCompanySection = new BLL.BLLActions.CompanySection(_configuration, _env);
 
-                BLLActions.CompanySection bllCompanySection =
-                    new BLLActions.CompanySection(_configuration, _env);
-
+             
                 if (entity.id != null)
                 {
                     entity.updateDate = DateTime.Now;

@@ -20,4 +20,9 @@ public sealed class JwtOptions
 
     [Range(1, 365)]
     public int RefreshTokenDays { get; init; } = 30;
+
+    [Required]
+    public string RefreshCookieName { get; init; } = "askale.refresh";
+
+    public string RefreshCookiePath { get; init; } = "/api/auth";
 }

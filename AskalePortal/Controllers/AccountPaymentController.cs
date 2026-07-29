@@ -12,8 +12,8 @@ namespace AskalePortal.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-  
-    public class AccountPaymentController : ControllerBase 
+
+    public class AccountPaymentController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _env;
@@ -30,7 +30,7 @@ namespace AskalePortal.API.Controllers
         #region save 
 
         [HttpPost("save")]
-        public async Task<ActionResult<object>> save([FromBody] Data.RequestModel.AccountPaymentSAPTableRequest entityReq)
+        public async Task<ActionResult<object>> save([FromForm] Data.RequestModel.AccountPaymentSAPTableRequest entityReq)
         {
 
             if (entityReq != null)
@@ -41,11 +41,12 @@ namespace AskalePortal.API.Controllers
                     userId = int.Parse(identity?.FindFirst("userId")?.Value ?? "0");
                 }
 
-                BLL.BLLActions.AccountPaymentSAPTable bllAccountPaymentSAPTable = new BLL.BLLActions.AccountPaymentSAPTable(_configuration, _env,_mapper, _server);
-                Data.Models.AccountPaymentSAPTable? accountPaymentSAPTable = entityReq.oenum!=null? bllAccountPaymentSAPTable.GetByOENUM(entityReq.oenum):null;
-                Data.Models.AccountPaymentSAPTable? saveAccountPaymentSAPTable = new Data.Models.AccountPaymentSAPTable();
+                BLL.BLLActions.AccountPaymentSAPTable bllAccountPaymentSAPTable = new BLL.BLLActions.AccountPaymentSAPTable(_configuration, _env, _mapper, _server);
+                Data.Models.AccountPaymentSAPTable? accountPaymentSAPTable = entityReq.oenum != null ? bllAccountPaymentSAPTable.GetByOENUM(entityReq.oenum) : null;
+                Data.Models.AccountPaymentSAPTable saveAccountPaymentSAPTable;
                 if (accountPaymentSAPTable != null)
                 {
+                    saveAccountPaymentSAPTable = accountPaymentSAPTable;
                     saveAccountPaymentSAPTable.updateDate = DateTime.Now;
                     saveAccountPaymentSAPTable.updatedUserId = userId == 0 ? null : userId;
                     saveAccountPaymentSAPTable.enabled = entityReq.enabled ?? true;
@@ -55,7 +56,7 @@ namespace AskalePortal.API.Controllers
                     saveAccountPaymentSAPTable.bukrs = entityReq.bukrs;
                     saveAccountPaymentSAPTable.kurumKodu = entityReq.kurumKodu;
                     saveAccountPaymentSAPTable.usnam = entityReq.usnam;
-                    saveAccountPaymentSAPTable.bankl = entityReq.bankl; 
+                    saveAccountPaymentSAPTable.bankl = entityReq.bankl;
                     saveAccountPaymentSAPTable.aedat = entityReq.aedat;
                     saveAccountPaymentSAPTable.aenam = entityReq.aenam;
                     saveAccountPaymentSAPTable.aeuhr = entityReq.aeuhr;
@@ -63,18 +64,18 @@ namespace AskalePortal.API.Controllers
                     saveAccountPaymentSAPTable.belnr = entityReq.belnr;
                     saveAccountPaymentSAPTable.bstat = entityReq.bstat;
                     saveAccountPaymentSAPTable.cpudt = entityReq.cpudt;
-                    saveAccountPaymentSAPTable.cputm = entityReq.cputm; 
+                    saveAccountPaymentSAPTable.cputm = entityReq.cputm;
                     saveAccountPaymentSAPTable.gjahr = entityReq.gjahr;
                     saveAccountPaymentSAPTable.hkont = entityReq.hkont;
                     saveAccountPaymentSAPTable.iban = entityReq.iban;
                     saveAccountPaymentSAPTable.name1 = entityReq.name1;
-                    saveAccountPaymentSAPTable.name2 = entityReq.name2; 
-                    saveAccountPaymentSAPTable.oenum = entityReq.oenum; 
+                    saveAccountPaymentSAPTable.name2 = entityReq.name2;
+                    saveAccountPaymentSAPTable.oenum = entityReq.oenum;
                     saveAccountPaymentSAPTable.SubeKodu = entityReq.SubeKodu;
-                    saveAccountPaymentSAPTable.unva1 = entityReq.unva1; 
-                    saveAccountPaymentSAPTable.unva2 = entityReq.unva2; 
-                    saveAccountPaymentSAPTable.usnam = entityReq.usnam; 
-                    saveAccountPaymentSAPTable.znot = entityReq.znot;   
+                    saveAccountPaymentSAPTable.unva1 = entityReq.unva1;
+                    saveAccountPaymentSAPTable.unva2 = entityReq.unva2;
+                    saveAccountPaymentSAPTable.usnam = entityReq.usnam;
+                    saveAccountPaymentSAPTable.znot = entityReq.znot;
                     saveAccountPaymentSAPTable.zsayino = entityReq.zsayino;
 
                     await bllAccountPaymentSAPTable.Update(saveAccountPaymentSAPTable);
@@ -82,7 +83,8 @@ namespace AskalePortal.API.Controllers
                 }
                 else
                 {
-                    saveAccountPaymentSAPTable.enabled = entityReq.enabled??  true;
+                    saveAccountPaymentSAPTable = new Data.Models.AccountPaymentSAPTable();
+                    saveAccountPaymentSAPTable.enabled = entityReq.enabled ?? true;
                     saveAccountPaymentSAPTable.createdDate = entityReq.createdDate;
                     saveAccountPaymentSAPTable.createdUserId = entityReq.createdUserId;
                     saveAccountPaymentSAPTable.SubeKodu = entityReq.SubeKodu;
@@ -165,7 +167,7 @@ namespace AskalePortal.API.Controllers
         #region getById
         [HttpPost("GetAccountPayment")]
         [Authorize(Roles = "ROLE_74_SEE")]
-        public async Task<ActionResult<string>> getaccountpayment([FromBody] AccontPaymentApi api)
+        public async Task<ActionResult<string>> getaccountpayment([FromForm] AccontPaymentApi api)
         {
             BLL.BLLActions.AccountPaymentSAPTable bllAccountPaymentSAPTable = new BLL.BLLActions.AccountPaymentSAPTable(_configuration, _env, _mapper, _server);
 
@@ -182,7 +184,7 @@ namespace AskalePortal.API.Controllers
 
         [HttpPost("GetTransferPayment")]
         [Authorize(Roles = "ROLE_74_SEE")]
-        public async Task<ActionResult<string>> getTransferPayment([FromBody] TransferPaymentApi api)
+        public async Task<ActionResult<string>> getTransferPayment([FromForm] TransferPaymentApi api)
         {
             BLL.BLLActions.AccountPaymentSAPTable bllAccountPaymentSAPTable = new BLL.BLLActions.AccountPaymentSAPTable(_configuration, _env, _mapper, _server);
             string? deger = await bllAccountPaymentSAPTable.GetTransferPayment(api.apiKey!, api.havaleEmri);

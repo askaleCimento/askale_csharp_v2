@@ -145,7 +145,7 @@ namespace AskalePortal.BLL
                 var q = dal.Get(k =>
                         k.enabled == true &&
                         (roleID == null || k.roleId == roleID) &&
-                        (a.roleId == 1 || a.role.companies.Contains("[" + k.company.vkorg + "]")) &&
+                (a.roleId == 1 || a.role.companies.Contains("[" + k.company.vkorg + "]")) &&
                         (string.IsNullOrEmpty(name) || (k.name != null && k.name.Contains(name))) &&
                         (string.IsNullOrEmpty(username) || (k.username != null && k.username.Contains(username))) &&
                         (string.IsNullOrEmpty(sapUser) || (k.sapUser != null && k.sapUser.Contains(sapUser))) &&
@@ -173,7 +173,7 @@ namespace AskalePortal.BLL
                 var q = dal.Get(k =>
                         k.enabled == false &&
                         (roleID == null || k.roleId == roleID) &&
-                        (a.roleId == 1 || a.role.companies.Contains("[" + k.company.vkorg + "]")) &&
+                (a.roleId == 1 || a.role.companies.Contains("[" + k.company.vkorg + "]")) &&
                         (string.IsNullOrEmpty(name) || (k.name != null && k.name.Contains(name))) &&
                         (string.IsNullOrEmpty(username) || (k.username != null && k.username.Contains(username))) &&
                         (string.IsNullOrEmpty(email) || (k.email != null && k.email.Contains(email))))
@@ -287,8 +287,11 @@ namespace AskalePortal.BLL
                     })
                     .ToList();
 
+                  
+                result.totalElements = query.Count();
                 result.number = result.content.Count();
                 result.size = pageSize;
+
                 return result;
             }
 
@@ -348,6 +351,8 @@ namespace AskalePortal.BLL
                     })
                     .ToList();
 
+                  
+                result.totalElements = query.Count();
                 result.number = result.content.Count();
                 result.size = pageSize;
 

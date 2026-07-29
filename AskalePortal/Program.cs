@@ -1,9 +1,11 @@
 using AskalePortal.API.Infrastructure.Serialization;
 using AskalePortal.API.Extensions;
 using AskalePortal.API.Infrastructure.Errors;
+using AskalePortal.API.Infrastructure.Serialization;
 using AskalePortal.API.Mapper;
 using AskalePortal.API.Security.Auth;
 using AskalePortal.API.Security.Auth.Cleanup;
+using AskalePortal.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
@@ -57,11 +59,7 @@ if (refreshTokenCleanupEnabled)
 
 // Controller ve JSON ayarları
 builder.Services
-    .AddControllers(options =>
-    {
-        options.Filters.Add<PaginationResultFilter>();
-        options.Filters.Add<DetachedEntityResultFilter>();
-    })
+    .AddControllers(options => options.Filters.Add<DetachedEntityResultFilter>())
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler =
@@ -104,18 +102,61 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedUICultures =
         new List<CultureInfo> { cultureInfo };
 });
+builder.Services.AddScoped<ISftpServer, SftpServer>();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        foreach (var modelState in context.ModelState)
+        {
+            foreach (var error in modelState.Value.Errors)
+            {
+                Console.WriteLine(
+                    $"MODEL BINDING ERROR | {modelState.Key} | " +
+                    $"{error.ErrorMessage} | " +
+                    $"{error.Exception?.Message}");
+            }
+        }
 
+        var errors = ApiValidation.ToErrors(context.ModelState);
+
+        var response = ApiErrorWriter.Create(
+            context.HttpContext,
+            StatusCodes.Status400BadRequest,
+            "VALIDATION_ERROR",
+            "Gönderilen bilgiler geçersiz.",
+            errors);
+
+        return new BadRequestObjectResult(response);
+    };
+});
 // CORS
 const string corsPolicyName = "CorsPolicy";
+
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? Array.Empty<string>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(corsPolicyName, policy =>
     {
+        if (allowedOrigins.Length > 0)
+        {
+            policy.WithOrigins(allowedOrigins);
+        }
+        else
+        {
+            // Geriye dönük geliştirme davranışı. Canlı ortamda AllowedOrigins
+            // mutlaka tanımlanmalıdır.
+            policy.SetIsOriginAllowed(_ => true);
+        }
+
         policy
             .AllowAnyOrigin()
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 

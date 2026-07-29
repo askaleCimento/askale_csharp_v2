@@ -1,4 +1,4 @@
-﻿using AskalePortal.BLL;
+using AskalePortal.BLL;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.RequestModel;
 using AskalePortal.Data.RequestParams;

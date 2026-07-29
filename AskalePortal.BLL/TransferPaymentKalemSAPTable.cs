@@ -88,7 +88,7 @@ namespace AskalePortal.BLL
            c.approved == null &&
            c.enabled == true &&
            (
-               a.firma.Contains(firma) ||
+               (a.firma != null && a.firma.Contains(firma)) ||
                (firma == "" && a.firma == null)
            )
        orderby a.henum descending
@@ -130,7 +130,7 @@ namespace AskalePortal.BLL
            c.enabled == true &&
            a.currentUserId == userId &&
            (
-               a.firma.Contains(firma) ||
+               (a.firma != null && a.firma.Contains(firma)) ||
                (firma == "" && a.firma == null)
            )
        orderby a.henum descending
@@ -196,7 +196,37 @@ namespace AskalePortal.BLL
 
             public TransferPaymentKalemMyListDetailDto mylistdetail(int id)
             {
-                TransferPaymentKalemMyListDetailDto transferPaymentKalemMyListDetailDto = mylistdetail(id);
+                TransferPaymentKalemMyListDetailDto? transferPaymentKalemMyListDetailDto =
+                    (from paymentItem in dal.dB.TransferPaymentKalemSAPTable
+                     join payment in dal.dB.TransferPaymentSAPTable
+                         on paymentItem.henum equals payment.henum
+                     where paymentItem.enabled == true
+                           && payment.enabled == true
+                           && paymentItem.Id == id
+                     orderby paymentItem.henum descending
+                     select new TransferPaymentKalemMyListDetailDto
+                     {
+                         id = paymentItem.Id,
+                         henum = paymentItem.henum,
+                         posnr = paymentItem.posnr,
+                         lifnr = paymentItem.lifnr,
+                         firma = paymentItem.firma,
+                         wrbtr = paymentItem.wrbtr,
+                         usnam = payment.usnam,
+                         currentStateId = paymentItem.currentStateId,
+                         aenam = payment.aenam,
+                         cpudt = payment.cpudt,
+                         iban = paymentItem.iban,
+                         banka = paymentItem.banka,
+                         brnch = paymentItem.brnch,
+                         bankn = paymentItem.bankn
+                     })
+                    .FirstOrDefault();
+
+                if (transferPaymentKalemMyListDetailDto == null)
+                {
+                    throw new InvalidOperationException("Havale ödeme detayı bulunamadı.");
+                }
 
                 BLLActions.ActiveTransferDetails bllActiveTransferDetails = new BLLActions.ActiveTransferDetails(_configuration, _env);
                 List<ActiveTransferDetail> listActiveTransferDetails = bllActiveTransferDetails.GetByAccountTransferId(id);
@@ -335,7 +365,7 @@ namespace AskalePortal.BLL
                             foreach (Data.Models.TransferPaymentKalemSAPTable item2 in item)
                             {
                                 AdminUser? nextUserr = bllApprovalProcesses
-                                        .GetNextUser(item2.currentUserId, approvalProcess?.Id ??0, true);
+                                        .GetNextUser(item2.currentUserId, approvalProcess?.Id ?? 0, true);
                                 if (nextUserr != null)
                                 {
                                     BLLActions.ActiveTransferDetails bllActiveTransferDetails = new BLLActions.ActiveTransferDetails(_configuration, _env);
@@ -376,7 +406,7 @@ namespace AskalePortal.BLL
                                             onaylayan = user?.name ?? "",
                                             onaysekli = "O",
                                             posnr = item2.posnr,
-                                            bittimi= "X",
+                                            bittimi = "X",
                                             saat = DateTime.Now.ToString("HH:mm:ss"),
                                             tarih = DateTime.Now.ToString("yyyyMMdd")
                                         };
@@ -422,7 +452,7 @@ namespace AskalePortal.BLL
                                                 onaylayan = user?.name ?? "",
                                                 onaysekli = "B",
                                                 posnr = item2.posnr,
-                                                bittimi= "X",
+                                                bittimi = "X",
                                                 saat = DateTime.Now.ToString("HH:mm:ss"),
                                                 tarih = DateTime.Now.ToString("yyyyMMdd")
                                             };
@@ -432,7 +462,7 @@ namespace AskalePortal.BLL
                                             sapConn.Disconnect();
 
                                         }
-                                      
+
                                         onaylandiMi = true;
                                         StringBuilder stringBuilderDeger = new StringBuilder();
                                         int basamak = item2.wrbtr.Length - 1;
@@ -580,7 +610,7 @@ namespace AskalePortal.BLL
                             }
 
                             AdminUser? nextUser = bllApprovalProcesses.GetNextUser(userId,
-                                    approvalProcess?.Id??0, true);
+                                    approvalProcess?.Id ?? 0, true);
                             if (nextUser != null)
                             {
 
@@ -718,7 +748,7 @@ namespace AskalePortal.BLL
                                      pathFile,
                                      $"askalepetroltos/{filename}"
                                  );
-                                    
+
 
                                 }
                                 else if (companyName.ToUpper().Equals("ACSG"))
@@ -731,7 +761,7 @@ namespace AskalePortal.BLL
                                     $"askalesigortatos/{filename}"
                                 );
 
-                                   
+
 
                                 }
                                 else if (companyName.ToUpper().Equals("ACPZ"))
@@ -744,7 +774,7 @@ namespace AskalePortal.BLL
                                     $"askalepazarlamatos/{filename}"
                                 );
 
-                                  
+
 
                                 }
                                 else if (companyName.ToUpper().Equals("AC68"))
@@ -838,24 +868,24 @@ namespace AskalePortal.BLL
                             }
                         }
                     }
-                    
+
                     Dictionary<string, List<Data.Models.TransferPaymentKalemSAPTable>> listedGroup = liste.GroupBy(u => u.henum).ToDictionary(g => g.Key, g => g.ToList());
                     foreach (List<Data.Models.TransferPaymentKalemSAPTable> item in listedGroup.Values)
                     {
                         EmailMessage emailMessage = new EmailMessage();
 
-                        BLLActions.TransferPaymentSAPTable bllTransferPaymentSAPTable = new BLLActions.TransferPaymentSAPTable(_configuration,_env);
+                        BLLActions.TransferPaymentSAPTable bllTransferPaymentSAPTable = new BLLActions.TransferPaymentSAPTable(_configuration, _env);
                         Data.Models.TransferPaymentSAPTable transferPaymentSAPTable = bllTransferPaymentSAPTable
                                 .GetByHENUM(item[0].henum);
 
-                        emailMessage.subject=(item[0].henum + " Nolu ödeme onayı hk.");
-                        emailMessage.toAddress="finans@askalecimento.com.tr";
-                        emailMessage.emailText=getPaymentMailStringOnaylandi(transferPaymentSAPTable);
-                        emailMessage.isSent=false;
-                        emailMessage.plannedDate=DateTime.Now;
-                        emailMessage.mailTuru=1;
+                        emailMessage.subject = (item[0].henum + " Nolu ödeme onayı hk.");
+                        emailMessage.toAddress = "finans@askalecimento.com.tr";
+                        emailMessage.emailText = getPaymentMailStringOnaylandi(transferPaymentSAPTable);
+                        emailMessage.isSent = false;
+                        emailMessage.plannedDate = DateTime.Now;
+                        emailMessage.mailTuru = 1;
 
-                        BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration,_env);
+                        BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
                         await bllEmailMessages.Add(emailMessage);
                     }
                     return false;
@@ -890,7 +920,7 @@ namespace AskalePortal.BLL
                             + "<td style ='text-align: left;border: 1px solid black;'>" + item.henum + "</td>"
                             + "<td style ='text-align: left;border: 1px solid black;'>" + item.posnr + "</td>"
                             + "<td style ='text-align: left;border: 1px solid black;'>" + item.lifnr + "</td>"
-                            + "<td style ='text-align: left;border: 1px solid black;'>" + item. firma + "</td>"
+                            + "<td style ='text-align: left;border: 1px solid black;'>" + item.firma + "</td>"
                             + "<td style ='text-align: right;border: 1px solid black;'>" + item.wrbtr + "</td>"
                             + "<td style ='text-align: center;border: 1px solid black;' >" + transferPaymentSAPTable.usnam
                             + "</td>";
@@ -918,7 +948,7 @@ namespace AskalePortal.BLL
 
             public string? getTransferMailString(Data.Models.TransferPaymentSAPTable transferPaymentSAPTable)
             {
-                var okLink = CommonConstants.OkNoLinks.OK_LINK+ "/accountpayment/replyfromouttransfer?answer=1&guid="
+                var okLink = CommonConstants.OkNoLinks.OK_LINK + "/accountpayment/replyfromouttransfer?answer=1&guid="
                  + transferPaymentSAPTable.henum;
                 var noLink = CommonConstants.OkNoLinks.OK_LINK + "/it-portal/accountpayment/replyfromouttransfer?answer=0&guid="
                         + transferPaymentSAPTable.henum;
