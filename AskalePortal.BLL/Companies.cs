@@ -146,35 +146,41 @@ namespace AskalePortal.BLL
 
             public List<CompanySaveDto>? GetAllFromSAP()
             {
-                List<CompanySaveDto>? lstData = new();
+                List<CompanySaveDto> lstData = new();
 
                 try
                 {
                     BLLActions.SAPConnectionData bllSapConnection =
-                        new BLLActions.SAPConnectionData(_configuration, _env);
+                        new BLLActions.SAPConnectionData(
+                            _configuration,
+                            _env);
 
-                    SapConnection? sapConnection =
-                        bllSapConnection.sapConnection(_configuration, _env);
+                    using SapConnection? sapConnection =
+                        bllSapConnection.sapConnection(
+                            _configuration,
+                            _env);
 
-                    if (sapConnection != null)
+                    if (sapConnection == null)
                     {
-                        ISapFunction sapFunction =
-                            sapConnection.CreateFunction("ZWEBI006");
-
-                        SirketlerOutput result =
-                            sapFunction.Invoke<SirketlerOutput>();
-
-                        lstData = result.Companies?
-                            .Select(x => new CompanySaveDto
-                            {
-                                mandt = x.MANDT,
-                                spras = x.SPRAS,
-                                vkorg = x.VKORG,
-                                vtext = x.VTEXT
-                            })
-                            .ToList()
-                            ?? new List<CompanySaveDto>();
+                        return lstData;
                     }
+
+                    using ISapFunction sapFunction =
+                        sapConnection.CreateFunction("ZWEBI006");
+
+                    CompanyOutput result =
+                        sapFunction.Invoke<CompanyOutput>();
+
+                    lstData = result.listCompanySap?
+                        .Select(x => new CompanySaveDto
+                        {
+                            mandt = x.mandt,
+                            spras = x.spras,
+                            vkorg = x.vkorg,
+                            vtext = x.vtext
+                        })
+                        .ToList()
+                        ?? new List<CompanySaveDto>();
                 }
                 catch (Exception ex)
                 {

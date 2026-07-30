@@ -29,7 +29,7 @@ namespace AskalePortal.BLL
 
             public override List<AskalePortal.Data.Models.Faq> GetAll()
             {
-                var q = dal.Get(k => k.enabled == true).OrderBy(k => k.title);
+                var q = dal.Get(k => k.enabled == true).OrderBy(k => k.title).OrderByDescending(u => u.Id);
 
                 return q.ToList();
             }
@@ -37,7 +37,7 @@ namespace AskalePortal.BLL
             public List<Faq>? GetAllFilter(FilterParam<HelpDeskStatusListDtoParameter> filterParam)
             {
                 string? title = filterParam.liste?.title;
-                List<Faq> liste = dal.Get(u => u.enabled && (string.IsNullOrEmpty(title) ? true : u.title.ToLower().Contains(title))).ToList();
+                List<Faq> liste = dal.Get(u => u.enabled && (string.IsNullOrEmpty(title) ? true : u.title.ToLower().Contains(title))).OrderByDescending(u=> u.Id).ToList();
                 return liste;
             }
 
@@ -73,7 +73,7 @@ namespace AskalePortal.BLL
                 int pageNumber = filterPageParam.page ?? 0;
 
                
-                IQueryable<Faq> query = dal.Get(u => u.enabled );
+                IQueryable<Faq> query = dal.Get(u => u.enabled ).OrderByDescending(u => u.Id);
                 result.content = query
                   .Skip(pageSize * pageNumber).Take(pageSize)
 

@@ -18,7 +18,7 @@ namespace AskalePortal.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+
     public class FaqController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -53,7 +53,7 @@ namespace AskalePortal.API.Controllers
 
                     entity.updateDate = DateTime.Now.ToString();
                     entity.updatedUserId = userId == 0 ? null : userId;
-                   await bllFaq.Update(_mapper.Map<Faq>(entity));
+                    await bllFaq.Update(_mapper.Map<Faq>(entity));
 
                     return Ok(entity);
                 }
@@ -195,32 +195,59 @@ namespace AskalePortal.API.Controllers
         #endregion
 
         #region downloadPictureAll
+
         [HttpPost("downloadPictureAll")]
-        public ActionResult<List<IntegerAndResponseByteArrayDto>> downloadPictureAll([FromForm] List<int> listId)
+        public ActionResult<List<IntegerAndResponseByteArrayDto>> downloadPictureAll(
+            [FromForm] int targetId,
+            [FromForm] int moduleId)
         {
-
             List<IntegerAndResponseByteArrayDto> usersPictureDtos = new();
-            string? filePath = Path.Combine(_env.IsDevelopment() ? _configuration["FilePath:local"]! : _env.IsProduction() ?
-                _configuration["FilePath:server"]! : _configuration["FilePath:test"]!, "documents\\");
-            foreach (var item in listId)
+
+            BLLActions.AttachedFiles bllAttachedFiles =
+                new BLLActions.AttachedFiles(_configuration, _env);
+
+            List<AttachedFile> attachedFiles =
+                bllAttachedFiles.getByModuleIdAndTargetId(moduleId, targetId);
+
+            string baseFilePath =
+                _env.IsDevelopment()
+                    ? _configuration["FilePath:local"]!
+                    : _env.IsProduction()
+                        ? _configuration["FilePath:server"]!
+                        : _configuration["FilePath:test"]!;
+
+            string directoryName =
+                Path.Combine(baseFilePath, "documents") +
+                Path.DirectorySeparatorChar;
+
+            foreach (AttachedFile attachedFile in attachedFiles)
             {
+                string? filename = attachedFile.title;
 
-                BLLActions.AttachedFiles bllAttachedFiles = new BLLActions.AttachedFiles(_configuration, _env);
-                Data.Models.AttachedFile? user = bllAttachedFiles.GetByID(item);
-                if (user != null)
+                if (string.IsNullOrWhiteSpace(filename))
                 {
-
-                    IntegerAndResponseByteArrayDto dto = new();
-                    dto.userId = item;
-                    ResponseByteArray responseByteArray = FileConverter.convertByte(filePath, user.title, user.filePath);
-                    dto.responseByteArray = responseByteArray;
-                    usersPictureDtos.Add(dto);
+                    return Ok(null);
                 }
 
-            }
-            return Ok(usersPictureDtos.ToJson());
+                IntegerAndResponseByteArrayDto dto = new()
+                {
+                    userId = attachedFile.Id
+                };
 
+                ResponseByteArray response =
+                    FileConverter.convertByte(
+                        directoryName,
+                        filename,
+                        filename);
+
+                dto.responseByteArray = response;
+
+                usersPictureDtos.Add(dto);
+            }
+
+            return Ok(usersPictureDtos);
         }
+
         #endregion
 
         #region downloadPictureAllModuleId
@@ -229,12 +256,12 @@ namespace AskalePortal.API.Controllers
         {
             List<IntegerAndResponseByteArrayDto> usersPictureDtos = [];
             BLLActions.AttachedFiles bllAttachedFiles = new BLLActions.AttachedFiles(_configuration, _env);
-            List< AttachedFile> attachedFiles = bllAttachedFiles.GetByModuleID(moduleId);
+            List<AttachedFile> attachedFiles = bllAttachedFiles.GetByModuleID(moduleId);
 
-            foreach (AttachedFile attachedFile in attachedFiles )
+            foreach (AttachedFile attachedFile in attachedFiles)
             {
                 IntegerAndResponseByteArrayDto dto = new IntegerAndResponseByteArrayDto();
-                dto.userId=(attachedFile.targetId);
+                dto.userId = (attachedFile.targetId);
 
                 string filename = attachedFile.filePath;
                 if (filename.Equals(null))
@@ -247,7 +274,7 @@ namespace AskalePortal.API.Controllers
                 ResponseByteArray responseByteArray = FileConverter.convertByte(filePath, attachedFile.title, attachedFile.title);
                 dto.responseByteArray = responseByteArray;
 
-              
+
                 usersPictureDtos.Add(dto);
             }
 
@@ -259,19 +286,19 @@ namespace AskalePortal.API.Controllers
         [HttpPost("download")]
         public ActionResult<ResponseByteArray> download([FromForm] string file)
         {
-            
+
             string? filePath = Path.Combine(_env.IsDevelopment() ? _configuration["FilePath:local"]! : _env.IsProduction() ?
                    _configuration["FilePath:server"]! : _configuration["FilePath:test"]!, "documents\\");
 
             ResponseByteArray responseByteArray = FileConverter.convertByte(filePath, file, file);
-            
-		return Ok(responseByteArray);
-            
+
+            return Ok(responseByteArray);
+
         }
         #endregion
 
         #region filterPageable
-        [HttpPost("filterPageableDto")]
+        [HttpPost("filterPageable")]
 
         public ActionResult<object> filterPageableDto([FromForm] FilterPageParam<UserFilterDtoRequest> filterPageParam)
         {
