@@ -36,75 +36,80 @@ namespace AskalePortal.API.Controllers
         public async Task<ActionResult<object>> save([FromForm] AracTalepTableSaveDto? entity)
         {
 
-
-            int userId = 0;
-            if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
+            if (entity == null)
             {
-                userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
-
-            }
-            BLL.BLLActions.AracTalepTable bllAracTalepTable = new BLL.BLLActions.AracTalepTable(_configuration, _env, _mapper);
-
-            if (entity?.id != 0)
-            {
-
-                entity!.updateDate = DateTime.Now.ToString();
-                entity.updatedUserId = userId == 0 ? null : userId;
-                AracTalepTable aracTalepTable = _mapper.Map<AracTalepTable>(entity);
-
-                await bllAracTalepTable.Update(aracTalepTable);
-                return Ok(entity);
+                return BadRequest();
             }
             else
             {
-                entity.createdDate = DateTime.Now.ToString();
-                entity.createdUserId = userId == 0 ? null : userId; ;
-                entity.enabled = true;
+                int userId = 0;
+                if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
+                {
+                    userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
 
-                entity.currentUserId = userId;
-                entity.onaySirasi = 0;
-                entity.currentStateId = 1;
+                }
+                BLL.BLLActions.AracTalepTable bllAracTalepTable = new BLL.BLLActions.AracTalepTable(_configuration, _env, _mapper);
 
-                AracTalepTable aracTalepTable = _mapper.Map<AracTalepTable>(entity);
+                if (entity?.id != null)
+                {
+                    entity.enabled = true;
+                    entity!.updateDate = DateTime.Now.ToString();
+                    entity.updatedUserId = userId == 0 ? null : userId;
+                    AracTalepTable aracTalepTable = _mapper.Map<AracTalepTable>(entity);
 
-                await bllAracTalepTable.Add(aracTalepTable);
+                    await bllAracTalepTable.Update(aracTalepTable);
+                    return Ok(entity);
+                }
+                else
+                {
+                    entity.createdDate = DateTime.Now.ToString();
+                    entity.createdUserId = userId == 0 ? null : userId; ;
+                    entity.enabled = true;
 
-                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                AdminUser? createdUser = bllAdminUsers.GetByID(userId);
+                    entity.currentUserId = userId;
+                    entity.onaySirasi = 0;
+                    entity.currentStateId = 1;
 
-                AracTalepTableDetail aracTalepTableDetail = new AracTalepTableDetail();
-                aracTalepTableDetail.enabled = (true);
-                aracTalepTableDetail.approved = (null);
-                aracTalepTableDetail.isReplied = (false);
-                aracTalepTableDetail.talepId = aracTalepTable.Id;
-                aracTalepTableDetail.userId = (userId);
-                aracTalepTableDetail.guid = Guid.NewGuid();
-                aracTalepTableDetail.createdDate = (DateTime.Now);
+                    AracTalepTable aracTalepTable = _mapper.Map<AracTalepTable>(entity);
 
-                BLLActions.AracTalepTableDetail bllAracTalepTableDetail = new BLLActions.AracTalepTableDetail(_configuration, _env);
-                await bllAracTalepTableDetail.Add(aracTalepTableDetail);
+                    AracTalepTable? savedAracTalepTable =await bllAracTalepTable.Add(aracTalepTable);
 
-                BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
-                EmailMessage emailMessage = new EmailMessage();
-                emailMessage.subject = ("Araç Talebi hk.");
-                emailMessage.toAddress = (createdUser?.email);
+                    BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
+                    AdminUser? createdUser = bllAdminUsers.GetByID(userId);
 
-                BLLActions.EmailReaderFile bllEmailReaderFile= new BLLActions.EmailReaderFile();
-                string mailMessage = bllEmailReaderFile.BuildEmailTemplate(_configuration, _env, "Sayın " + createdUser?.name +
-                    " Araç Talebi hk.",
-                            aracTalepTable.Id.ToString() + " ID'li talep onayınızı beklemektedir");
-                emailMessage.emailText = (mailMessage);
-                emailMessage.mailTuru = (1);
-                emailMessage.enabled = (true);
-                emailMessage.isSent = (false);
-                emailMessage.plannedDate = (DateTime.Now);
-                await bllEmailMessages.Add(emailMessage);
+                    AracTalepTableDetail aracTalepTableDetail = new AracTalepTableDetail();
+                    aracTalepTableDetail.enabled = (true);
+                    aracTalepTableDetail.approved = (null);
+                    aracTalepTableDetail.isReplied = (false);
+                    aracTalepTableDetail.talepId = savedAracTalepTable.Id;
+                    aracTalepTableDetail.userId = (userId);
+                    aracTalepTableDetail.guid = Guid.NewGuid();
+                    aracTalepTableDetail.createdDate = (DateTime.Now);
 
-                return Ok(aracTalepTable);
+                    BLLActions.AracTalepTableDetail bllAracTalepTableDetail = new BLLActions.AracTalepTableDetail(_configuration, _env);
+                    await bllAracTalepTableDetail.Add(aracTalepTableDetail);
+
+                    BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
+                    EmailMessage emailMessage = new EmailMessage();
+                    emailMessage.subject = ("Araç Talebi hk.");
+                    emailMessage.toAddress = (createdUser?.email);
+
+                    BLLActions.EmailReaderFile bllEmailReaderFile = new BLLActions.EmailReaderFile();
+                    string mailMessage = bllEmailReaderFile.BuildEmailTemplate(_configuration, _env, "Sayın " + createdUser?.name +
+                        " Araç Talebi hk.",
+                                savedAracTalepTable.Id.ToString() + " ID'li talep onayınızı beklemektedir");
+                    emailMessage.emailText = (mailMessage);
+                    emailMessage.mailTuru = (1);
+                    emailMessage.enabled = (true);
+                    emailMessage.isSent = (false);
+                    emailMessage.plannedDate = (DateTime.Now);
+                    await bllEmailMessages.Add(emailMessage);
+
+                    return Ok(_mapper.Map<AracTalepTableSaveDto>(savedAracTalepTable));
+
+                }
 
             }
-
-
 
         }
         #endregion
@@ -161,8 +166,13 @@ namespace AskalePortal.API.Controllers
         public ActionResult<PageReturn<AracTalepTableDto>> myList([FromForm] FilterPageParam<AracTalepTableParamsDto> filterPageParam)
         {
             BLL.BLLActions.AracTalepTable bllAracTalepTable = new BLL.BLLActions.AracTalepTable(_configuration, _env, _mapper);
+            int userId = 0;
+            if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
+            {
+                userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
 
-            PageReturn<AracTalepTableDto>? liste = bllAracTalepTable.mylistDto(filterPageParam);
+            }
+            PageReturn<AracTalepTableDto>? liste = bllAracTalepTable.mylistDto(filterPageParam, userId);
             return Ok(liste);
         }
         #endregion
@@ -213,7 +223,7 @@ namespace AskalePortal.API.Controllers
             return Ok(deger);
         }
         #endregion
-     
+
         #region confirm
         [HttpPost("confirm")]
         public async Task<ActionResult<int>> confirm([FromForm] int talepId, [FromForm] int userId)
