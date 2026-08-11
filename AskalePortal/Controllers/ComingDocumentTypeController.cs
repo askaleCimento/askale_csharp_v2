@@ -93,7 +93,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLLActions.IncomingDocumentTypes bllIncomingDocumentTypes = new BLLActions.IncomingDocumentTypes(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();

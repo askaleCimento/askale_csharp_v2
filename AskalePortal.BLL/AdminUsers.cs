@@ -287,7 +287,7 @@ namespace AskalePortal.BLL
                     })
                     .ToList();
 
-                  
+
                 result.totalElements = query.Count();
                 result.number = result.content.Count();
                 result.size = pageSize;
@@ -351,7 +351,7 @@ namespace AskalePortal.BLL
                     })
                     .ToList();
 
-                  
+
                 result.totalElements = query.Count();
                 result.number = result.content.Count();
                 result.size = pageSize;
@@ -500,847 +500,765 @@ namespace AskalePortal.BLL
                 return result;
             }
 
-            public async Task<AdminUser> saveHRUser(AdminUserSaveDto newUserGelen, int userId)
+            #endregion
+
+
+            public async Task<AdminUser> saveHRUser(
+                AdminUserSaveDto newUserGelen,
+                int userId)
             {
-                AdminUser newUser = _mapper.Map<AdminUser>(newUserGelen);
-                AdminUser oldUser = GetByID(newUser.Id)!;
-                BLLActions.HRExpenseTripTable bllHRExpenseTripTable = new BLLActions.HRExpenseTripTable(_configuration, _env, _mapper);
-                BLLActions.HRExpenseTable bllHRExpenseTable = new BLLActions.HRExpenseTable(_configuration, _env, _mapper);
-                BLLActions.HRExpenseDetail bllHRExpenseDetail = new BLLActions.HRExpenseDetail(_configuration, _env);
-                BLLActions.HRExpenseTripDetail bllHRExpenseTripDetail = new BLLActions.HRExpenseTripDetail(_configuration, _env);
-                BLLActions.HRExpenseWithOutTable bllHRExpenseWithOutTable = new BLLActions.HRExpenseWithOutTable(_configuration, _env, _mapper);
-                BLLActions.HRExpenseWithOutDetail bllHRExpenseWithOutDetail = new BLLActions.HRExpenseWithOutDetail(_configuration, _env);
-                BLLActions.AnnualLeaveTable bllAnnualLeaveTable = new BLLActions.AnnualLeaveTable(_configuration, _env, _mapper);
-                BLLActions.AnnualLeaveDetail bllAnnualLeaveDetail = new BLLActions.AnnualLeaveDetail(_configuration, _env);
-                BLLActions.RepresentativeExpenseTable bllRepresentativeExpenseTable = new BLLActions.RepresentativeExpenseTable(_configuration, _env, _mapper);
-                BLLActions.RepresentativeExpenseDetail bllRepresentativeExpenseDetail = new BLLActions.RepresentativeExpenseDetail(_configuration, _env);
-                BLLActions.AracTalepTable bllAracTalepTable = new BLLActions.AracTalepTable(_configuration, _env, _mapper);
-                BLLActions.AracTalepTableDetail bllAracTalepTableDetail = new BLLActions.AracTalepTableDetail(_configuration, _env);
+                AdminUser newUser =
+                    _mapper.Map<AdminUser>(newUserGelen);
 
-                // employer1 değişmiş ise
-                if (oldUser.hremployer1 != newUser.hremployer1)
+
+                // ============================================================
+                // ESKİ KAYDI SADECE KARŞILAŞTIRMA İÇİN AL
+                //
+                // DİKKAT:
+                // GetByID() kullanırsak EF Core oldUser'ı track eder.
+                //
+                // Daha sonra:
+                //
+                //     Update(newUser)
+                //
+                // içinde newUser Attach edilmeye çalışıldığında aynı Id'ye sahip
+                // oldUser zaten track edildiği için:
+                //
+                // "another instance with the same key is already being tracked"
+                //
+                // hatası oluşur.
+                //
+                // Bu yüzden oldUser mutlaka AsNoTracking alınmalıdır.
+                // ============================================================
+
+                AdminUser oldUser = dal
+                    .Get(x => x.Id == newUser.Id)
+                    .AsNoTracking()
+                    .FirstOrDefault()
+                    ?? throw new InvalidOperationException(
+                        $"Güncellenecek AdminUser bulunamadı. Id: {newUser.Id}");
+
+
+                // ============================================================
+                // HR EMPLOYER
+                // ============================================================
+
+                if (ApproverChanged(
+                    oldUser.hremployer1,
+                    newUser.hremployer1))
                 {
-
-                    List<Data.Models.HRExpenseTripTable> listHRExpenseTripTable = bllHRExpenseTripTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.hremployer1, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.HRExpenseTripTable hrExpenseTripTable in listHRExpenseTripTable)
-                    {
-                        hrExpenseTripTable.currentUserId = (newUser.hremployer1 ?? 0);
-                        await bllHRExpenseTripTable.Update(hrExpenseTripTable);
-                    }
-                    List<Data.Models.HRExpenseTable> listHRExpense = bllHRExpenseTable.findByUserIdActive(oldUser.hremployer1,
-                            oldUser.Id);
-                    foreach (Data.Models.HRExpenseTable hrExpenseTable in listHRExpense)
-                    {
-                        hrExpenseTable.currentUserId = (newUser.hremployer1 ?? 0);
-                        await bllHRExpenseTable.Update(hrExpenseTable);
-                    }
-
-                    List<Data.Models.HRExpenseDetail> listHRExpenseDetail = bllHRExpenseDetail
-                            .findAllByUserIdActive(oldUser.hremployer1, oldUser.Id);
-                    foreach (Data.Models.HRExpenseDetail hrExpenseDetail in listHRExpenseDetail)
-                    {
-                        hrExpenseDetail.userId = (newUser.hremployer1 ?? 0);
-                        await bllHRExpenseDetail.Update(hrExpenseDetail);
-                    }
-
-                    List<Data.Models.HRExpenseTripDetail> listHRExpenseTripDetail = bllHRExpenseTripDetail
-                            .findByUserIdActive(oldUser.hremployer1, oldUser.Id);
-                    foreach (Data.Models.HRExpenseTripDetail hrExpenseTripDetail in listHRExpenseTripDetail)
-                    {
-                        hrExpenseTripDetail.userId = (newUser.hremployer1 ?? 0);
-                        await bllHRExpenseTripDetail.Update(hrExpenseTripDetail);
-                    }
-
-                    List<Data.Models.HRExpenseWithOutTable> listHRExpenseWithOut = bllHRExpenseWithOutTable
-                            .findByUserIdActive(oldUser.hremployer1, oldUser.Id);
-                    foreach (Data.Models.HRExpenseWithOutTable hrExpenseWithOutTable in listHRExpenseWithOut)
-                    {
-                        hrExpenseWithOutTable.currentUserId = (newUser.hremployer1 ?? 0);
-                        await bllHRExpenseWithOutTable.Update(hrExpenseWithOutTable);
-                    }
-                    List<Data.Models.HRExpenseWithOutDetail> listHRExpenseWithOutDetail = bllHRExpenseWithOutDetail
-                            .findAllByUserIdActive(oldUser.hremployer1, oldUser.Id);
-                    foreach (Data.Models.HRExpenseWithOutDetail hrExpenseWithOutDetail in listHRExpenseWithOutDetail)
-                    {
-                        hrExpenseWithOutDetail.userId = (newUser.hremployer1 ?? 0);
-                        await bllHRExpenseWithOutDetail.Update(hrExpenseWithOutDetail);
-                    }
-
-                    List<Data.Models.AnnualLeaveTable> listAnnualLeaveTable = bllAnnualLeaveTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.hremployer1, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveTable annualLeaveTable in listAnnualLeaveTable)
-                    {
-                        annualLeaveTable.currentUserId = (newUser.hremployer1 ?? 0);
-                        await bllAnnualLeaveTable.Update(annualLeaveTable);
-                    }
-                    List<Data.Models.AnnualLeaveDetail> listAnnualLeaveDetail = bllAnnualLeaveDetail
-                            .findAllByUserIdActive(oldUser.hremployer1, oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveDetail annualLeaveDetail in listAnnualLeaveDetail)
-                    {
-                        annualLeaveDetail.userId = (newUser.hremployer1 ?? 0);
-                        await bllAnnualLeaveDetail.Update(annualLeaveDetail);
-                    }
-
-                    List<Data.Models.RepresentativeExpenseTable> listRepresentativeExpenseTable = bllRepresentativeExpenseTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.hremployer1, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.RepresentativeExpenseTable representativeExpenseTable in listRepresentativeExpenseTable)
-                    {
-                        representativeExpenseTable.currentUserId = (newUser.hremployer1 ?? 0);
-                        await bllRepresentativeExpenseTable.Update(representativeExpenseTable);
-                    }
-                    List<Data.Models.RepresentativeExpenseDetail> listRepresentativeExpenseDetail = bllRepresentativeExpenseDetail
-                            .findAllByUserIdActive(oldUser.hremployer1, oldUser.Id);
-                    foreach (Data.Models.RepresentativeExpenseDetail representativeExpenseDetail in listRepresentativeExpenseDetail)
-                    {
-                        representativeExpenseDetail.userId = (newUser.hremployer1 ?? 0);
-                        await bllRepresentativeExpenseDetail.Update(representativeExpenseDetail);
-                    }
-
-                }
-                // manager 1 değişmiş ise
-                if (oldUser.manager1 != newUser.manager1)
-                {
-
-                    List<Data.Models.HRExpenseTripTable> listHRExpenseTripTable = bllHRExpenseTripTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager1, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.HRExpenseTripTable hrExpenseTripTable in listHRExpenseTripTable)
-                    {
-
-                        hrExpenseTripTable.currentUserId = (newUser.manager1 ?? 0);
-                        await bllHRExpenseTripTable.Update(hrExpenseTripTable);
-                    }
-                    List<Data.Models.HRExpenseTripDetail> listHRExpenseTripDetail = bllHRExpenseTripDetail
-                            .findByUserIdActive(oldUser.manager1, oldUser.Id);
-                    foreach (Data.Models.HRExpenseTripDetail hrExpenseTripDetail in listHRExpenseTripDetail)
-                    {
-                        hrExpenseTripDetail.userId = (newUser.manager1 ?? 0);
-                        await bllHRExpenseTripDetail.Update(hrExpenseTripDetail);
-
-                    }
-
-                    List<Data.Models.HRExpenseTable> listHRExpense = bllHRExpenseTable.findByUserIdActive(oldUser.manager1,
-                            oldUser.Id);
-                    foreach (Data.Models.HRExpenseTable hrExpenseTable in listHRExpense)
-                    {
-                        hrExpenseTable.currentUserId = (newUser.manager1 ?? 0);
-                        await bllHRExpenseTable.Update(hrExpenseTable);
-                    }
-
-                    List<Data.Models.HRExpenseDetail> listHRExpenseDetail = bllHRExpenseDetail
-                            .findAllByUserIdActive(oldUser.manager1, oldUser.Id);
-                    foreach (Data.Models.HRExpenseDetail hrExpenseDetail in listHRExpenseDetail)
-                    {
-                        hrExpenseDetail.userId = (newUser.manager1 ?? 0);
-                        await bllHRExpenseDetail.Update(hrExpenseDetail);
-
-                    }
-
-                    List<Data.Models.HRExpenseWithOutTable> listHRExpenseWithOut = bllHRExpenseWithOutTable
-                            .findByUserIdActive(oldUser.manager1, oldUser.Id);
-                    foreach (Data.Models.HRExpenseWithOutTable hrExpenseWithOutTable in listHRExpenseWithOut)
-                    {
-                        hrExpenseWithOutTable.currentUserId = (newUser.manager1 ?? 0);
-                        await bllHRExpenseWithOutTable.Update(hrExpenseWithOutTable);
-
-                    }
-                    List<Data.Models.HRExpenseWithOutDetail> listHRExpenseWithOutDetail = bllHRExpenseWithOutDetail
-                            .findAllByUserIdActive(oldUser.manager1, oldUser.Id);
-                    foreach (Data.Models.HRExpenseWithOutDetail hrExpenseWithOutDetail in listHRExpenseWithOutDetail)
-                    {
-                        hrExpenseWithOutDetail.userId = (newUser.manager1 ?? 0);
-                        await bllHRExpenseWithOutDetail.Update(hrExpenseWithOutDetail);
-
-                    }
-
-                    List<Data.Models.AnnualLeaveTable> liAnnualLeaveTables = bllAnnualLeaveTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager1, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveTable annualLeaveTable in liAnnualLeaveTables)
-                    {
-                        annualLeaveTable.currentUserId = (newUser.manager1 ?? 0);
-                        await bllAnnualLeaveTable.Update(annualLeaveTable);
-
-                    }
-                    List<Data.Models.AnnualLeaveDetail> listAnnualLeaveDetail = bllAnnualLeaveDetail
-                            .findAllByUserIdActive(oldUser.manager1, oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveDetail annualLeaveDetail in listAnnualLeaveDetail)
-                    {
-
-                        annualLeaveDetail.userId = (newUser.manager1 ?? 0);
-                        await bllAnnualLeaveDetail.Update(annualLeaveDetail);
-
-                    }
-
-                    List<Data.Models.RepresentativeExpenseTable> listRepresentativeExpenseTable = bllRepresentativeExpenseTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager1, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.RepresentativeExpenseTable representativeExpenseTable in listRepresentativeExpenseTable)
-                    {
-                        representativeExpenseTable.currentUserId = (newUser.manager1 ?? 0);
-                        await bllRepresentativeExpenseTable.Update(representativeExpenseTable);
-                    }
-                    List<Data.Models.RepresentativeExpenseDetail> listRepresentativeExpenseDetail = bllRepresentativeExpenseDetail
-                            .findAllByUserIdActive(oldUser.manager1, oldUser.Id);
-                    foreach (Data.Models.RepresentativeExpenseDetail representativeExpenseDetail in listRepresentativeExpenseDetail)
-                    {
-
-                        representativeExpenseDetail.userId = (newUser.manager1 ?? 0);
-                        await bllRepresentativeExpenseDetail.Update(representativeExpenseDetail);
-
-                    }
-
-                }
-                // manager2 değişmiş ise
-                if (oldUser.manager2 != newUser.manager2)
-                {
-
-                    List<Data.Models.HRExpenseTripTable> listHRExpenseTripTable = bllHRExpenseTripTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager2, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.HRExpenseTripTable hrExpenseTripTable in listHRExpenseTripTable)
-                    {
-
-                        if (newUser.manager2 != null)
-                        {
-                            hrExpenseTripTable.currentUserId = (newUser.manager2 ?? 0);
-                            await bllHRExpenseTripTable.Update(hrExpenseTripTable);
-                        }
-                        else
-                        {
-                            // bitir
-                            hrExpenseTripTable.onaySirasi = (10);
-                            hrExpenseTripTable.currentStateId = (4);
-                            await bllHRExpenseTripTable.Update(hrExpenseTripTable);
-                        }
-                    }
-
-                    List<Data.Models.HRExpenseTripDetail> listHRExpenseTripDetail = bllHRExpenseTripDetail
-                            .findByUserIdActive(oldUser.manager2, oldUser.Id);
-                    foreach (Data.Models.HRExpenseTripDetail hrExpenseTripDetail in listHRExpenseTripDetail)
-                    {
-                        if (newUser.manager2 != null)
-                        {
-                            hrExpenseTripDetail.userId = (newUser.manager2 ?? 0);
-                            await bllHRExpenseTripDetail.Update(hrExpenseTripDetail);
-                        }
-                        else
-                        {
-                            // sil
-                            hrExpenseTripDetail.enabled = (false);
-                            await bllHRExpenseTripDetail.Update(hrExpenseTripDetail);
-                        }
-
-                    }
-                    List<Data.Models.HRExpenseTable> listHRExpense = bllHRExpenseTable.findByUserIdActive(oldUser.manager2,
-                            oldUser.Id);
-                    foreach (Data.Models.HRExpenseTable hrExpenseTable in listHRExpense)
-                    {
-                        if (newUser.manager2 != null)
-                        {
-                            hrExpenseTable.currentUserId = (newUser.manager2 ?? 0);
-                            await bllHRExpenseTable.Update(hrExpenseTable);
-                        }
-                        else
-                        {
-                            // bitir
-                            hrExpenseTable.onaySirasi = (10);
-                            hrExpenseTable.currentStateId = (4);
-                            await bllHRExpenseTable.Update(hrExpenseTable);
-                        }
-                    }
-
-                    List<Data.Models.HRExpenseDetail> listHRExpenseDetail = bllHRExpenseDetail
-                            .findAllByUserIdActive(oldUser.manager2, oldUser.Id);
-                    foreach (Data.Models.HRExpenseDetail hrExpenseDetail in listHRExpenseDetail)
-                    {
-                        if (newUser.manager2 != null)
-                        {
-                            hrExpenseDetail.userId = (newUser.manager2 ?? 0);
-                            await bllHRExpenseDetail.Update(hrExpenseDetail);
-                        }
-                        else
-                        {
-                            // sil
-                            hrExpenseDetail.enabled = (false);
-                            await bllHRExpenseDetail.Update(hrExpenseDetail);
-                        }
-
-                    }
-
-                    List<Data.Models.HRExpenseWithOutTable> listHRExpenseWithOut = bllHRExpenseWithOutTable
-                            .findByUserIdActive(oldUser.manager2, oldUser.Id);
-                    foreach (Data.Models.HRExpenseWithOutTable hrExpenseWithOutTable in listHRExpenseWithOut)
-                    {
-                        if (newUser.manager2 != null)
-                        {
-                            hrExpenseWithOutTable.currentUserId = (newUser.manager2 ?? 0);
-                            await bllHRExpenseWithOutTable.Update(hrExpenseWithOutTable);
-                        }
-                        else
-                        {
-                            // bitir
-                            hrExpenseWithOutTable.onaySirasi = (10);
-                            hrExpenseWithOutTable.currentStateId = (4);
-                            await bllHRExpenseWithOutTable.Update(hrExpenseWithOutTable);
-                        }
-
-                    }
-                    List<Data.Models.HRExpenseWithOutDetail> listHRExpenseWithOutDetail = bllHRExpenseWithOutDetail
-                            .findAllByUserIdActive(oldUser.manager2, oldUser.Id);
-                    foreach (Data.Models.HRExpenseWithOutDetail hrExpenseWithOutDetail in listHRExpenseWithOutDetail)
-                    {
-                        if (newUser.manager2 != null)
-                        {
-                            hrExpenseWithOutDetail.userId = (newUser.manager2 ?? 0);
-                            await bllHRExpenseWithOutDetail.Update(hrExpenseWithOutDetail);
-                        }
-                        else
-                        {
-                            // sil
-                            hrExpenseWithOutDetail.enabled = (false);
-                            await bllHRExpenseWithOutDetail.Update(hrExpenseWithOutDetail);
-                        }
-
-                    }
-
-                    List<Data.Models.AnnualLeaveTable> listAnnualLeaveTable = bllAnnualLeaveTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager2, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveTable annualLeaveTable in listAnnualLeaveTable)
-                    {
-                        if (newUser.manager2 != null)
-                        {
-                            annualLeaveTable.currentUserId = (newUser.manager2 ?? 0);
-                            await bllAnnualLeaveTable.Update(annualLeaveTable);
-                        }
-                        else
-                        {
-                            // bitir
-                            // annualLeaveTable.setOnaySirasi(10);
-                            annualLeaveTable.currentStateId = (4);
-                            await bllAnnualLeaveTable.Update(annualLeaveTable);
-                        }
-                    }
-                    List<Data.Models.AnnualLeaveDetail> listAnnualLeaveDetail = bllAnnualLeaveDetail
-                            .findAllByUserIdActive(oldUser.manager2, oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveDetail annualLeaveDetail in listAnnualLeaveDetail)
-                    {
-                        if (newUser.manager2 != null)
-                        {
-                            annualLeaveDetail.userId = (newUser.manager2 ?? 0);
-                            await bllAnnualLeaveDetail.Update(annualLeaveDetail);
-                        }
-                        else
-                        {
-                            // sil
-                            annualLeaveDetail.enabled = (false);
-                            await bllAnnualLeaveDetail.Update(annualLeaveDetail);
-                        }
-
-                    }
-
-                    List<Data.Models.RepresentativeExpenseTable> listRepresentativeExpenseTable = bllRepresentativeExpenseTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager2, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.RepresentativeExpenseTable representativeExpenseTable in listRepresentativeExpenseTable)
-                    {
-                        if (newUser.manager2 != null)
-                        {
-                            representativeExpenseTable.currentUserId = (newUser.manager2 ?? 0);
-                            await bllRepresentativeExpenseTable.Update(representativeExpenseTable);
-                        }
-                        else
-                        {
-                            // bitir
-                            representativeExpenseTable.onaySirasi = (10);
-                            representativeExpenseTable.currentStateId = (4);
-                            await bllRepresentativeExpenseTable.Update(representativeExpenseTable);
-                        }
-                    }
-
-                    List<Data.Models.RepresentativeExpenseDetail> listRepresentativeExpenseDetail = bllRepresentativeExpenseDetail
-                            .findAllByUserIdActive(oldUser.manager2, oldUser.Id);
-                    foreach (Data.Models.RepresentativeExpenseDetail representativeExpenseDetail in listRepresentativeExpenseDetail)
-                    {
-                        if (newUser.manager2 != null)
-                        {
-                            representativeExpenseDetail.userId = (newUser.manager2 ?? 0);
-                            await bllRepresentativeExpenseDetail.Update(representativeExpenseDetail);
-                        }
-                        else
-                        {
-                            // sil
-                            representativeExpenseDetail.enabled = (false);
-                            await bllRepresentativeExpenseDetail.Update(representativeExpenseDetail);
-                        }
-
-                    }
-
-                }
-                // Manager 3 değişmiş ise
-                if (oldUser.manager3 != newUser.manager3)
-                {
-                    List<Data.Models.HRExpenseTripTable> listHRExpenseTripTable = bllHRExpenseTripTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager3, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.HRExpenseTripTable hrExpenseTripTable in listHRExpenseTripTable)
-                    {
-
-                        if (newUser.manager3 != null)
-                        {
-                            hrExpenseTripTable.currentUserId = (newUser.manager3 ?? 0);
-                            await bllHRExpenseTripTable.Update(hrExpenseTripTable);
-                        }
-                        else
-                        {
-                            // bitir
-                            hrExpenseTripTable.onaySirasi = (10);
-                            hrExpenseTripTable.currentStateId = (4);
-                            await bllHRExpenseTripTable.Update(hrExpenseTripTable);
-                        }
-                    }
-
-                    List<Data.Models.HRExpenseTripDetail> listHRExpenseTripDetail = bllHRExpenseTripDetail
-                            .findByUserIdActive(oldUser.manager3, oldUser.Id);
-                    foreach (Data.Models.HRExpenseTripDetail hrExpenseTripDetail in listHRExpenseTripDetail)
-                    {
-                        if (newUser.manager3 != null)
-                        {
-                            hrExpenseTripDetail.userId = (newUser.manager3 ?? 0);
-                            await bllHRExpenseTripDetail.Update(hrExpenseTripDetail);
-                        }
-                        else
-                        {
-                            // sil
-                            hrExpenseTripDetail.enabled = (false);
-                            await bllHRExpenseTripDetail.Update(hrExpenseTripDetail);
-                        }
-
-                    }
-
-                    List<Data.Models.HRExpenseTable> listHRExpense = bllHRExpenseTable.findByUserIdActive(oldUser.manager3,
-                            oldUser.Id);
-
-                    foreach (Data.Models.HRExpenseTable hrExpenseTable in listHRExpense)
-                    {
-                        if (newUser.manager3 != null)
-                        {
-                            hrExpenseTable.currentUserId = (newUser.manager3 ?? 0);
-                            await bllHRExpenseTable.Update(hrExpenseTable);
-                        }
-                        else
-                        {
-                            // bitir
-                            hrExpenseTable.onaySirasi = (10);
-                            hrExpenseTable.currentStateId = (4);
-                            await bllHRExpenseTable.Update(hrExpenseTable);
-                        }
-                    }
-
-                    List<Data.Models.HRExpenseDetail> listHRExpenseDetail = bllHRExpenseDetail
-                            .findAllByUserIdActive(oldUser.manager3, oldUser.Id);
-                    foreach (Data.Models.HRExpenseDetail hrExpenseDetail in listHRExpenseDetail)
-                    {
-                        if (newUser.manager3 != null)
-                        {
-                            hrExpenseDetail.userId = (newUser.manager3 ?? 0);
-                            await bllHRExpenseDetail.Update(hrExpenseDetail);
-                        }
-                        else
-                        {
-                            // sil
-                            hrExpenseDetail.enabled = (false);
-                            await bllHRExpenseDetail.Update(hrExpenseDetail);
-                        }
-
-                    }
-
-                    List<Data.Models.HRExpenseWithOutTable> listHRExpenseWithOut = bllHRExpenseWithOutTable
-                            .findByUserIdActive(oldUser.manager3, oldUser.Id);
-                    foreach (Data.Models.HRExpenseWithOutTable hrExpenseWithOutTable in listHRExpenseWithOut)
-                    {
-                        if (newUser.manager3 != null)
-                        {
-                            hrExpenseWithOutTable.currentUserId = (newUser.manager3 ?? 0);
-                            await bllHRExpenseWithOutTable.Update(hrExpenseWithOutTable);
-                        }
-                        else
-                        {
-                            // bitir
-                            hrExpenseWithOutTable.onaySirasi = (10);
-                            hrExpenseWithOutTable.currentStateId = (4);
-                            await bllHRExpenseWithOutTable.Update(hrExpenseWithOutTable);
-                        }
-
-                    }
-
-                    List<Data.Models.HRExpenseWithOutDetail> listHRExpenseWithOutDetail = bllHRExpenseWithOutDetail
-                            .findAllByUserIdActive(oldUser.manager3, oldUser.Id);
-                    foreach (Data.Models.HRExpenseWithOutDetail hrExpenseWithOutDetail in listHRExpenseWithOutDetail)
-                    {
-                        if (newUser.manager3 != null)
-                        {
-                            hrExpenseWithOutDetail.userId = (newUser.manager3 ?? 0);
-                            await bllHRExpenseWithOutDetail.Update(hrExpenseWithOutDetail);
-                        }
-                        else
-                        {
-                            // sil
-                            hrExpenseWithOutDetail.enabled = (false);
-                            await bllHRExpenseWithOutDetail.Update(hrExpenseWithOutDetail);
-                        }
-
-                    }
-
-                    List<Data.Models.AnnualLeaveTable> listAnnualLeaveTables = bllAnnualLeaveTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager3, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveTable annualLeaveTable in listAnnualLeaveTables)
-                    {
-                        if (newUser.manager3 != null)
-                        {
-                            annualLeaveTable.currentUserId = (newUser.manager3 ?? 0);
-                            await bllAnnualLeaveTable.Update(annualLeaveTable);
-                        }
-                        else
-                        {
-                            // bitir
-                            // annualLeaveTable.setOnaySirasi(10);
-                            annualLeaveTable.currentStateId = (4);
-                            await bllAnnualLeaveTable.Update(annualLeaveTable);
-                        }
-                    }
-
-                    List<Data.Models.AnnualLeaveDetail> listAnnualLeaveDetail = bllAnnualLeaveDetail
-                            .findAllByUserIdActive(oldUser.manager3, oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveDetail annualLeaveDetail in listAnnualLeaveDetail)
-                    {
-                        if (newUser.manager3 != null)
-                        {
-                            annualLeaveDetail.userId = (newUser.manager3 ?? 0);
-                            await bllAnnualLeaveDetail.Update(annualLeaveDetail);
-                        }
-                        else
-                        {
-                            // sil
-                            annualLeaveDetail.enabled = (false);
-                            await bllAnnualLeaveDetail.Update(annualLeaveDetail);
-                        }
-
-                    }
-
-                    List<Data.Models.RepresentativeExpenseTable> listRepresentativeExpenseTable = bllRepresentativeExpenseTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager3, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.RepresentativeExpenseTable representativeExpenseTable in listRepresentativeExpenseTable)
-                    {
-                        if (newUser.manager3 != null)
-                        {
-                            representativeExpenseTable.currentUserId = (newUser.manager3 ?? 0);
-                            await bllRepresentativeExpenseTable.Update(representativeExpenseTable);
-                        }
-                        else
-                        {
-                            // bitir
-                            representativeExpenseTable.onaySirasi = (10);
-                            representativeExpenseTable.currentStateId = (4);
-                            await bllRepresentativeExpenseTable.Update(representativeExpenseTable);
-                        }
-                    }
-                    List<Data.Models.RepresentativeExpenseDetail> listRepresentativeExpenseDetail = bllRepresentativeExpenseDetail
-                            .findAllByUserIdActive(oldUser.manager3, oldUser.Id);
-                    foreach (Data.Models.RepresentativeExpenseDetail representativeExpenseDetail in listRepresentativeExpenseDetail)
-                    {
-                        if (newUser.manager3 != null)
-                        {
-                            representativeExpenseDetail.userId = (newUser.manager3 ?? 0);
-                            await bllRepresentativeExpenseDetail.Update(representativeExpenseDetail);
-                        }
-                        else
-                        {
-                            // sil
-                            representativeExpenseDetail.enabled = (false);
-                            await bllRepresentativeExpenseDetail.Update(representativeExpenseDetail);
-                        }
-
-                    }
-
-                }
-                // Manager 4 değişmiş ise
-                if (oldUser.manager4 != newUser.manager4)
-                {
-
-                    List<Data.Models.HRExpenseTripTable> listHRExpenseTripTable = bllHRExpenseTripTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager4, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.HRExpenseTripTable hrExpenseTripTable in listHRExpenseTripTable)
-                    {
-                        if (newUser.manager4 != null)
-                        {
-                            hrExpenseTripTable.currentUserId = (newUser.manager4 ?? 0);
-                            await bllHRExpenseTripTable.Update(hrExpenseTripTable);
-                        }
-                        else
-                        {
-                            hrExpenseTripTable.onaySirasi = (10);
-                            hrExpenseTripTable.currentStateId = (4);
-                            await bllHRExpenseTripTable.Update(hrExpenseTripTable);
-                        }
-
-                    }
-
-                    List<Data.Models.HRExpenseTripDetail> listHRExpenseTripDetail = bllHRExpenseTripDetail
-                            .findByUserIdActive(oldUser.manager4, oldUser.Id);
-                    foreach (Data.Models.HRExpenseTripDetail hrExpenseTripDetail in listHRExpenseTripDetail)
-                    {
-                        if (newUser.manager4 != null)
-                        {
-                            hrExpenseTripDetail.createdUserId = (newUser.manager4);
-                            await bllHRExpenseTripDetail.Update(hrExpenseTripDetail);
-                        }
-                        else
-                        {
-                            hrExpenseTripDetail.enabled = (false);
-                            await bllHRExpenseTripDetail.Update(hrExpenseTripDetail);
-                        }
-
-                    }
-
-                    List<Data.Models.HRExpenseTable> listHRExpense = bllHRExpenseTable.findByUserIdActive(oldUser.manager4,
-                            oldUser.Id);
-                    foreach (Data.Models.HRExpenseTable hrExpenseTable in listHRExpense)
-                    {
-                        if (newUser.manager4 != null)
-                        {
-                            hrExpenseTable.currentUserId = (newUser.manager4 ?? 0);
-                            await bllHRExpenseTable.Update(hrExpenseTable);
-                        }
-                        else
-                        {
-                            hrExpenseTable.onaySirasi = (10);
-                            hrExpenseTable.currentStateId = (4);
-                            await bllHRExpenseTable.Update(hrExpenseTable);
-                        }
-
-                    }
-
-                    List<Data.Models.HRExpenseDetail> listHRExpenseDetail = bllHRExpenseDetail
-                            .findAllByUserIdActive(oldUser.manager4, oldUser.Id);
-                    foreach (Data.Models.HRExpenseDetail hrExpenseDetail in listHRExpenseDetail)
-                    {
-                        if (newUser.manager4 != null)
-                        {
-                            hrExpenseDetail.userId = (newUser.manager4 ?? 0);
-                            await bllHRExpenseDetail.Update(hrExpenseDetail);
-                        }
-                        else
-                        {
-                            hrExpenseDetail.enabled = (false);
-                            await bllHRExpenseDetail.Update(hrExpenseDetail);
-                        }
-                    }
-
-                    List<Data.Models.HRExpenseWithOutTable> listHRExpenseWithOut = bllHRExpenseWithOutTable
-                            .findByUserIdActive(oldUser.manager4, oldUser.Id);
-                    foreach (Data.Models.HRExpenseWithOutTable hrExpenseWithOutTable in listHRExpenseWithOut)
-                    {
-                        if (newUser.manager4 != null)
-                        {
-                            hrExpenseWithOutTable.currentUserId = (newUser.manager4 ?? 0);
-                            await bllHRExpenseWithOutTable.Update(hrExpenseWithOutTable);
-                        }
-                        else
-                        {
-                            hrExpenseWithOutTable.onaySirasi = (10);
-                            hrExpenseWithOutTable.currentStateId = (4);
-                            await bllHRExpenseWithOutTable.Update(hrExpenseWithOutTable);
-                        }
-                    }
-
-                    List<Data.Models.HRExpenseWithOutDetail> listHRExpenseWithOutDetail = bllHRExpenseWithOutDetail
-                            .findAllByUserIdActive(oldUser.manager4, oldUser.Id);
-                    foreach (Data.Models.HRExpenseWithOutDetail hrExpenseWithOutDetail in listHRExpenseWithOutDetail)
-                    {
-                        if (newUser.manager4 != null)
-                        {
-                            hrExpenseWithOutDetail.userId = (newUser.manager4 ?? 0);
-                            await bllHRExpenseWithOutDetail.Update(hrExpenseWithOutDetail);
-                        }
-                        else
-                        {
-                            hrExpenseWithOutDetail.enabled = (false);
-                            await bllHRExpenseWithOutDetail.Update(hrExpenseWithOutDetail);
-                        }
-                    }
-
-                    List<Data.Models.AnnualLeaveTable> listAnnualLeaveTable = bllAnnualLeaveTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager4, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveTable annualLeaveTable in listAnnualLeaveTable)
-                    {
-                        if (newUser.manager4 != null)
-                        {
-                            annualLeaveTable.currentUserId = (newUser.manager4 ?? 0);
-                            await bllAnnualLeaveTable.Update(annualLeaveTable);
-                        }
-                        else
-                        {
-                            // annualLeaveTable.setOnaySirasi(10);
-                            annualLeaveTable.currentStateId = (4);
-                            await bllAnnualLeaveTable.Update(annualLeaveTable);
-                        }
-
-                    }
-                    List<Data.Models.AnnualLeaveDetail> listAnnualLeaveDetail = bllAnnualLeaveDetail
-                            .findAllByUserIdActive(oldUser.manager4, oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveDetail annualLeaveDetail in listAnnualLeaveDetail)
-                    {
-                        if (newUser.manager4 != null)
-                        {
-                            annualLeaveDetail.userId = (newUser.manager4 ?? 0);
-                            await bllAnnualLeaveDetail.Update(annualLeaveDetail);
-                        }
-                        else
-                        {
-                            annualLeaveDetail.enabled = (false);
-                            await bllAnnualLeaveDetail.Update(annualLeaveDetail);
-                        }
-                    }
-
-                    List<Data.Models.RepresentativeExpenseTable> listRepresentativeExpenseTable = bllRepresentativeExpenseTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.manager4, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.RepresentativeExpenseTable representativeExpenseTable in listRepresentativeExpenseTable)
-                    {
-                        if (newUser.manager4 != null)
-                        {
-                            representativeExpenseTable.userId = (newUser.manager4 ?? 0);
-                            await bllRepresentativeExpenseTable.Update(representativeExpenseTable);
-                        }
-                        else
-                        {
-                            representativeExpenseTable.onaySirasi = (10);
-                            representativeExpenseTable.currentStateId = (4);
-                            await bllRepresentativeExpenseTable.Update(representativeExpenseTable);
-                        }
-                    }
-
-                    List<Data.Models.RepresentativeExpenseDetail> listRepresentativeExpenseDetail = bllRepresentativeExpenseDetail
-                            .findAllByUserIdActive(oldUser.manager4, oldUser.Id);
-                    foreach (Data.Models.RepresentativeExpenseDetail representativeExpenseDetail in listRepresentativeExpenseDetail)
-                    {
-                        if (newUser.manager4 != null)
-                        {
-                            representativeExpenseDetail.userId = (newUser.manager4 ?? 0);
-                            await bllRepresentativeExpenseDetail.Update(representativeExpenseDetail);
-                        }
-                        else
-                        {
-                            representativeExpenseDetail.enabled = (false);
-                            await bllRepresentativeExpenseDetail.Update(representativeExpenseDetail);
-                        }
-                    }
-
+                    await UpdateCommonApprovalUserAsync(
+                        oldUser.Id,
+                        oldUser.hremployer1!.Value,
+                        newUser.hremployer1,
+                        finishFlowWhenRemoved: false);
                 }
 
-                if (oldUser.izinOnayId != newUser.izinOnayId)
+
+                // ============================================================
+                // MANAGER 1
+                // ============================================================
+
+                if (ApproverChanged(
+                    oldUser.manager1,
+                    newUser.manager1))
                 {
-
-                    List<Data.Models.AnnualLeaveTable> listAnnualLeaveTable = bllAnnualLeaveTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.izinOnayId, 1, true,
-                                    oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveTable annualLeaveTable in listAnnualLeaveTable)
-                    {
-                        if (newUser.izinOnayId != null)
-                        {
-                            annualLeaveTable.currentUserId = (newUser.izinOnayId ?? 0);
-                            await bllAnnualLeaveTable.Update(annualLeaveTable);
-                        }
-                        else
-                        {
-                            // annualLeaveTable.setOnaySirasi(10);
-                            annualLeaveTable.currentStateId = (4);
-                            await bllAnnualLeaveTable.Update(annualLeaveTable);
-                        }
-
-                    }
-                    List<Data.Models.AnnualLeaveDetail> listAnnualLeaveDetail = bllAnnualLeaveDetail
-                            .findAllByUserIdActive(oldUser.izinOnayId, oldUser.Id);
-                    foreach (Data.Models.AnnualLeaveDetail annualLeaveDetail in listAnnualLeaveDetail)
-                    {
-                        if (newUser.izinOnayId != null)
-                        {
-                            annualLeaveDetail.userId = (newUser.izinOnayId ?? 0);
-                            await bllAnnualLeaveDetail.Update(annualLeaveDetail);
-                        }
-                        else
-                        {
-                            annualLeaveDetail.enabled = (false);
-                            await bllAnnualLeaveDetail.Update(annualLeaveDetail);
-                        }
-                    }
-
+                    await UpdateCommonApprovalUserAsync(
+                        oldUser.Id,
+                        oldUser.manager1!.Value,
+                        newUser.manager1,
+                        finishFlowWhenRemoved: false);
                 }
 
-                if (oldUser.aracOnayId != newUser.aracOnayId)
+
+                // ============================================================
+                // MANAGER 2
+                // ============================================================
+
+                if (ApproverChanged(
+                    oldUser.manager2,
+                    newUser.manager2))
                 {
-
-                    List<Data.Models.AracTalepTable> listAracTalepTable = bllAracTalepTable
-                            .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(oldUser.aracOnayId, 1, true,
-                                    oldUser.Id);
-                    List<Data.Models.AracTalepTableDetail> listAracTalepTableDetail = bllAracTalepTableDetail
-                            .findAllByUserIdActive(oldUser.aracOnayId, oldUser.Id);
-                    foreach (Data.Models.AracTalepTable aracTalepTable in listAracTalepTable)
-                    {
-                        if (newUser.aracOnayId != null)
-                        {
-                            aracTalepTable.currentUserId = (newUser.aracOnayId);
-                            await bllAracTalepTable.Update(aracTalepTable);
-                        }
-                        else
-                        {
-                            // annualLeaveTable.setOnaySirasi(10);
-                            aracTalepTable.currentStateId = (4);
-                            await bllAracTalepTable.Update(aracTalepTable);
-                        }
-
-                    }
-
-                    foreach (Data.Models.AracTalepTableDetail aracTalepTableDetail in listAracTalepTableDetail)
-                    {
-                        if (newUser.aracOnayId != null)
-                        {
-                            aracTalepTableDetail.userId = (newUser.aracOnayId);
-
-                            await bllAracTalepTableDetail.Update(aracTalepTableDetail);
-
-                        }
-                        else
-                        {
-                            aracTalepTableDetail.enabled = (false);
-                            await bllAracTalepTableDetail.Update(aracTalepTableDetail);
-                        }
-                    }
-
+                    await UpdateCommonApprovalUserAsync(
+                        oldUser.Id,
+                        oldUser.manager2!.Value,
+                        newUser.manager2,
+                        finishFlowWhenRemoved: true);
                 }
+
+
+                // ============================================================
+                // MANAGER 3
+                // ============================================================
+
+                if (ApproverChanged(
+                    oldUser.manager3,
+                    newUser.manager3))
+                {
+                    await UpdateCommonApprovalUserAsync(
+                        oldUser.Id,
+                        oldUser.manager3!.Value,
+                        newUser.manager3,
+                        finishFlowWhenRemoved: true);
+                }
+
+
+                // ============================================================
+                // MANAGER 4
+                // ============================================================
+
+                if (ApproverChanged(
+                    oldUser.manager4,
+                    newUser.manager4))
+                {
+                    await UpdateCommonApprovalUserAsync(
+                        oldUser.Id,
+                        oldUser.manager4!.Value,
+                        newUser.manager4,
+                        finishFlowWhenRemoved: true);
+                }
+
+
+                // ============================================================
+                // İZİN ONAYLAYICI
+                // ============================================================
+
+                if (ApproverChanged(
+                    oldUser.izinOnayId,
+                    newUser.izinOnayId))
+                {
+                    await UpdateAnnualLeaveApproverAsync(
+                        oldUser.Id,
+                        oldUser.izinOnayId!.Value,
+                        newUser.izinOnayId);
+                }
+
+
+                // ============================================================
+                // ARAÇ ONAYLAYICI
+                // ============================================================
+
+                if (ApproverChanged(
+                    oldUser.aracOnayId,
+                    newUser.aracOnayId))
+                {
+                    await UpdateVehicleApproverAsync(
+                        oldUser.Id,
+                        oldUser.aracOnayId!.Value,
+                        newUser.aracOnayId);
+                }
+
+
+                // Eğer AdminUser modelinde updatedUserId varsa kullanabilirsin:
+                //
+                // newUser.updatedUserId = userId;
+
+
+                // oldUser AsNoTracking olduğu için burada artık aynı Id
+                // tracking çakışması oluşmaz.
                 return await Update(newUser);
             }
 
 
+            // ================================================================
+            // APPROVER CHANGED
+            // ================================================================
 
-            #endregion
+            private static bool ApproverChanged(
+                int? oldApproverId,
+                int? newApproverId)
+            {
+                /*
+                 * old = null, new = null
+                 *      -> false
+                 *
+                 * old = null, new = 15
+                 *      -> false
+                 *      -> ilk atama
+                 *
+                 * old = 15, new = 15
+                 *      -> false
+                 *
+                 * old = 15, new = 20
+                 *      -> true
+                 *
+                 * old = 15, new = null
+                 *      -> true
+                 */
+
+                return oldApproverId.HasValue &&
+                       oldApproverId != newApproverId;
+            }
+
+
+            // ================================================================
+            // ORTAK ONAYLAYICI DEĞİŞİKLİĞİ
+            //
+            // hremployer1
+            // manager1
+            // manager2
+            // manager3
+            // manager4
+            //
+            // için kullanılır.
+            // ================================================================
+
+            private async Task UpdateCommonApprovalUserAsync(
+                int employeeId,
+                int oldApproverId,
+                int? newApproverId,
+                bool finishFlowWhenRemoved)
+            {
+                BLLActions.HRExpenseTripTable bllHRExpenseTripTable =
+                    new BLLActions.HRExpenseTripTable(
+                        _configuration,
+                        _env,
+                        _mapper);
+
+                BLLActions.HRExpenseTable bllHRExpenseTable =
+                    new BLLActions.HRExpenseTable(
+                        _configuration,
+                        _env,
+                        _mapper);
+
+                BLLActions.HRExpenseDetail bllHRExpenseDetail =
+                    new BLLActions.HRExpenseDetail(
+                        _configuration,
+                        _env);
+
+                BLLActions.HRExpenseTripDetail bllHRExpenseTripDetail =
+                    new BLLActions.HRExpenseTripDetail(
+                        _configuration,
+                        _env);
+
+                BLLActions.HRExpenseWithOutTable bllHRExpenseWithOutTable =
+                    new BLLActions.HRExpenseWithOutTable(
+                        _configuration,
+                        _env,
+                        _mapper);
+
+                BLLActions.HRExpenseWithOutDetail bllHRExpenseWithOutDetail =
+                    new BLLActions.HRExpenseWithOutDetail(
+                        _configuration,
+                        _env);
+
+                BLLActions.AnnualLeaveTable bllAnnualLeaveTable =
+                    new BLLActions.AnnualLeaveTable(
+                        _configuration,
+                        _env,
+                        _mapper);
+
+                BLLActions.AnnualLeaveDetail bllAnnualLeaveDetail =
+                    new BLLActions.AnnualLeaveDetail(
+                        _configuration,
+                        _env);
+
+                BLLActions.RepresentativeExpenseTable
+                    bllRepresentativeExpenseTable =
+                        new BLLActions.RepresentativeExpenseTable(
+                            _configuration,
+                            _env,
+                            _mapper);
+
+                BLLActions.RepresentativeExpenseDetail
+                    bllRepresentativeExpenseDetail =
+                        new BLLActions.RepresentativeExpenseDetail(
+                            _configuration,
+                            _env);
+
+
+                // ============================================================
+                // HR EXPENSE TRIP TABLE
+                // ============================================================
+
+                List<Data.Models.HRExpenseTripTable> tripTables =
+                    bllHRExpenseTripTable
+                        .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(
+                            oldApproverId,
+                            1,
+                            true,
+                            employeeId);
+
+                foreach (Data.Models.HRExpenseTripTable item in tripTables)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.currentUserId =
+                            newApproverId.Value;
+                    }
+                    else if (finishFlowWhenRemoved)
+                    {
+                        item.onaySirasi = 10;
+                        item.currentStateId = 4;
+                    }
+                    else
+                    {
+                        item.currentUserId = 0;
+                    }
+
+                    await bllHRExpenseTripTable.Update(item);
+                }
+
+
+                // ============================================================
+                // HR EXPENSE TRIP DETAIL
+                // ============================================================
+
+                List<Data.Models.HRExpenseTripDetail> tripDetails =
+                    bllHRExpenseTripDetail
+                        .findByUserIdActive(
+                            oldApproverId,
+                            employeeId);
+
+                foreach (Data.Models.HRExpenseTripDetail item in tripDetails)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        /*
+                         * Eski manager4 kodunda burada:
+                         *
+                         * createdUserId
+                         *
+                         * değiştiriliyordu.
+                         *
+                         * Diğer manager bloklarıyla aynı olacak şekilde userId
+                         * kullanıyoruz.
+                         */
+                        item.userId =
+                            newApproverId.Value;
+                    }
+                    else if (finishFlowWhenRemoved)
+                    {
+                        item.enabled = false;
+                    }
+                    else
+                    {
+                        item.userId = 0;
+                    }
+
+                    await bllHRExpenseTripDetail.Update(item);
+                }
+
+
+                // ============================================================
+                // HR EXPENSE TABLE
+                // ============================================================
+
+                List<Data.Models.HRExpenseTable> expenseTables =
+                    bllHRExpenseTable
+                        .findByUserIdActive(
+                            oldApproverId,
+                            employeeId);
+
+                foreach (Data.Models.HRExpenseTable item in expenseTables)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.currentUserId =
+                            newApproverId.Value;
+                    }
+                    else if (finishFlowWhenRemoved)
+                    {
+                        item.onaySirasi = 10;
+                        item.currentStateId = 4;
+                    }
+                    else
+                    {
+                        item.currentUserId = 0;
+                    }
+
+                    await bllHRExpenseTable.Update(item);
+                }
+
+
+                // ============================================================
+                // HR EXPENSE DETAIL
+                // ============================================================
+
+                List<Data.Models.HRExpenseDetail> expenseDetails =
+                    bllHRExpenseDetail
+                        .findAllByUserIdActive(
+                            oldApproverId,
+                            employeeId);
+
+                foreach (Data.Models.HRExpenseDetail item in expenseDetails)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.userId =
+                            newApproverId.Value;
+                    }
+                    else if (finishFlowWhenRemoved)
+                    {
+                        item.enabled = false;
+                    }
+                    else
+                    {
+                        item.userId = 0;
+                    }
+
+                    await bllHRExpenseDetail.Update(item);
+                }
+
+
+                // ============================================================
+                // HR EXPENSE WITHOUT TABLE
+                // ============================================================
+
+                List<Data.Models.HRExpenseWithOutTable> withoutTables =
+                    bllHRExpenseWithOutTable
+                        .findByUserIdActive(
+                            oldApproverId,
+                            employeeId);
+
+                foreach (Data.Models.HRExpenseWithOutTable item in withoutTables)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.currentUserId =
+                            newApproverId.Value;
+                    }
+                    else if (finishFlowWhenRemoved)
+                    {
+                        item.onaySirasi = 10;
+                        item.currentStateId = 4;
+                    }
+                    else
+                    {
+                        item.currentUserId = 0;
+                    }
+
+                    await bllHRExpenseWithOutTable.Update(item);
+                }
+
+
+                // ============================================================
+                // HR EXPENSE WITHOUT DETAIL
+                // ============================================================
+
+                List<Data.Models.HRExpenseWithOutDetail> withoutDetails =
+                    bllHRExpenseWithOutDetail
+                        .findAllByUserIdActive(
+                            oldApproverId,
+                            employeeId);
+
+                foreach (Data.Models.HRExpenseWithOutDetail item in withoutDetails)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.userId =
+                            newApproverId.Value;
+                    }
+                    else if (finishFlowWhenRemoved)
+                    {
+                        item.enabled = false;
+                    }
+                    else
+                    {
+                        item.userId = 0;
+                    }
+
+                    await bllHRExpenseWithOutDetail.Update(item);
+                }
+
+
+                // ============================================================
+                // ANNUAL LEAVE TABLE
+                // ============================================================
+
+                List<Data.Models.AnnualLeaveTable> annualLeaveTables =
+                    bllAnnualLeaveTable
+                        .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(
+                            oldApproverId,
+                            1,
+                            true,
+                            employeeId);
+
+                foreach (Data.Models.AnnualLeaveTable item in annualLeaveTables)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.currentUserId =
+                            newApproverId.Value;
+                    }
+                    else if (finishFlowWhenRemoved)
+                    {
+                        /*
+                         * Mevcut kodunda AnnualLeave tarafında onaySirasi
+                         * değiştirilmeden currentStateId = 4 yapılıyordu.
+                         */
+                        item.currentStateId = 4;
+                    }
+                    else
+                    {
+                        item.currentUserId = 0;
+                    }
+
+                    await bllAnnualLeaveTable.Update(item);
+                }
+
+
+                // ============================================================
+                // ANNUAL LEAVE DETAIL
+                // ============================================================
+
+                List<Data.Models.AnnualLeaveDetail> annualLeaveDetails =
+                    bllAnnualLeaveDetail
+                        .findAllByUserIdActive(
+                            oldApproverId,
+                            employeeId);
+
+                foreach (Data.Models.AnnualLeaveDetail item in annualLeaveDetails)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.userId =
+                            newApproverId.Value;
+                    }
+                    else if (finishFlowWhenRemoved)
+                    {
+                        item.enabled = false;
+                    }
+                    else
+                    {
+                        item.userId = 0;
+                    }
+
+                    await bllAnnualLeaveDetail.Update(item);
+                }
+
+
+                // ============================================================
+                // REPRESENTATIVE EXPENSE TABLE
+                // ============================================================
+
+                List<Data.Models.RepresentativeExpenseTable> representativeTables =
+                    bllRepresentativeExpenseTable
+                        .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(
+                            oldApproverId,
+                            1,
+                            true,
+                            employeeId);
+
+                foreach (
+                    Data.Models.RepresentativeExpenseTable item
+                    in representativeTables)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        /*
+                         * Eski manager4 kodunda userId değiştiriliyordu.
+                         *
+                         * Diğer manager blokları ve sorgu currentUserId kullandığı
+                         * için currentUserId olarak düzenlendi.
+                         */
+                        item.currentUserId =
+                            newApproverId.Value;
+                    }
+                    else if (finishFlowWhenRemoved)
+                    {
+                        item.onaySirasi = 10;
+                        item.currentStateId = 4;
+                    }
+                    else
+                    {
+                        item.currentUserId = 0;
+                    }
+
+                    await bllRepresentativeExpenseTable.Update(item);
+                }
+
+
+                // ============================================================
+                // REPRESENTATIVE EXPENSE DETAIL
+                // ============================================================
+
+                List<Data.Models.RepresentativeExpenseDetail> representativeDetails =
+                    bllRepresentativeExpenseDetail
+                        .findAllByUserIdActive(
+                            oldApproverId,
+                            employeeId);
+
+                foreach (
+                    Data.Models.RepresentativeExpenseDetail item
+                    in representativeDetails)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.userId =
+                            newApproverId.Value;
+                    }
+                    else if (finishFlowWhenRemoved)
+                    {
+                        item.enabled = false;
+                    }
+                    else
+                    {
+                        item.userId = 0;
+                    }
+
+                    await bllRepresentativeExpenseDetail.Update(item);
+                }
+            }
+
+
+            // ================================================================
+            // YILLIK İZİN ONAYLAYICI
+            // ================================================================
+
+            private async Task UpdateAnnualLeaveApproverAsync(
+                int employeeId,
+                int oldApproverId,
+                int? newApproverId)
+            {
+                BLLActions.AnnualLeaveTable bllAnnualLeaveTable =
+                    new BLLActions.AnnualLeaveTable(
+                        _configuration,
+                        _env,
+                        _mapper);
+
+                BLLActions.AnnualLeaveDetail bllAnnualLeaveDetail =
+                    new BLLActions.AnnualLeaveDetail(
+                        _configuration,
+                        _env);
+
+
+                // ============================================================
+                // ANNUAL LEAVE TABLE
+                // ============================================================
+
+                List<Data.Models.AnnualLeaveTable> annualLeaveTables =
+                    bllAnnualLeaveTable
+                        .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(
+                            oldApproverId,
+                            1,
+                            true,
+                            employeeId);
+
+                foreach (Data.Models.AnnualLeaveTable item in annualLeaveTables)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.currentUserId =
+                            newApproverId.Value;
+                    }
+                    else
+                    {
+                        item.currentStateId = 4;
+                    }
+
+                    await bllAnnualLeaveTable.Update(item);
+                }
+
+
+                // ============================================================
+                // ANNUAL LEAVE DETAIL
+                // ============================================================
+
+                List<Data.Models.AnnualLeaveDetail> annualLeaveDetails =
+                    bllAnnualLeaveDetail
+                        .findAllByUserIdActive(
+                            oldApproverId,
+                            employeeId);
+
+                foreach (Data.Models.AnnualLeaveDetail item in annualLeaveDetails)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.userId =
+                            newApproverId.Value;
+                    }
+                    else
+                    {
+                        item.enabled = false;
+                    }
+
+                    await bllAnnualLeaveDetail.Update(item);
+                }
+            }
+
+
+            // ================================================================
+            // ARAÇ ONAYLAYICI
+            // ================================================================
+
+            private async Task UpdateVehicleApproverAsync(
+                int employeeId,
+                int oldApproverId,
+                int? newApproverId)
+            {
+                BLLActions.AracTalepTable bllAracTalepTable =
+                    new BLLActions.AracTalepTable(
+                        _configuration,
+                        _env,
+                        _mapper);
+
+                BLLActions.AracTalepTableDetail bllAracTalepTableDetail =
+                    new BLLActions.AracTalepTableDetail(
+                        _configuration,
+                        _env);
+
+
+                // ============================================================
+                // ARAÇ TALEP TABLE
+                // ============================================================
+
+                List<Data.Models.AracTalepTable> vehicleTables =
+                    bllAracTalepTable
+                        .findAllByCurrentUserIdAndCurrentStateIdAndEnabledAndUserId(
+                            oldApproverId,
+                            1,
+                            true,
+                            employeeId);
+
+                foreach (Data.Models.AracTalepTable item in vehicleTables)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.currentUserId =
+                            newApproverId.Value;
+                    }
+                    else
+                    {
+                        item.currentStateId = 4;
+                    }
+
+                    await bllAracTalepTable.Update(item);
+                }
+
+
+                // ============================================================
+                // ARAÇ TALEP DETAIL
+                // ============================================================
+
+                List<Data.Models.AracTalepTableDetail> vehicleDetails =
+                    bllAracTalepTableDetail
+                        .findAllByUserIdActive(
+                            oldApproverId,
+                            employeeId);
+
+                foreach (Data.Models.AracTalepTableDetail item in vehicleDetails)
+                {
+                    if (newApproverId.HasValue)
+                    {
+                        item.userId =
+                            newApproverId.Value;
+                    }
+                    else
+                    {
+                        item.enabled = false;
+                    }
+
+                    await bllAracTalepTableDetail.Update(item);
+                }
+            }
 
 
             public List<AdminUser> getUserByCompanyVkorg(List<int> listEmails, string vkorg, bool enabled)
             {
                 List<AdminUser> liste = dal.Get(u => u.enabled == enabled && u.role.companies.Contains(vkorg) && listEmails.Contains(u.Id)).ToList();
-              
-                
+
+
                 return liste;
             }
 

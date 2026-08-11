@@ -81,7 +81,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLL.BLLActions.FinansUserTable bllFinansUserTable = new BLL.BLLActions.FinansUserTable(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();

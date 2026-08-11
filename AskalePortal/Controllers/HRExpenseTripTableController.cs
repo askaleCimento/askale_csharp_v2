@@ -77,7 +77,13 @@ namespace AskalePortal.API.Controllers
         public ActionResult<PageReturn<HRExpenseTripTableSaveDto>> active([FromForm] FilterPageParam<HRExpenseTripTableActiveListDtoParameter> filterPageParam)
         {
             BLLActions.HRExpenseTripTable bllHRExpenseTripTable = new BLLActions.HRExpenseTripTable(_configuration, _env, _mapper);
-            PageReturn<HRExpenseTripTableSaveDto> page = bllHRExpenseTripTable.listByUserIdActive(filterPageParam);
+            int userId = 0;
+            if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
+            {
+                userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
+
+            }
+            PageReturn<HRExpenseTripTableSaveDto> page = bllHRExpenseTripTable.listByUserIdActive(filterPageParam, userId);
             return Ok(page);
         }
         #endregion
@@ -86,7 +92,13 @@ namespace AskalePortal.API.Controllers
         public ActionResult<PageReturn<HRExpenseTripTableSaveDto>> mylist([FromForm] FilterPageParam<HRExpenseTripTableMyListDtoParameter> filterPageParam)
         {
             BLLActions.HRExpenseTripTable bllHRExpenseTripTable = new BLLActions.HRExpenseTripTable(_configuration, _env, _mapper);
-            PageReturn<HRExpenseTripTableSaveDto> page = bllHRExpenseTripTable.listByUserIdMyList(filterPageParam);
+            int userId = 0;
+            if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
+            {
+                userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
+
+            }
+            PageReturn<HRExpenseTripTableSaveDto> page = bllHRExpenseTripTable.listByUserIdMyList(filterPageParam,userId);
 
             return Ok(page);
         }

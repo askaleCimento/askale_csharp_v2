@@ -187,6 +187,8 @@ public partial class AdminUser
 
     public string bank { get; set; }
 
+    public string? izinGunleri { get; set; }
+
     public int? aracOnayId { get; set; }
 
     public virtual ICollection<ActionLog> ActionLog { get; set; } = new List<ActionLog>();

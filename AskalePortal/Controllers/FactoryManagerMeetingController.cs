@@ -70,7 +70,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLL.BLLActions.FactoryManagerMeetings bllFactoryManagerMeetings = new BLL.BLLActions.FactoryManagerMeetings(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();

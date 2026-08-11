@@ -89,7 +89,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLLActions.HREmployeeType bllHREmployeeType = new BLLActions.HREmployeeType(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();

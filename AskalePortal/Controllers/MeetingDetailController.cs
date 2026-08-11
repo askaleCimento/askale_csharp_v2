@@ -65,7 +65,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLL.BLLActions.MeetingDetails bllMeetingDetails = new BLL.BLLActions.MeetingDetails(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();

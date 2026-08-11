@@ -57,7 +57,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLLActions.MusteriSikayetTipi bllMusteriSikayetTipi = new BLLActions.MusteriSikayetTipi(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();

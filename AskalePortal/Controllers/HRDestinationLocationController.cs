@@ -35,7 +35,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLL.BLLActions.HRDestinationLocation bllHRDestinationLocationTable = new BLL.BLLActions.HRDestinationLocation(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();

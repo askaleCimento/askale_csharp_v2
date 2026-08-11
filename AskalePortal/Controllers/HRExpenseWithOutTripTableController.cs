@@ -59,7 +59,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLLActions.HRExpenseWithOutTripTable bllHRExpenseWithOutTripTable = new BLLActions.HRExpenseWithOutTripTable(_configuration, _env, _mapper);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();

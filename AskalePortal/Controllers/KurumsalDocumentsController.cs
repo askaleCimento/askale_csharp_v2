@@ -40,7 +40,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLL.BLLActions.KurumsalDocuments bllKurumsalDocument = new BLL.BLLActions.KurumsalDocuments(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
                     KurumsalDocument kurumsalDocument = _mapper.Map<KurumsalDocument>(entity);
                     kurumsalDocument!.updatedDate = DateTime.Now;
@@ -118,7 +118,7 @@ namespace AskalePortal.API.Controllers
         #region createfolderleft
         [HttpPost("createfolderleft")]
 
-        public async Task<ActionResult<Data.ResponseModels.KurumsalDocumentsDto>> createfolderleft([FromForm] Data.ResponseModels.KurumsalDocumentsDto kurumsalDocumentsDto)
+        public async Task<ActionResult<Data.ResponseModels.KurumsalDocumentsDto>> createfolderleft([FromForm] Data.ResponseModels.KurumsalDocumentsDto entity)
         {
             try
             {
@@ -133,19 +133,19 @@ namespace AskalePortal.API.Controllers
             }
             BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
             AdminUser? user = bllAdminUsers.GetByID(userId);
-            kurumsalDocument.title = kurumsalDocumentsDto.title;
-            kurumsalDocument.typeName = kurumsalDocumentsDto.typeName;
-            kurumsalDocument.topId = kurumsalDocumentsDto.topID ??0;
-            kurumsalDocument.typeId=kurumsalDocumentsDto.typeID??0;
-            kurumsalDocument.filename=kurumsalDocumentsDto.filename;
-            kurumsalDocument.fileSize=kurumsalDocumentsDto.fileSize;
+            kurumsalDocument.title = entity.title;
+            kurumsalDocument.typeName = entity.typeName;
+            kurumsalDocument.topId = entity.topID ??0;
+            kurumsalDocument.typeId= entity.typeID??0;
+            kurumsalDocument.filename= entity.filename;
+            kurumsalDocument.fileSize= entity.fileSize;
             kurumsalDocument.documentID = Guid.NewGuid();
             kurumsalDocument.createdUserId = user?.Id??0;
             kurumsalDocument.createdByUserName = user?.name ??"";
             kurumsalDocument.createdDate = DateTime.Now;
             kurumsalDocument.archiveId = 0;
             kurumsalDocument.enabled = true;
-            if (kurumsalDocumentsDto.typeID == 1)
+            if (entity.typeID == 1)
             {
                 kurumsalDocument.fileSize = 0;
             }

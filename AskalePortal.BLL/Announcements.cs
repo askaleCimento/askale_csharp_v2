@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using AskalePortal.Data.ResponseModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,23 @@ namespace AskalePortal.BLL
             public override List<AskalePortal.Data.Models.Announcement> GetAll()
             {
                 var q = dal.Get(k => k.enabled == true).OrderByDescending(k => k.createdDate);
+
+                return q.ToList();
+            }
+
+            public List<AnnouncementSaveDto>? GetAllDto()
+            {
+                var q = dal.Get(k => k.enabled == true).OrderByDescending(k => k.createdDate).Select(u=>new AnnouncementSaveDto 
+                { 
+                 createdDate=u.createdDate.ToString("dd.MM.yyyy HH:ss"),
+                createdUserId=u.createdUserId,
+                description=u.description,
+                enabled=u.enabled,
+                id=u.Id,
+                title=u.title,
+                updateDate=u.updatedDate.ToString(),
+                updatedUserId = u.updatedUserId
+                } );
 
                 return q.ToList();
             }

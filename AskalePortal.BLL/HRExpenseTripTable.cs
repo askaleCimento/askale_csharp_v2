@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -304,7 +305,7 @@ namespace AskalePortal.BLL
                 try
                 {
 
-                    if (entity.id == 0)
+                    if (entity.id == null)
                     {
                         entity.createdUserId = (userId);
                         entity.enabled = (true);
@@ -366,126 +367,437 @@ namespace AskalePortal.BLL
                 }
             }
 
-            public PageReturn<HRExpenseTripTableSaveDto> listByUserIdActive(FilterPageParam<HRExpenseTripTableActiveListDtoParameter> filterPageParam)
-            {
 
-                PageReturn<HRExpenseTripTableSaveDto>? result = new PageReturn<HRExpenseTripTableSaveDto>();
+            public PageReturn<HRExpenseTripTableSaveDto> listByUserIdActive(
+                FilterPageParam<HRExpenseTripTableActiveListDtoParameter> filterPageParam, int currentUserId)
+            {
+                if (filterPageParam == null)
+                {
+                    throw new ArgumentNullException(nameof(filterPageParam));
+                }
+
                 int pageSize = filterPageParam.size ?? 20;
                 int pageNumber = filterPageParam.page ?? 0;
 
-                DateTime? gidisTarihi = filterPageParam.liste?.filterGidisTarihi;
-                DateTime? donusTarihi = filterPageParam.liste?.filterDonusTarihi;
-                int? userId = filterPageParam.liste?.filterUser;
-                int? filterDestination = filterPageParam.liste?.filterDestination;
+                // Geçersiz sayfalama değerlerini düzelt.
+                if (pageSize <= 0)
+                {
+                    pageSize = 20;
+                }
+                else if (pageSize > 200)
+                {
+                    pageSize = 200;
+                }
 
-                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                Models.AdminUser? user = bllAdminUsers.GetByID(userId ?? 0);
+                if (pageNumber < 0)
+                {
+                    pageNumber = 0;
+                }
 
+                int? filterUserId = filterPageParam.liste?.userId;
 
-                IQueryable<Models.HRExpenseTripTable> query = dal.Get(u =>
-                (u.enabled && u.approval == null && u.lastApproved == null && u.currentStateId == 1) &&
-                (user!.roleId  == 1 ? true : (u.createdUserId == userId || u.userId == userId)) &&
-                (filterDestination == null || filterDestination == 0 ? true : u.destinationLocationId == filterDestination) &&
-                (gidisTarihi == null ? true : u.gidisTarihi == gidisTarihi) &&
-                (donusTarihi == null ? true : u.donusTarihi == donusTarihi)
-                ).OrderByDescending(u => u.Id);
-                result.content = query
-                  .Skip(pageSize * pageNumber).Take(pageSize)
+                int? filterDestination =
+                    filterPageParam.liste?.filterDestination;
 
-                    .Select(u => new Data.ResponseModels.HRExpenseTripTableSaveDto()
+                DateTime? filterGidisTarihi =
+                    filterPageParam.liste?.filterGidisTarihi?.Date;
+
+                DateTime? filterDonusTarihi =
+                    filterPageParam.liste?.filterDonusTarihi?.Date;
+
+                if (filterUserId is <= 0)
+                {
+                    filterUserId = null;
+                }
+
+                if (filterDestination is <= 0)
+                {
+                    filterDestination = null;
+                }
+
+                if (currentUserId <= 0)
+                {
+                    throw new InvalidOperationException(
+                        "İşlemi yapan kullanıcı bilgisi bulunamadı.");
+                }
+
+                BLLActions.AdminUsers bllAdminUsers =
+                    new BLLActions.AdminUsers(
+                        _configuration,
+                        _env,
+                        _mapper);
+
+                Models.AdminUser? currentUser =
+                    bllAdminUsers.GetByID(currentUserId);
+
+                if (currentUser == null)
+                {
+                    throw new InvalidOperationException(
+                        $"Kullanıcı bulunamadı. UserId: {currentUserId}");
+                }
+
+                bool isAdmin = currentUser.roleId == 1;
+
+                IQueryable<Models.HRExpenseTripTable> query =
+                    dal.Get(u =>
+                        u.enabled &&
+                        u.approval == null &&
+                        u.lastApproved == null &&
+                        u.currentStateId == 1);
+
+                /*
+                 * Admin bütün kayıtları görebilir.
+                 * Diğer kullanıcılar yalnızca oluşturdukları veya kendilerine ait
+                 * kayıtları görebilir.
+                 */
+                if (!isAdmin)
+                {
+                    query = query.Where(u =>
+                        u.createdUserId == currentUserId ||
+                        u.userId == currentUserId);
+                }
+
+                /*
+                 * Kullanıcı filtresi yetki kontrolünden ayrı uygulanır.
+                 * filterUser seyahat sahibi kullanıcıyı ifade ediyorsa u.userId
+                 * üzerinden filtrelenmesi daha doğrudur.
+                 */
+                if (filterUserId.HasValue)
+                {
+                    query = query.Where(u =>
+                        u.userId == filterUserId.Value);
+                }
+
+                if (filterDestination.HasValue)
+                {
+                    query = query.Where(u =>
+                        u.destinationLocationId ==
+                        filterDestination.Value);
+                }
+
+                /*
+                 * Tarih alanında saat bilgisi bulunabileceği için eşitlik yerine
+                 * gün başlangıcı ve sonraki gün başlangıcı arasında filtreleme yapılır.
+                 */
+                if (filterGidisTarihi.HasValue)
+                {
+                    DateTime startDate = filterGidisTarihi.Value.Date;
+                    DateTime endDate = startDate.AddDays(1);
+
+                    query = query.Where(u =>
+                        u.gidisTarihi.HasValue &&
+                        u.gidisTarihi.Value >= startDate &&
+                        u.gidisTarihi.Value < endDate);
+                }
+
+                if (filterDonusTarihi.HasValue)
+                {
+                    DateTime startDate = filterDonusTarihi.Value.Date;
+                    DateTime endDate = startDate.AddDays(1);
+
+                    query = query.Where(u =>
+                        u.donusTarihi.HasValue &&
+                        u.donusTarihi.Value >= startDate &&
+                        u.donusTarihi.Value < endDate);
+                }
+
+                int totalElements = query.Count();
+
+                int totalPages = totalElements == 0
+                    ? 0
+                    : (int)Math.Ceiling(
+                        totalElements / (double)pageSize);
+
+                /*
+                 * Filtreleme sonrasında mevcut sayfa artık yoksa
+                 * son geçerli sayfaya dön.
+                 */
+                if (totalPages > 0 && pageNumber >= totalPages)
+                {
+                    pageNumber = totalPages - 1;
+                }
+
+                /*
+                 * Önce sadece ilgili sayfadaki entity kayıtları alınır.
+                 * Tarih formatlama işlemi SQL tarafında değil, bellekte yapılır.
+                 */
+                List<Models.HRExpenseTripTable> records = query
+                    .OrderByDescending(u => u.Id)
+                    .Skip(pageSize * pageNumber)
+                    .Take(pageSize)
+                    .ToList();
+
+                List<HRExpenseTripTableSaveDto> content = records
+                    .Select(u => new HRExpenseTripTableSaveDto
                     {
+                        id = u.Id,
                         disaprovecondition = u.disaprovecondition,
-                        gidisTarihi = u.gidisTarihi.ToString(),
-                        destinationLocationId = u.destinationLocationId,
+
+                        gidisTarihi = FormatDate(u.gidisTarihi),
+                        donusTarihi = FormatDate(u.donusTarihi),
+                        createdDate = FormatDate(u.createdDate),
+                        updateDate = FormatDate(u.updatedDate),
+
+                        destinationLocationId =
+                            u.destinationLocationId,
+
                         hereLocationId = u.hereLocationId,
                         approval = u.approval,
                         avans = u.avans,
-                        createdDate = u.createdDate.ToString(),
                         createdUserId = u.createdUserId,
                         currentStateId = u.currentStateId,
                         currentUserId = u.currentUserId,
                         digerDestination = u.digerDestination,
-                        donusTarihi = u.donusTarihi.ToString(),
                         enabled = u.enabled,
-                        id = u.Id,
                         lastApproved = u.lastApproved,
                         onaySirasi = u.onaySirasi,
                         tripDescription = u.tripDescription,
                         tripDescriptionId = u.tripDescriptionId,
-                        updateDate = u.updatedDate.ToString(),
                         updatedUserId = u.updatedUserId,
                         userId = u.userId,
-                        vekaletId = u.vekaletId,
+                        vekaletId = u.vekaletId
+                    })
+                    .ToList();
 
-                    }).ToList();
-                result.totalElements = query.Count();
-                result.number = result.content.Count();
-                result.size = pageSize;
+                PageReturn<HRExpenseTripTableSaveDto> result =
+                    new PageReturn<HRExpenseTripTableSaveDto>
+                    {
+                        content = content,
+                        totalElements = totalElements,
+                        totalPages = totalPages,
+
+                        // Mevcut sayfanın numarasıdır.
+                        number = pageNumber,
+
+                        // Mevcut sayfadaki kayıt sayısıdır.
+                        numberOfElements = content.Count,
+
+                        size = pageSize,
+                        first = pageNumber == 0,
+                        last = totalPages == 0 ||
+                               pageNumber == totalPages - 1,
+                        empty = content.Count == 0
+                    };
 
                 return result;
-
-
             }
 
-            public PageReturn<HRExpenseTripTableSaveDto> listByUserIdMyList(FilterPageParam<HRExpenseTripTableMyListDtoParameter> filterPageParam)
+
+
+            public PageReturn<HRExpenseTripTableSaveDto> listByUserIdMyList(FilterPageParam<HRExpenseTripTableMyListDtoParameter> filterPageParam, int currentUserId)
             {
-                PageReturn<HRExpenseTripTableSaveDto>? result = new PageReturn<HRExpenseTripTableSaveDto>();
+                if (filterPageParam == null)
+                {
+                    throw new ArgumentNullException(nameof(filterPageParam));
+                }
+
                 int pageSize = filterPageParam.size ?? 20;
                 int pageNumber = filterPageParam.page ?? 0;
 
-                DateTime? gidisTarihi = filterPageParam.liste?.filterGidisTarihi;
-                DateTime? donusTarihi = filterPageParam.liste?.filterDonusTarihi;
-                int? userId = filterPageParam.liste?.filterUser;
-                int? filterDestination = filterPageParam.liste?.filterDestination;
-                int? filterWhereYouAre = filterPageParam.liste?.filterWhereYouAre;
+                // Geçersiz sayfalama parametrelerini düzelt.
+                if (pageSize <= 0)
+                {
+                    pageSize = 20;
+                }
+                else if (pageSize > 200)
+                {
+                    pageSize = 200;
+                }
 
-                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                Models.AdminUser? user = bllAdminUsers.GetByID(userId ?? 0);
+                if (pageNumber < 0)
+                {
+                    pageNumber = 0;
+                }
 
+            
+                int? filterUserId =
+                    filterPageParam.liste?.filterUser;
 
-                IQueryable<Models.HRExpenseTripTable> query = dal.Get(u =>
-                (u.enabled && u.currentUserId == userId && u.approval == null && u.lastApproved == null && u.currentStateId == 1) &&
+                int? filterDestination =
+                    filterPageParam.liste?.filterDestination;
 
-                (filterWhereYouAre == null || filterWhereYouAre == 0 ? true : u.hereLocationId == filterWhereYouAre) &&
-                (filterDestination == null || filterDestination == 0 ? true : u.destinationLocationId == filterDestination) &&
-                (gidisTarihi == null ? true : u.gidisTarihi == gidisTarihi) &&
-                (donusTarihi == null ? true : u.donusTarihi == donusTarihi)
-                ).OrderByDescending(u => u.Id);
-                result.content = query
-                  .Skip(pageSize * pageNumber).Take(pageSize)
+                int? filterWhereYouAre =
+                    filterPageParam.liste?.filterWhereYouAre;
 
-                    .Select(u => new Data.ResponseModels.HRExpenseTripTableSaveDto()
+                DateTime? filterGidisTarihi =
+                    filterPageParam.liste?.filterGidisTarihi?.Date;
+
+                DateTime? filterDonusTarihi =
+                    filterPageParam.liste?.filterDonusTarihi?.Date;
+
+                // Flutter tarafından 0 gönderilen seçimleri filtresiz kabul et.
+                if (filterUserId is <= 0)
+                {
+                    filterUserId = null;
+                }
+
+                if (filterDestination is <= 0)
+                {
+                    filterDestination = null;
+                }
+
+                if (filterWhereYouAre is <= 0)
+                {
+                    filterWhereYouAre = null;
+                }
+
+                IQueryable<Models.HRExpenseTripTable> query =
+                    dal.Get(u =>
+                        u.enabled &&
+                        u.currentUserId == currentUserId &&
+                        u.approval == null &&
+                        u.lastApproved == null &&
+                        u.currentStateId == 1);
+
+                /*
+                 * filterUser seçilmişse seyahat sahibi kullanıcıya göre filtrele.
+                 * Bu filtre currentUserId kontrolünden farklıdır.
+                 */
+                if (filterUserId.HasValue)
+                {
+                    query = query.Where(u =>
+                        u.userId == filterUserId.Value);
+                }
+
+                if (filterWhereYouAre.HasValue)
+                {
+                    query = query.Where(u =>
+                        u.hereLocationId == filterWhereYouAre.Value);
+                }
+
+                if (filterDestination.HasValue)
+                {
+                    query = query.Where(u =>
+                        u.destinationLocationId ==
+                        filterDestination.Value);
+                }
+
+                /*
+                 * Tarihler saat bilgisi taşıyabileceği için doğrudan == kullanılmaz.
+                 * Seçilen günün başlangıcı ile sonraki günün başlangıcı karşılaştırılır.
+                 */
+                if (filterGidisTarihi.HasValue)
+                {
+                    DateTime startDate =
+                        filterGidisTarihi.Value.Date;
+
+                    DateTime endDate =
+                        startDate.AddDays(1);
+
+                    query = query.Where(u =>
+                        u.gidisTarihi.HasValue &&
+                        u.gidisTarihi.Value >= startDate &&
+                        u.gidisTarihi.Value < endDate);
+                }
+
+                if (filterDonusTarihi.HasValue)
+                {
+                    DateTime startDate =
+                        filterDonusTarihi.Value.Date;
+
+                    DateTime endDate =
+                        startDate.AddDays(1);
+
+                    query = query.Where(u =>
+                        u.donusTarihi.HasValue &&
+                        u.donusTarihi.Value >= startDate &&
+                        u.donusTarihi.Value < endDate);
+                }
+
+                int totalElements = query.Count();
+
+                int totalPages = totalElements == 0
+                    ? 0
+                    : (int)Math.Ceiling(
+                        totalElements / (double)pageSize);
+
+                /*
+                 * Filtre sonrası istenen sayfa kalmadıysa
+                 * son geçerli sayfaya dön.
+                 */
+                if (totalPages > 0 && pageNumber >= totalPages)
+                {
+                    pageNumber = totalPages - 1;
+                }
+
+                /*
+                 * Tarihleri formatlamadan önce sorguyu çalıştır.
+                 * Böylece ToString("dd.MM.yyyy") SQL'e çevrilmeye çalışılmaz.
+                 */
+                List<Models.HRExpenseTripTable> records = query
+                    .OrderByDescending(u => u.Id)
+                    .Skip(pageSize * pageNumber)
+                    .Take(pageSize)
+                    .ToList();
+
+                List<HRExpenseTripTableSaveDto> content = records
+                    .Select(u => new HRExpenseTripTableSaveDto
                     {
+                        id = u.Id,
                         disaprovecondition = u.disaprovecondition,
-                        gidisTarihi = u.gidisTarihi.ToString(),
-                        destinationLocationId = u.destinationLocationId,
-                        hereLocationId = u.hereLocationId,
+
+                        gidisTarihi = FormatDate(u.gidisTarihi),
+                        donusTarihi = FormatDate(u.donusTarihi),
+                        createdDate = FormatDate(u.createdDate),
+                        updateDate = FormatDate(u.updatedDate),
+
+                        destinationLocationId =
+                            u.destinationLocationId,
+
+                        hereLocationId =
+                            u.hereLocationId,
+
                         approval = u.approval,
                         avans = u.avans,
-                        createdDate = u.createdDate.ToString(),
                         createdUserId = u.createdUserId,
                         currentStateId = u.currentStateId,
                         currentUserId = u.currentUserId,
                         digerDestination = u.digerDestination,
-                        donusTarihi = u.donusTarihi.ToString(),
                         enabled = u.enabled,
-                        id = u.Id,
                         lastApproved = u.lastApproved,
                         onaySirasi = u.onaySirasi,
                         tripDescription = u.tripDescription,
                         tripDescriptionId = u.tripDescriptionId,
-                        updateDate = u.updatedDate.ToString(),
                         updatedUserId = u.updatedUserId,
                         userId = u.userId,
-                        vekaletId = u.vekaletId,
+                        vekaletId = u.vekaletId
+                    })
+                    .ToList();
 
-                    }).ToList();
-                result.totalElements = query.Count();
-                result.number = result.content.Count();
-                result.size = pageSize;
+                return new PageReturn<HRExpenseTripTableSaveDto>
+                {
+                    content = content,
+                    totalElements = totalElements,
+                    totalPages = totalPages,
 
-                return result;
+                    // Mevcut sayfa numarası.
+                    number = pageNumber,
 
+                    // Mevcut sayfadaki kayıt sayısı.
+                    numberOfElements = content.Count,
+
+                    size = pageSize,
+                    first = pageNumber == 0,
+                    last = totalPages == 0 ||
+                           pageNumber == totalPages - 1,
+                    empty = content.Count == 0
+                };
+            }
+
+            private static string FormatDate(DateTime? date)
+            {
+                return date.HasValue
+                    ? date.Value.ToString(
+                        "dd.MM.yyyy",
+                        CultureInfo.InvariantCulture)
+                    : string.Empty;
+            }
+
+            private static string FormatDate(DateTime date)
+            {
+                return date.ToString(
+                    "dd.MM.yyyy",
+                    CultureInfo.InvariantCulture);
             }
 
             public async Task<int> approve(int userId, int tripId, bool approved)
@@ -813,7 +1125,7 @@ namespace AskalePortal.BLL
                     return -1;
 
                 }
-                catch (Exception )
+                catch (Exception)
                 {
 
 
@@ -976,40 +1288,40 @@ namespace AskalePortal.BLL
                 string? filterusername = filterPageParam.liste?.filterUserName;
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
                 AdminUser? currentUser = bllAdminUsers.GetByID(userId);
-               
+
                 BLLActions.RoleDetails bllRoleDetails = new BLLActions.RoleDetails(_configuration, _env, _mapper);
                 RoleDetail? roleDetail = bllRoleDetails.GetByRoleIDAndModuleID(currentUser!.roleId, (int)CommonConstants.MODULES.HR_EXPENSE_CONTROL);
                 if (currentUser.roleId == 1)
                 {
-                  var  query = dal.Get(u => (u.enabled && u.currentStateId != 1 && u.approval == true)
-                     && (string.IsNullOrEmpty(filtername) ? true : u.user.name.Contains(filtername))
-                      && (string.IsNullOrEmpty(filterusername) ? true : u.user.username.Contains(filterusername))
-                    ).ToList().OrderByDescending(u=>u.Id).Select(u=> new HRExpenseTripTableSaveDto()
-                    {
-                        userId=u.userId,
-                        createdUserId=u.createdUserId,
-                        approval=u.approval,
-                        avans=u.avans,
-                        createdDate=u.createdDate.ToString(),
-                        currentStateId=u.currentStateId,
-                        currentUserId=u.currentUserId,
-                        destinationLocationId=u.destinationLocationId,
-                        digerDestination=u.digerDestination,
-                        disaprovecondition = u.disaprovecondition,
-                        donusTarihi = u.donusTarihi.ToString(),
-                        enabled = u.enabled,
-                        gidisTarihi = u.gidisTarihi.ToString(),
-                        hereLocationId=u.hereLocationId,
-                        id=u.Id,
-                        lastApproved = u.lastApproved,
-                        onaySirasi=u.onaySirasi,
-                        tripDescription = u.tripDescription,
-                        tripDescriptionId = u.tripDescriptionId,
-                        updateDate = u.updatedDate.ToString(),
-                        updatedUserId = u.updatedUserId,
-                        vekaletId = u.vekaletId
-                        
-                    });
+                    var query = dal.Get(u => (u.enabled && u.currentStateId != 1 && u.approval == true)
+                       && (string.IsNullOrEmpty(filtername) ? true : u.user.name.Contains(filtername))
+                        && (string.IsNullOrEmpty(filterusername) ? true : u.user.username.Contains(filterusername))
+                      ).ToList().OrderByDescending(u => u.Id).Select(u => new HRExpenseTripTableSaveDto()
+                      {
+                          userId = u.userId,
+                          createdUserId = u.createdUserId,
+                          approval = u.approval,
+                          avans = u.avans,
+                          createdDate = u.createdDate.ToString(),
+                          currentStateId = u.currentStateId,
+                          currentUserId = u.currentUserId,
+                          destinationLocationId = u.destinationLocationId,
+                          digerDestination = u.digerDestination,
+                          disaprovecondition = u.disaprovecondition,
+                          donusTarihi = u.donusTarihi.ToString(),
+                          enabled = u.enabled,
+                          gidisTarihi = u.gidisTarihi.ToString(),
+                          hereLocationId = u.hereLocationId,
+                          id = u.Id,
+                          lastApproved = u.lastApproved,
+                          onaySirasi = u.onaySirasi,
+                          tripDescription = u.tripDescription,
+                          tripDescriptionId = u.tripDescriptionId,
+                          updateDate = u.updatedDate.ToString(),
+                          updatedUserId = u.updatedUserId,
+                          vekaletId = u.vekaletId
+
+                      });
 
                     result.totalElements = query.Count();
 
@@ -1035,36 +1347,36 @@ namespace AskalePortal.BLL
                         Company company = bllCompanies.getByVkorgCompany(item);
                         listCompanyIdsint.Add(company.Id);
                     }
-                  var  query = dal.Get(u => (u.enabled && u.currentStateId != 1 && u.approval == true)
-                    && (string.IsNullOrEmpty(filtername) ? true : u.user.name.Contains(filtername))
-                      && (string.IsNullOrEmpty(filterusername) ? true : u.user.username.Contains(filterusername))
-                      && listCompanyIdsint.Contains(u.user.companyId)
-                    ).ToList().OrderByDescending(u => u.Id).Select(u => new HRExpenseTripTableSaveDto()
-                    {
-                        userId = u.userId,
-                        createdUserId = u.createdUserId,
-                        approval = u.approval,
-                        avans = u.avans,
-                        createdDate = u.createdDate.ToString(),
-                        currentStateId = u.currentStateId,
-                        currentUserId = u.currentUserId,
-                        destinationLocationId = u.destinationLocationId,
-                        digerDestination = u.digerDestination,
-                        disaprovecondition = u.disaprovecondition,
-                        donusTarihi = u.donusTarihi.ToString(),
-                        enabled = u.enabled,
-                        gidisTarihi = u.gidisTarihi.ToString(),
-                        hereLocationId = u.hereLocationId,
-                        id = u.Id,
-                        lastApproved = u.lastApproved,
-                        onaySirasi = u.onaySirasi,
-                        tripDescription = u.tripDescription,
-                        tripDescriptionId = u.tripDescriptionId,
-                        updateDate = u.updatedDate.ToString(),
-                        updatedUserId = u.updatedUserId,
-                        vekaletId = u.vekaletId
+                    var query = dal.Get(u => (u.enabled && u.currentStateId != 1 && u.approval == true)
+                      && (string.IsNullOrEmpty(filtername) ? true : u.user.name.Contains(filtername))
+                        && (string.IsNullOrEmpty(filterusername) ? true : u.user.username.Contains(filterusername))
+                        && listCompanyIdsint.Contains(u.user.companyId)
+                      ).ToList().OrderByDescending(u => u.Id).Select(u => new HRExpenseTripTableSaveDto()
+                      {
+                          userId = u.userId,
+                          createdUserId = u.createdUserId,
+                          approval = u.approval,
+                          avans = u.avans,
+                          createdDate = u.createdDate.ToString(),
+                          currentStateId = u.currentStateId,
+                          currentUserId = u.currentUserId,
+                          destinationLocationId = u.destinationLocationId,
+                          digerDestination = u.digerDestination,
+                          disaprovecondition = u.disaprovecondition,
+                          donusTarihi = u.donusTarihi.ToString(),
+                          enabled = u.enabled,
+                          gidisTarihi = u.gidisTarihi.ToString(),
+                          hereLocationId = u.hereLocationId,
+                          id = u.Id,
+                          lastApproved = u.lastApproved,
+                          onaySirasi = u.onaySirasi,
+                          tripDescription = u.tripDescription,
+                          tripDescriptionId = u.tripDescriptionId,
+                          updateDate = u.updatedDate.ToString(),
+                          updatedUserId = u.updatedUserId,
+                          vekaletId = u.vekaletId
 
-                    }); ;
+                      }); ;
 
                     result.totalElements = query.Count();
 
@@ -1081,36 +1393,36 @@ namespace AskalePortal.BLL
                 }
                 else
                 {
-                  var  query =dal.Get(u => (u.enabled && u.currentStateId != 1 && u.approval == true)
-                    && (u.createdUserId == userId || u.userId == userId)
-                     && (string.IsNullOrEmpty(filtername) ? true : u.user.name.Contains(filtername))
-                      && (string.IsNullOrEmpty(filterusername) ? true : u.user.username.Contains(filterusername))
-                    ).ToList().OrderByDescending(u => u.Id).Select(u => new HRExpenseTripTableSaveDto()
-                    {
-                        userId = u.userId,
-                        createdUserId = u.createdUserId,
-                        approval = u.approval,
-                        avans = u.avans,
-                        createdDate = u.createdDate.ToString(),
-                        currentStateId = u.currentStateId,
-                        currentUserId = u.currentUserId,
-                        destinationLocationId = u.destinationLocationId,
-                        digerDestination = u.digerDestination,
-                        disaprovecondition = u.disaprovecondition,
-                        donusTarihi = u.donusTarihi.ToString(),
-                        enabled = u.enabled,
-                        gidisTarihi = u.gidisTarihi.ToString(),
-                        hereLocationId = u.hereLocationId,
-                        id = u.Id,
-                        lastApproved = u.lastApproved,
-                        onaySirasi = u.onaySirasi,
-                        tripDescription = u.tripDescription,
-                        tripDescriptionId = u.tripDescriptionId,
-                        updateDate = u.updatedDate.ToString(),
-                        updatedUserId = u.updatedUserId,
-                        vekaletId = u.vekaletId
+                    var query = dal.Get(u => (u.enabled && u.currentStateId != 1 && u.approval == true)
+                      && (u.createdUserId == userId || u.userId == userId)
+                       && (string.IsNullOrEmpty(filtername) ? true : u.user.name.Contains(filtername))
+                        && (string.IsNullOrEmpty(filterusername) ? true : u.user.username.Contains(filterusername))
+                      ).ToList().OrderByDescending(u => u.Id).Select(u => new HRExpenseTripTableSaveDto()
+                      {
+                          userId = u.userId,
+                          createdUserId = u.createdUserId,
+                          approval = u.approval,
+                          avans = u.avans,
+                          createdDate = u.createdDate.ToString(),
+                          currentStateId = u.currentStateId,
+                          currentUserId = u.currentUserId,
+                          destinationLocationId = u.destinationLocationId,
+                          digerDestination = u.digerDestination,
+                          disaprovecondition = u.disaprovecondition,
+                          donusTarihi = u.donusTarihi.ToString(),
+                          enabled = u.enabled,
+                          gidisTarihi = u.gidisTarihi.ToString(),
+                          hereLocationId = u.hereLocationId,
+                          id = u.Id,
+                          lastApproved = u.lastApproved,
+                          onaySirasi = u.onaySirasi,
+                          tripDescription = u.tripDescription,
+                          tripDescriptionId = u.tripDescriptionId,
+                          updateDate = u.updatedDate.ToString(),
+                          updatedUserId = u.updatedUserId,
+                          vekaletId = u.vekaletId
 
-                    }); ;
+                      }); ;
 
                     result.totalElements = query.Count();
 
@@ -1134,14 +1446,14 @@ namespace AskalePortal.BLL
                     enabled = u.enabled,
                     updatedUserId = u.updatedUserId,
                     approval = u.approval,
-                    avans=u.avans,
-                    createdDate=u.createdDate.ToString(),
-                    createdUserId=u.createdUserId,
-                    currentStateId=u.currentStateId,
-                    currentUserId=u.currentUserId,
-                    destinationLocationId=u.destinationLocationId,
-                    digerDestination=u.digerDestination,
-                    disaprovecondition=u.disaprovecondition,
+                    avans = u.avans,
+                    createdDate = u.createdDate.ToString(),
+                    createdUserId = u.createdUserId,
+                    currentStateId = u.currentStateId,
+                    currentUserId = u.currentUserId,
+                    destinationLocationId = u.destinationLocationId,
+                    digerDestination = u.digerDestination,
+                    disaprovecondition = u.disaprovecondition,
                     donusTarihi = u.donusTarihi.ToString(),
                     gidisTarihi = u.gidisTarihi.ToString(),
                     hereLocationId = u.hereLocationId,

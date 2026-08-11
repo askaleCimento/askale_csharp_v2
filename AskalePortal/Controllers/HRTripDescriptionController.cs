@@ -33,7 +33,6 @@ namespace AskalePortal.API.Controllers
         }
         #endregion
 
-
         #region getById
         [HttpPost("getById")]
 
@@ -86,7 +85,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLLActions.HRTripDescription bllHRTripDescription = new BLLActions.HRTripDescription(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();

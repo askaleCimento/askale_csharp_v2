@@ -193,46 +193,46 @@ namespace AskalePortal.BLL
                         {
                             throw new InvalidOperationException("Kullanıcının izin onaylayıcısı tanımlı değil.");
                         }
-                        entity.createdUserId=userId;
-                        entity.createdDate=DateTime.Now.ToString("dd.MM.yyyy HH:mm");
-                        entity.enabled=true;
+                        entity.createdUserId = userId;
+                        entity.createdDate = DateTime.Now.ToString("dd.MM.yyyy HH:mm");
+                        entity.enabled = true;
                         Data.Models.AnnualLeaveTable annualLeaveTable = await Add(_mapper.Map<Data.Models.AnnualLeaveTable>(entity));
 
                         Data.Models.AnnualLeaveDetail annualLeaveDetail = new Data.Models.AnnualLeaveDetail();
-                        annualLeaveDetail.isReplied=false;
-                        annualLeaveDetail.userId= loggedUser?.izinOnayId??0;
-                        annualLeaveDetail.createdDate=DateTime.Now;
-                        annualLeaveDetail.anuId=annualLeaveTable.Id;
+                        annualLeaveDetail.isReplied = false;
+                        annualLeaveDetail.userId = loggedUser?.izinOnayId ?? 0;
+                        annualLeaveDetail.createdDate = DateTime.Now;
+                        annualLeaveDetail.anuId = annualLeaveTable.Id;
                         annualLeaveDetail.guid = Guid.NewGuid();
-                        annualLeaveDetail.siraNo=1;
-                        annualLeaveDetail.enabled=true;
+                        annualLeaveDetail.siraNo = 1;
+                        annualLeaveDetail.enabled = true;
                         BLLActions.AnnualLeaveDetail bllAnnualLeaveDetail = new BLLActions.AnnualLeaveDetail(_configuration, _env);
                         await bllAnnualLeaveDetail.Add(annualLeaveDetail);
 
                         EmailMessage emailMessage = new EmailMessage();
                         UserByNameEMailDto nextUserEmail = bllAdminUsers
-                                .getUserByNameAndEmail(loggedUser?.izinOnayId??0);
-                        emailMessage.isSent=false;
-                        emailMessage.toAddress=nextUserEmail.email;
-                        emailMessage.mailTuru=1;
-                        emailMessage.createdDate=DateTime.Now;
-                        emailMessage.createdUserId=userId;
-                        emailMessage.subject=annualLeaveTable.Id.ToString() + " Nolu İzin hk.";
-                        string mailString = "<h2>Sayın " + nextUserEmail.name+ "</h2><br/>" + "<h4>"
+                                .getUserByNameAndEmail(loggedUser?.izinOnayId ?? 0);
+                        emailMessage.isSent = false;
+                        emailMessage.toAddress = nextUserEmail.email;
+                        emailMessage.mailTuru = 1;
+                        emailMessage.createdDate = DateTime.Now;
+                        emailMessage.createdUserId = userId;
+                        emailMessage.subject = annualLeaveTable.Id.ToString() + " Nolu İzin hk.";
+                        string mailString = "<h2>Sayın " + nextUserEmail.name + "</h2><br/>" + "<h4>"
                                 + annualLeaveTable.Id.ToString() + " Id'li izin onayınızı beklemektedir.<br/></h4>";
-                        emailMessage.emailText=mailString;
-                        emailMessage.plannedDate=DateTime.Now;
-                        emailMessage.enabled=true;
+                        emailMessage.emailText = mailString;
+                        emailMessage.plannedDate = DateTime.Now;
+                        emailMessage.enabled = true;
                         BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
                         await bllEmailMessages.Add(emailMessage);
-                        return _mapper.Map<AnnualLeaveTableSaveDto> (annualLeaveTable);
+                        return _mapper.Map<AnnualLeaveTableSaveDto>(annualLeaveTable);
                     }
                     else
                     {
 
-                        entity.updatedUserId=userId;
-                        entity.updateDate=DateTime.Now.ToString();
-                        entity.enabled=true;
+                        entity.updatedUserId = userId;
+                        entity.updateDate = DateTime.Now.ToString();
+                        entity.enabled = true;
                         await Update(_mapper.Map<Data.Models.AnnualLeaveTable>(entity));
                         return (entity);
                     }
@@ -301,63 +301,147 @@ namespace AskalePortal.BLL
                 return dal.Get(u => u.userId == userId && u.enabled).ToList();
             }
 
-            public PageReturn<AnnualLeaveTableResponseDto>? list(FilterPageParam<AnnualLeaveFilterDtoRequest>filterPageParam, int adminUserId)
-            {
 
-                AdminUsers bllAdminUser = new AdminUsers(_configuration, _env, _mapper);
-                Data.Models.AdminUser? adminUser = bllAdminUser.GetByID(adminUserId);
+            public PageReturn<AnnualLeaveTableResponseDto>? list(
+                FilterPageParam<AnnualLeaveFilterDtoRequest> filterPageParam,
+                int adminUserId)
+            {
+                AdminUsers bllAdminUsers =
+                    new AdminUsers(_configuration, _env, _mapper);
+
+                Data.Models.AdminUser? adminUser =
+                    bllAdminUsers.GetByID(adminUserId);
 
                 if (adminUser == null)
+                {
                     return null;
-
-                PageReturn<AnnualLeaveTableResponseDto> result = new PageReturn<AnnualLeaveTableResponseDto>();
+                }
 
                 int pageSize = filterPageParam?.size ?? 10;
                 int pageNumber = filterPageParam?.page ?? 0;
 
+                if (pageSize <= 0)
+                {
+                    pageSize = 10;
+                }
+
+                if (pageNumber < 0)
+                {
+                    pageNumber = 0;
+                }
+
                 int? id = filterPageParam?.liste?.id;
-                int? userId = filterPageParam?.liste?.userId;
                 int? searchUserId = filterPageParam?.liste?.searchUserId;
                 int? currentStateId = filterPageParam?.liste?.currentStateId;
 
+                /*
+                 * roleId int olduğu için HasValue/Value kullanılmaz.
+                 *
+                 * canSeeLogs yalnızca yıllık izin modülü için kontrol edilir.
+                 * Başka bir modüldeki canSeeLogs yetkisi yıllık izin
+                 * kayıtlarının tamamını görme hakkı vermez.
+                 */
                 bool canSeeLogs =
                     adminUser.roleId == 1 ||
-                    (adminUser.role?.RoleDetail?.Any(r => r.canSeeLogs) ?? false);
+                    (adminUser.role?.RoleDetail?.Any(roleDetail =>
+                        roleDetail.moduleId ==
+                            (int)CommonConstants.MODULES.ANNUALLEAVE &&
+                        roleDetail.canSeeLogs) ?? false);
 
-                IQueryable<Data.Models.AnnualLeaveTable> query = dal.Get(u =>
-                    (id == null || u.Id == id) &&
-                    u.enabled &&
-                    u.siraNo != 6 &&
-                    (currentStateId == null || u.currentStateId == currentStateId) &&
-                    (searchUserId == null || u.userId == searchUserId) &&
+                /*
+                 * Java AnnualLeaveTableServiceImpl.list akışında:
+                 *
+                 * - Yönetici/yetkili kullanıcı aktif kayıtları görebilir.
+                 * - Normal kullanıcı yalnızca kendisine ait izinleri görür.
+                 *
+                 * Bu nedenle normal kullanıcı filtresi currentUserId
+                 * üzerinden değil, izin sahibi olan userId üzerinden yapılır.
+                 * İstekten gönderilen userId yerine token üzerinden gelen
+                 * adminUserId kullanılır.
+                 *
+                 * siraNo == 6 kaydı da hâlâ aktif bir izin talebidir.
+                 * Kullanıcının aktif izin listesinden kaybolmaması için
+                 * bu metotta siraNo filtresi uygulanmaz.
+                 */
+                IQueryable<Data.Models.AnnualLeaveTable> query =
+                    dal.Get(annualLeave =>
+                        annualLeave.enabled &&
+                        (!id.HasValue ||
+                         id.Value <= 0 ||
+                         annualLeave.Id == id.Value) &&
+                        (!currentStateId.HasValue ||
+                         currentStateId.Value <= 0 ||
+                         annualLeave.currentStateId ==
+                            currentStateId.Value) &&
+                        (!searchUserId.HasValue ||
+                         searchUserId.Value <= 0 ||
+                         annualLeave.userId == searchUserId.Value));
 
-                    (canSeeLogs || (userId == null || u.currentUserId == userId))
-                )
-                .OrderByDescending(u => u.Id);
+                if (!canSeeLogs)
+                {
+                    query = query.Where(
+                        annualLeave =>
+                            annualLeave.userId == adminUserId);
+                }
 
-                var pagedData = query
-                    .Skip(pageSize * pageNumber)
+                int totalElements = query.Count();
+
+                /*
+                 * Tarihleri SQL sorgusu içerisinde formatlamak bazı
+                 * Entity Framework sağlayıcılarında çevrilemez.
+                 * Önce gerekli ham alanlar alınır, tarih formatı daha
+                 * sonra bellek üzerinde uygulanır.
+                 */
+                var pageRows = query
+                    .OrderByDescending(annualLeave => annualLeave.Id)
+                    .Skip(pageNumber * pageSize)
                     .Take(pageSize)
-                    .Select(u => new AnnualLeaveTableResponseDto
+                    .Select(annualLeave => new
                     {
-                        id = u.Id,
-                        currentStateId = u.currentStateId,
-                        endDate = u.endDate.ToString("dd.MM.yyyy HH:ss"),
-                        istenenIzin = u.dayRequested,
-                        kalanIzin = u.dayleft,
-                        startDate = u.startDate.ToString("dd.MM.yyyy HH:ss"),
-
-                        username = u.user != null ? u.user.name : null
+                        annualLeave.Id,
+                        annualLeave.currentStateId,
+                        annualLeave.endDate,
+                        annualLeave.dayRequested,
+                        annualLeave.dayleft,
+                        annualLeave.startDate,
+                        username = annualLeave.user != null
+                            ? annualLeave.user.name
+                            : null
                     })
-                    .OrderByDescending(u => u.id)
                     .ToList();
 
-                result.content = pagedData;
-                result.totalElements = query.Count();
-                result.number = pagedData.Count;
-                result.size = pageSize;
+                List<AnnualLeaveTableResponseDto> pagedData =
+                    pageRows
+                        .Select(annualLeave =>
+                            new AnnualLeaveTableResponseDto
+                            {
+                                id = annualLeave.Id,
+                                currentStateId =
+                                    annualLeave.currentStateId,
+                                endDate =
+                                    annualLeave.endDate.ToString(
+                                        "dd.MM.yyyy HH:mm"),
+                                istenenIzin =
+                                    annualLeave.dayRequested,
+                                kalanIzin =
+                                    annualLeave.dayleft,
+                                startDate =
+                                    annualLeave.startDate.ToString(
+                                        "dd.MM.yyyy HH:mm"),
+                                username =
+                                    annualLeave.username
+                            })
+                        .ToList();
 
-                return result;
+                return new PageReturn<AnnualLeaveTableResponseDto>
+                {
+                    content = pagedData,
+                    totalElements = totalElements,
+
+                    // PageReturn.number mevcut sayfa numarasıdır.
+                    number = pageNumber,
+                    size = pageSize
+                };
             }
             public ResponseByteArray? showPdf(int id)
             {
@@ -447,8 +531,6 @@ namespace AskalePortal.BLL
                             annualLeaveTable.digerAciklama,
                             annualLeaveTable.dayleft.ToString() + " gün"
 
-
-
                         );
 
 
@@ -509,15 +591,15 @@ namespace AskalePortal.BLL
                 annualLeaveDetailDto.id = id;
                 annualLeaveDetailDto.adres = annualLeaveTable?.adress;
                 annualLeaveDetailDto.vekaletName = vekaletUser?.name;
-                annualLeaveDetailDto.iseGirisTarihi = annualLeaveTable?.enteredDate.ToString("dd.MM.yyyy HH:mm");
+                annualLeaveDetailDto.iseGirisTarihi = annualLeaveTable?.enteredDate.ToString("dd.MM.yyyy");
                 annualLeaveDetailDto.departman = annualLeaveTable?.departmanName;
                 annualLeaveDetailDto.digerAciklama = annualLeaveTable?.digerAciklama;
                 annualLeaveDetailDto.name = user?.name;
                 annualLeaveDetailDto.sicilNo = user?.perNo;
                 annualLeaveDetailDto.pozisyon = annualLeaveTable?.job;
                 annualLeaveDetailDto.izinTuru = annualLeaveTable?.typeId;
-                annualLeaveDetailDto.mevcutIzin = annualLeaveTable?.dayleft.ToString("dd.MM.yyyy HH:mm");
-                annualLeaveDetailDto.istenenIzin = annualLeaveTable?.dayRequested.ToString("dd.MM.yyyy HH:mm");
+                annualLeaveDetailDto.mevcutIzin = annualLeaveTable?.dayleft.ToString();
+                annualLeaveDetailDto.istenenIzin = annualLeaveTable?.dayRequested.ToString();
                 annualLeaveDetailDto.typeName = annualLeaveType?.typeName ?? "";
                 annualLeaveDetailDto.typeNameEn = annualLeaveType?.typeNameEn ?? "";
                 annualLeaveDetailDto.kalanIzin = annualLeaveTable?.typeId == 2 ? (annualLeaveTable?.dayleft - annualLeaveTable?.dayRequested).ToString() : annualLeaveTable?.dayleft.ToString();
@@ -643,9 +725,6 @@ namespace AskalePortal.BLL
             public async Task<int> approve(int id, int loggedUserId)
             {
 
-                int burakKurkcu = 5758;
-                int farukOztas = 6894;
-                //DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
                 BLLActions.CeoTable bllCeoTable = new BLLActions.CeoTable(_configuration, _env);
                 Data.Models.CeoTable? ceoTable = bllCeoTable.GetByID(1);
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
@@ -667,6 +746,9 @@ namespace AskalePortal.BLL
                             int? nextUser;
                             if (userMain != null)
                             {
+                                int? ikGmy = userMain.hrmanager1;
+                                int? ikMudur = userMain.hrmanager;
+
                                 if (annualLeaveTable.siraNo == 1 && annualLeaveTable.currentUserId.Equals(user.Id))
                                 {
                                     nextUser = userMain?.manager1;
@@ -679,10 +761,10 @@ namespace AskalePortal.BLL
                                     {
                                         if (annualLeaveTable.typeId.Equals(4))
                                         {
-                                            if (userMain!.manager1.Equals(farukOztas)
-                                                    || userMain.manager1.Equals(burakKurkcu))
+                                            if (userMain.manager1 == ikMudur
+                                                    || userMain.manager1 == ikGmy)
                                             {
-                                                return await onayla1(annualLeaveTable, id, 1, loggedUserId);
+                                                return await onayla1(annualLeaveTable, id, 1, userMain, loggedUserId);
                                             }
                                             else
                                             {
@@ -837,17 +919,17 @@ namespace AskalePortal.BLL
                                         if (annualLeaveTable.typeId.Equals(4))
                                         {
 
-                                            if (annualLeaveTable.currentUserId.Equals(farukOztas)
+                                            if (annualLeaveTable.currentUserId == ikMudur
                                                 && annualLeaveTable.dayRequested >= 10m)
                                             {
-                                                return await onaylaFarukBey(annualLeaveTable, id, 2, loggedUserId);
+                                                return await onaylaIkMudur(annualLeaveTable, id, 2, userMain, loggedUserId);
                                             }
-                                            else if (annualLeaveTable.currentUserId.Equals(burakKurkcu))
+                                            else if (annualLeaveTable.currentUserId == ikGmy)
                                             {
-                                                return await onaylaBurakBey(userMain.izinOnayId ?? 0, annualLeaveTable, id, 2, loggedUserId);
+                                                return await onaylaIkGmy(userMain.izinOnayId, annualLeaveTable, id, 2, loggedUserId);
                                             }
 
-                                            return await onayla1(annualLeaveTable, id, 2, loggedUserId);
+                                            return await onayla1(annualLeaveTable, id, 2, userMain, loggedUserId);
 
                                         }
                                         else
@@ -921,26 +1003,26 @@ namespace AskalePortal.BLL
                                     }
                                     else
                                     {
-                                        if (nextUser.Equals(burakKurkcu) && annualLeaveTable.typeId.Equals(4))
+                                        if (nextUser == ikGmy && annualLeaveTable.typeId.Equals(4))
                                         {
 
-                                            if (userMain.manager1.Equals(farukOztas)
-                                                    && userMain.manager2.Equals(burakKurkcu))
+                                            if (userMain.manager1 == ikMudur
+                                                    && userMain.manager2 == ikGmy)
                                             {
-                                                return await onaylaFarukBey(annualLeaveTable, id, 2, loggedUserId);
+                                                return await onaylaIkMudur(annualLeaveTable, id, 2, userMain, loggedUserId);
 
                                             }
                                             else if (annualLeaveTable.dayRequested >= 10m)
                                             {
-                                                return await onaylaBurakBey(userMain.izinOnayId ?? 0, annualLeaveTable, id, 2, loggedUserId);
+                                                return await onaylaIkGmy(userMain.izinOnayId, annualLeaveTable, id, 2, loggedUserId);
                                             }
-                                            else if (userMain.manager2.Equals(farukOztas)
+                                            else if (userMain.manager2 == ikMudur
                                                     && annualLeaveTable.dayRequested >= 10m)
                                             {
-                                                return await onaylaFarukBey(annualLeaveTable, id, 2, loggedUserId);
+                                                return await onaylaIkMudur(annualLeaveTable, id, 2, userMain, loggedUserId);
                                             }
 
-                                            return await onayla1(annualLeaveTable, id, 3, loggedUserId);
+                                            return await onayla1(annualLeaveTable, id, 3, userMain, loggedUserId);
                                         }
                                         annualLeaveTable.currentUserId = nextUser ?? 0;
                                         annualLeaveTable.siraNo = 3;
@@ -1013,22 +1095,22 @@ namespace AskalePortal.BLL
 
                                     if (annualLeaveTable.typeId.Equals(4))
                                     {
-                                        if (annualLeaveTable.currentUserId.Equals(farukOztas)
+                                        if (annualLeaveTable.currentUserId == ikMudur
                                                 && annualLeaveTable.dayRequested >= 10m)
                                         {
-                                            return await onaylaFarukBey(annualLeaveTable, id, 3, loggedUserId);
+                                            return await onaylaIkMudur(annualLeaveTable, id, 3, userMain, loggedUserId);
                                         }
-                                        else if (annualLeaveTable.currentUserId.Equals(burakKurkcu))
+                                        else if (annualLeaveTable.currentUserId == ikGmy)
                                         {
-                                            return await onaylaBurakBey(userMain.izinOnayId ?? 0, annualLeaveTable, id, 3, loggedUserId);
+                                            return await onaylaIkGmy(userMain.izinOnayId, annualLeaveTable, id, 3, loggedUserId);
                                         }
-                                        else if (annualLeaveTable.currentUserId.Equals(farukOztas))
+                                        else if (annualLeaveTable.currentUserId == ikMudur)
                                         {
-                                            return await onaylaBurakBey(userMain.izinOnayId ?? 0, annualLeaveTable, id, 3, loggedUserId);
+                                            return await onaylaIkGmy(userMain.izinOnayId, annualLeaveTable, id, 3, loggedUserId);
                                         }
                                         else
                                         {
-                                            return await onayla1(annualLeaveTable, id, 3, loggedUserId);
+                                            return await onayla1(annualLeaveTable, id, 3, userMain, loggedUserId);
                                         }
 
                                     }
@@ -1112,18 +1194,18 @@ namespace AskalePortal.BLL
                                 {
                                     if (annualLeaveTable.typeId.Equals(4))
                                     {
-                                        if (annualLeaveTable.currentUserId.Equals(farukOztas)
+                                        if (annualLeaveTable.currentUserId == ikMudur
                                                 && annualLeaveTable.dayRequested >= 10m)
                                         {
-                                            return await onaylaFarukBey(annualLeaveTable, id, 4, loggedUserId);
+                                            return await onaylaIkMudur(annualLeaveTable, id, 4, userMain, loggedUserId);
                                         }
-                                        else if (annualLeaveTable.currentUserId.Equals(burakKurkcu))
+                                        else if (annualLeaveTable.currentUserId == ikGmy)
                                         {
-                                            return await onaylaBurakBey(userMain.izinOnayId ?? 0, annualLeaveTable, id, 4, loggedUserId);
+                                            return await onaylaIkGmy(userMain.izinOnayId, annualLeaveTable, id, 4, loggedUserId);
                                         }
                                         else
                                         {
-                                            return await onaylaBurakBey(userMain.izinOnayId ?? 0, annualLeaveTable, id, 4, loggedUserId);
+                                            return await onaylaIkGmy(userMain.izinOnayId, annualLeaveTable, id, 4, loggedUserId);
                                         }
                                         //					return 3;
                                     }
@@ -1206,7 +1288,7 @@ namespace AskalePortal.BLL
                                         && annualLeaveTable.typeId.Equals(4)
                                         && annualLeaveTable.dayRequested >= 10m)
                                 {
-                                    return await onaylaBurakBey(userMain.izinOnayId ?? 0, annualLeaveTable, id, 5, loggedUserId);
+                                    return await onaylaIkGmy(userMain.izinOnayId, annualLeaveTable, id, 5, loggedUserId);
 
                                 }
 
@@ -1240,10 +1322,21 @@ namespace AskalePortal.BLL
             }
 
 
-            public async Task<int> onayla1(Data.Models.AnnualLeaveTable annualLeaveTable, int anuId, int siraNo, int loggedUserId)
+            public async Task<int> onayla1(
+                Data.Models.AnnualLeaveTable annualLeaveTable,
+                int anuId,
+                int siraNo,
+                AdminUser userMain,
+                int loggedUserId)
             {
-                // nextUser-> faruk bey
-                int nextUser = 6894;
+                int? nextUserId = userMain.hrmanager;
+
+                if (!nextUserId.HasValue || nextUserId.Value <= 0)
+                {
+                    return 3;
+                }
+
+                int nextUser = nextUserId.Value;
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
                 AdminUser user = bllAdminUsers.GetByID(loggedUserId);
                 annualLeaveTable.currentUserId = nextUser;
@@ -1297,9 +1390,21 @@ namespace AskalePortal.BLL
                 return 1;
             }
 
-            public async Task<int> onaylaFarukBey(Data.Models.AnnualLeaveTable annualLeaveTable, int anuId, int siraNo, int loggedUserId)
+            public async Task<int> onaylaIkMudur(
+                Data.Models.AnnualLeaveTable annualLeaveTable,
+                int anuId,
+                int siraNo,
+                AdminUser userMain,
+                int loggedUserId)
             {
-                int nextUser = 5758;
+                int? nextUserId = userMain.hrmanager1;
+
+                if (!nextUserId.HasValue || nextUserId.Value <= 0)
+                {
+                    return 3;
+                }
+
+                int nextUser = nextUserId.Value;
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
                 AdminUser user = bllAdminUsers.GetByID(loggedUserId);
                 annualLeaveTable.currentUserId = nextUser;
@@ -1352,10 +1457,19 @@ namespace AskalePortal.BLL
                 return 1;
             }
 
-            public async Task<int> onaylaBurakBey(int izinonayId, Data.Models.AnnualLeaveTable annualLeaveTable, int anuId, int siraNo, int loggedUserId)
+            public async Task<int> onaylaIkGmy(
+                int? izinOnayId,
+                Data.Models.AnnualLeaveTable annualLeaveTable,
+                int anuId,
+                int siraNo,
+                int loggedUserId)
             {
-                int nextUser = izinonayId;
-                // nextUser -> izinonayId
+                if (!izinOnayId.HasValue || izinOnayId.Value <= 0)
+                {
+                    return 3;
+                }
+
+                int nextUser = izinOnayId.Value;
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
                 AdminUser user = bllAdminUsers.GetByID(loggedUserId);
                 //DateTimeFormatter dtFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -1444,10 +1558,10 @@ namespace AskalePortal.BLL
 
 
                 IQueryable<Data.Models.AnnualLeaveTable> query = dal.Get(a =>
-                   ( userId == null || a.currentUserId ==userId) && 
-			 ( searchUserId == null || a.userId ==searchUserId) && 
-			( id == null || a.Id ==id ) &&
-			a.currentStateId ==currentStateId && (a.siraNo== 6) && a.enabled ==true
+                   (userId == null || a.currentUserId == userId) &&
+             (searchUserId == null || a.userId == searchUserId) &&
+            (id == null || a.Id == id) &&
+            a.currentStateId == currentStateId && (a.siraNo == 6) && a.enabled == true
                 )
                 .OrderByDescending(u => u.Id);
 
@@ -1505,7 +1619,7 @@ namespace AskalePortal.BLL
 
                 bool annualCalendarCanSeeLogs =
                     adminUser.role?.RoleDetail?.Any(x =>
-                        x.moduleId == (int) CommonConstants.MODULES.ANNUALCALENDAR &&
+                        x.moduleId == (int)CommonConstants.MODULES.ANNUALCALENDAR &&
                         x.canSeeLogs) ?? false;
 
                 if (adminUser.roleId == 1)
@@ -1597,19 +1711,20 @@ namespace AskalePortal.BLL
                 {
 
                     Data.Models.AnnualLeaveTable? annualLeaveTable = GetByID(id);
-                    if (annualLeaveTable != null) {
+                    if (annualLeaveTable != null)
+                    {
                         BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
                         AdminUser user = bllAdminUsers.GetByID(loggedUserId);
-                        annualLeaveTable.currentStateId=2;
+                        annualLeaveTable.currentStateId = 2;
                         await Update(annualLeaveTable);
                         BLLActions.AnnualLeaveDetail bllAnnualLeaveDetail = new BLLActions.AnnualLeaveDetail(_configuration, _env);
                         Data.Models.AnnualLeaveDetail annualLeaveDetail = bllAnnualLeaveDetail
                                 .findByAnuIdAndUserIdAndSiraNoAndEnabled(id, user.Id, annualLeaveTable.siraNo, true);
                         if (annualLeaveDetail != null)
                         {
-                            annualLeaveDetail.replyDate=DateTime.Now;
-                            annualLeaveDetail.isReplied=true;
-                            annualLeaveDetail.approved=false;
+                            annualLeaveDetail.replyDate = DateTime.Now;
+                            annualLeaveDetail.isReplied = true;
+                            annualLeaveDetail.approved = false;
                             await bllAnnualLeaveDetail.Update(annualLeaveDetail);
                         }
                         else
@@ -1618,19 +1733,19 @@ namespace AskalePortal.BLL
                         }
 
                         UserByNameEMailDto nextUserEmail = bllAdminUsers
-                                .getUserByNameAndEmail(annualLeaveTable.createdUserId ??0);
+                                .getUserByNameAndEmail(annualLeaveTable.createdUserId ?? 0);
                         EmailMessage emailMessage = new EmailMessage();
-                        emailMessage.isSent=false;
-                        emailMessage.toAddress=nextUserEmail.email;
-                        emailMessage.mailTuru=1;
-                        emailMessage.createdDate=DateTime.Now;
-                        emailMessage.createdUserId=user.Id;
-                        emailMessage.subject=annualLeaveTable.Id.ToString() + " Nolu İzin hk.";
+                        emailMessage.isSent = false;
+                        emailMessage.toAddress = nextUserEmail.email;
+                        emailMessage.mailTuru = 1;
+                        emailMessage.createdDate = DateTime.Now;
+                        emailMessage.createdUserId = user.Id;
+                        emailMessage.subject = annualLeaveTable.Id.ToString() + " Nolu İzin hk.";
                         string mailString = "<h2>Sayın " + nextUserEmail.name + "</h2><br/>" + "<h4>"
                                 + annualLeaveTable.Id.ToString() + " Id'li izin red edilmiştir.<br/></h4>";
-                        emailMessage.emailText=mailString;
-                        emailMessage.plannedDate=DateTime.Now;
-                        emailMessage.enabled=true;
+                        emailMessage.emailText = mailString;
+                        emailMessage.plannedDate = DateTime.Now;
+                        emailMessage.enabled = true;
                         BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
                         await bllEmailMessages.Add(emailMessage);
 
@@ -1640,15 +1755,15 @@ namespace AskalePortal.BLL
                     {
                         return 2;
                     }
-                
+
                 }
                 catch (Exception e)
                 {
-                    
+
                     return 2;
                 }
-            
-          
+
+
             }
 
             public async Task<int> onaylaIK(int id, int loggedUserId)
@@ -1748,8 +1863,8 @@ namespace AskalePortal.BLL
                             return 4;
                         }
                     }
-                  
-                
+
+
                     else
                     {
                         return 4;

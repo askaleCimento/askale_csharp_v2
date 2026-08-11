@@ -35,12 +35,14 @@ namespace AskalePortal.API.Controllers
             BLLActions.AnnualLeaveTable bllAnnualLeaveTable = new BLLActions.AnnualLeaveTable(_configuration, _env, _mapper);
             return Ok(bllAnnualLeaveTable.GetByID(id));
         }
+
         [HttpPost("getbyannualleaveId")]
         public ActionResult getbyannualleaveId([FromForm] int annualId)
         {
             BLLActions.AnnualLeaveTable bllAnnualLeaveTable = new BLLActions.AnnualLeaveTable(_configuration, _env, _mapper);
             return Ok(bllAnnualLeaveTable.getByAnnualLeaveId(annualId));
         }
+
         [HttpPost("save")]
         public async Task<ActionResult<AnnualLeaveTableSaveDto>> save([FromForm] AnnualLeaveTableSaveDto entity)
         {
@@ -70,12 +72,14 @@ namespace AskalePortal.API.Controllers
                 return Ok(0);
             }
         }
+
         [HttpPost("getAnnualLeaveSap")]
         public ActionResult<AnnualLeaveSapModel?> getAnnualLeaveSap([FromForm] string perNo)
         {
             BLLActions.AnnualLeaveTable bllAnnualLeaveTable = new BLLActions.AnnualLeaveTable(_configuration, _env, _mapper);
             return Ok(bllAnnualLeaveTable.getAnnualLeaveSap(perNo));
         }
+
         [HttpPost("mylist")]
         public ActionResult<PageReturn<AnnualLeaveTableResponseDto?>> mylist([FromForm] FilterPageParam<AnnualTableFilterDtoRequest> filterPageParam)
         {
@@ -127,6 +131,7 @@ namespace AskalePortal.API.Controllers
             return Ok(liste);
         }
         #endregion
+
         #region iklist
         [HttpPost("iklist")]
         public ActionResult<PageReturn<AnnualLeaveTableDto>> iklist([FromForm] FilterPageParam<AnnualLeaveFilterDtoRequest> filterPageParam)
@@ -137,6 +142,7 @@ namespace AskalePortal.API.Controllers
             return Ok(liste);
         }
         #endregion
+
         #region listFinished
         [HttpPost("listFinished")]
         public ActionResult<PageReturn<AnnualLeaveTableDto>> listFinished([FromForm] FilterPageParam<AnnualLeaveFilterDtoRequest> filterPageParam)

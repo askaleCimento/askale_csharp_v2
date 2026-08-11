@@ -38,7 +38,7 @@ namespace AskalePortal.API.Controllers
                 }
                BLLActions.Announcements bllAnnouncement = new BLLActions.Announcements(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();
@@ -101,11 +101,11 @@ namespace AskalePortal.API.Controllers
         #region getAll
         [HttpPost("getAll")]
 
-        public ActionResult<object> getAll()
+        public ActionResult<AnnouncementSaveDto> getAll()
         {
            BLLActions.Announcements bllAnnouncement = new BLLActions.Announcements(_configuration, _env);
 
-            List<Announcement>? listAnnouncement = bllAnnouncement.GetAll();
+            List<AnnouncementSaveDto>? listAnnouncement = bllAnnouncement.GetAllDto();
             return Ok(listAnnouncement);
 
         }

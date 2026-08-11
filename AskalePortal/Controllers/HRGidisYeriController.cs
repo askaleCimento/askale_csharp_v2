@@ -85,7 +85,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLLActions.HRGidisYeri bllHRGidisYeri = new BLLActions.HRGidisYeri(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();

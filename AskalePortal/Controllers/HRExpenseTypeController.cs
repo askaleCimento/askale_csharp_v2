@@ -84,7 +84,7 @@ namespace AskalePortal.API.Controllers
                 }
                 BLL.BLLActions.HRExpenseTypeTable bllHRExpenseTypeTable = new BLL.BLLActions.HRExpenseTypeTable(_configuration, _env);
 
-                if (entity?.id != 0)
+                if (entity?.id != null)
                 {
 
                     entity!.updateDate = DateTime.Now.ToString();

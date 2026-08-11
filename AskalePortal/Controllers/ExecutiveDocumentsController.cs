@@ -47,7 +47,7 @@ namespace AskalePortal.API.Controllers
 
         #region createfolderleft
         [HttpPost("createfolderleft")]
-        public async Task<ActionResult<Data.ResponseModels.ExecutiveDocumentsDto>> createfolderleft([FromForm] Data.ResponseModels.ExecutiveDocumentsDto icraDocumentsDto)
+        public async Task<ActionResult<Data.ResponseModels.ExecutiveDocumentsDto>> createfolderleft([FromForm] Data.ResponseModels.ExecutiveDocumentsDto entity)
         {
 
             Data.Models.IcraDocument icraDocument = new Data.Models.IcraDocument();
@@ -59,19 +59,19 @@ namespace AskalePortal.API.Controllers
             }
             BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
             AdminUser? user = bllAdminUsers.GetByID(userId);
-            icraDocument.title = icraDocumentsDto.title ??"";
-            icraDocument.typeName = icraDocumentsDto.typeName??"";
-            icraDocument.topId = icraDocumentsDto.topID ?? 0;
-            icraDocument.typeId = icraDocumentsDto.typeID ?? 0;
-            icraDocument.filename = icraDocumentsDto.filename;
-            icraDocument.fileSize = icraDocumentsDto.fileSize;
+            icraDocument.title = entity.title ??"";
+            icraDocument.typeName = entity.typeName??"";
+            icraDocument.topId = entity.topID ?? 0;
+            icraDocument.typeId = entity.typeID ?? 0;
+            icraDocument.filename = entity.filename;
+            icraDocument.fileSize = entity.fileSize;
             icraDocument.documentID = Guid.NewGuid();
             icraDocument.createdUserId = user?.Id??0;
             icraDocument.createdByUserName = user?.name ??"";
             icraDocument.createdDate = DateTime.Now;
             icraDocument.archiveId = 0;
             icraDocument.enabled = true;
-            if (icraDocumentsDto.typeID == 1)
+            if (entity.typeID == 1)
             {
                 icraDocument.fileSize = 0;
             }
@@ -82,8 +82,6 @@ namespace AskalePortal.API.Controllers
 
         }
         #endregion
-
-
 
         #region gettopid
         [HttpPost("gettopid")]
