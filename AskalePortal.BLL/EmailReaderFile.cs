@@ -23,9 +23,9 @@ namespace AskalePortal.BLL
 
             public string BuildEmailTemplate(IConfiguration _configuration, IWebHostEnvironment env, string title, string description)
             {
-                
-                string? filePath = Path.Combine(env.IsDevelopment() ? _configuration["FilePath:local"]! : env.IsProduction() ? _configuration["FilePath:server"]! :
-                    _configuration["FilePath:test"]!, "templates\\Email\\email.html");
+                string? filePath = "C:\\Users\\dilek.sariyerlioglu\\source\\repos\\askale_csharp_v2\\AskalePortal.BLL\\templates\\Email\\email.html";
+                //string? filePath = Path.Combine(env.IsDevelopment() ? _configuration["FilePath:local"]! : env.IsProduction() ? _configuration["FilePath:server"]! :
+                //    _configuration["FilePath:test"]!, "templates\\Email\\email.html");
                 StreamReader reader = new StreamReader(filePath);
                 string content = reader.ReadToEnd();
                 content = content.Replace("{footer}", "Copyright &copy; 2016 Aşkale Çimento");
@@ -73,7 +73,7 @@ namespace AskalePortal.BLL
                 StreamReader reader = new StreamReader(filePath);
                 string content = reader.ReadToEnd();
 
-              
+
                 content.Replace("title", title);
                 content.Replace("firstUser", firstUser);
                 content.Replace("kunnr", kunnr);
@@ -94,11 +94,11 @@ namespace AskalePortal.BLL
 
             public string CreateSozlesmeMailString(IConfiguration _configuration, IWebHostEnvironment env, string title, int Id, string VTEXT, string SozlesmeCinsi, string FirmaAdi, string SozlesmeKonusu, string Aciklama, string SozlesmeTutari, string BitisTarihi)
             {
-                string? filePath = Path.Combine(env.IsDevelopment() ? _configuration["FilePath:local"]! : env.IsProduction() ? _configuration["FilePath:server"]! :
-                _configuration["FilePath:test"]!, "templates\\Email\\emailSozlesme.html");
-                //filePath = "C:\\Users\\dilek.sariyerlioglu\\Source\\Repos\\askaleportalccore\\AskalePortal.BLL\\templates\\Email\\emailSozlesme.html";
+                //string? filePath = Path.Combine(env.IsDevelopment() ? _configuration["FilePath:local"]! : env.IsProduction() ? _configuration["FilePath:server"]! :
+                //_configuration["FilePath:test"]!, "templates\\Email\\emailSozlesme.html");
+                string filePath = "C:\\Users\\dilek.sariyerlioglu\\Source\\Repos\\askaleportalccore\\AskalePortal.BLL\\templates\\Email\\emailSozlesme.html";
 
-                StreamReader reader = new StreamReader(filePath);
+                 StreamReader reader = new StreamReader(filePath);
                 string content = reader.ReadToEnd();
                 content = content.Replace("{title}", title);
                 content = content.Replace("{Id}", Id.ToString());
@@ -114,7 +114,7 @@ namespace AskalePortal.BLL
             }
 
 
-            public string CreateIsTakipMailString(IConfiguration _configuration, IWebHostEnvironment env,IMapper mapper, string title, Data.Models.SureliIsTakipTable entity)
+            public string CreateIsTakipMailString(IConfiguration _configuration, IWebHostEnvironment env, IMapper mapper, string title, Data.Models.SureliIsTakipTable entity)
             {
                 string? filePath = Path.Combine(env.IsDevelopment() ? _configuration["FilePath:local"]! : env.IsProduction() ? _configuration["FilePath:server"]! :
                 _configuration["FilePath:test"]!, "templetes\\Email\\emailIsTakip.html");
@@ -128,7 +128,7 @@ namespace AskalePortal.BLL
                 content = content.Replace("{BaslamaTarihi}", entity.baslamaTarihi.ToShortDateString());
                 string[] idlers = entity.takipSorumlusu.Split(',');
                 string InternalAuditor = "";
-                BLLActions.AdminUsers bllAdminusers = new BLLActions.AdminUsers(_configuration,env, mapper);
+                BLLActions.AdminUsers bllAdminusers = new BLLActions.AdminUsers(_configuration, env, mapper);
                 foreach (var item in idlers)
                 {
 
@@ -156,8 +156,8 @@ namespace AskalePortal.BLL
                 return content;
             }
 
-            public string getMusteriEmailText(IConfiguration _configuration, IWebHostEnvironment env,Data.Models.MusteriSikayetForm entity, string companyName, string sikayetTipi,
-        string categoryName,    string createdUserName, List<AttachedFile> attachedFiles)
+            public string getMusteriEmailText(IConfiguration _configuration, IWebHostEnvironment env, Data.Models.MusteriSikayetForm entity, string companyName, string sikayetTipi,
+        string categoryName, string createdUserName, List<AttachedFile> attachedFiles)
             {
                 string? filePath = Path.Combine(env.IsDevelopment() ? _configuration["FilePath:local"]! : env.IsProduction() ? _configuration["FilePath:server"]! :
                 _configuration["FilePath:test"]!, "templates\\Email\\emailMusteriSikayet.html");
@@ -176,12 +176,12 @@ namespace AskalePortal.BLL
                 content = content.Replace("{MusteriTemsilcisi}", entity.musteriTemsilcisi.ToString());
                 content = content.Replace("{MusteriTel}", entity.musteriTel.ToString());
                 content = content.Replace("{MusteriEmail}", entity.musteriEmail.ToString());
-                content = content.Replace("{name}",createdUserName);
+                content = content.Replace("{name}", createdUserName);
                 content = content.Replace("{createdDate}", entity.createdDate.ToString("dd.MM.yyyy"));
                 content = content.Replace("{description}", entity.description.ToString());
                 content = content.Replace("{attachedFiles}", attachedFiles.ToString());
                 content = content.Replace("{footer}", "Copyright &copy; 2016 Aşkale Çimento");
-                content = content.Replace("{okLink}",CommonConstants.OkNoLinks.OK_LINK);
+                content = content.Replace("{okLink}", CommonConstants.OkNoLinks.OK_LINK);
                 content = content.Replace("{noLink}", CommonConstants.OkNoLinks.NO_LINK);
                 return content;
 

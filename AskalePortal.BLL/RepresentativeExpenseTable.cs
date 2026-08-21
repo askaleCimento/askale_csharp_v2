@@ -68,56 +68,66 @@ namespace AskalePortal.BLL
 
             public async Task<Data.Models.RepresentativeExpenseTable> Save(RepresentativeExpenseTableSaveDto entity, int userId)
             {
-                if (entity.id == null)
+                try
                 {
-                    entity.createdUserId = (userId);
-                    entity.createdDate = DateTime.Now.ToString();
-                    entity.enabled = true;
-
-                    Data.Models.RepresentativeExpenseTable? representativeExpenseTable = await Add(_mapper.Map<Data.Models.RepresentativeExpenseTable>(entity));
-                    BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                    Data.Models.AdminUser user = bllAdminUsers.GetByID(representativeExpenseTable!.userId)!;
-                    Data.Models.AdminUser manager1 = bllAdminUsers.GetByID(user.manager1 ?? 0)!;
-
-                    BLLActions.RepresentativeExpenseDetail bllRepresentativeExpenseDetail = new BLLActions.RepresentativeExpenseDetail(_configuration, _env);
-                    Data.Models.RepresentativeExpenseDetail representativeExpenseDetail = new Data.Models.RepresentativeExpenseDetail();
-                    representativeExpenseDetail.enabled = true;
-                    representativeExpenseDetail.approved = null;
-                    representativeExpenseDetail.isReplied = false;
-                    representativeExpenseDetail.repId = representativeExpenseTable.Id;
-                    representativeExpenseDetail.userId = user.manager1 ?? 0;
-                    representativeExpenseDetail.guid = Guid.NewGuid();
-                    representativeExpenseDetail.createdDate = (DateTime.Now);
-                    await bllRepresentativeExpenseDetail.Add(representativeExpenseDetail);
-
-                    EmailMessage emailMessage = new EmailMessage();
-                    emailMessage.subject = "Bekleyen Harcama Onayı hk.";
-                    emailMessage.toAddress = manager1.email;
-
-                    BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
 
 
-                    BLLActions.EmailReaderFile bllEmailReaderFile = new BLLActions.EmailReaderFile();
-                    string mailMessage = bllEmailReaderFile.BuildEmailTemplate(_configuration, _env, "Sayın " + manager1.name +
-                    " Harcama Onayı hk.",
-                                representativeExpenseTable.Id.ToString() + " ID'li harcama onayınızı beklemektedir.");
+                    if (entity.id == null)
+                    {
+                        entity.createdUserId = (userId);
+                        entity.createdDate = DateTime.Now.ToString();
+                        entity.enabled = true;
 
-                    emailMessage.emailText = (mailMessage);
-                    emailMessage.mailTuru = 3;
-                    emailMessage.enabled = true;
-                    emailMessage.isSent = false;
-                    emailMessage.plannedDate = DateTime.Now;
-                    await bllEmailMessages.Add(emailMessage);
-                    return representativeExpenseTable;
+                        Data.Models.RepresentativeExpenseTable? representativeExpenseTable = await Add(_mapper.Map<Data.Models.RepresentativeExpenseTable>(entity));
+                        BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
+                        Data.Models.AdminUser user = bllAdminUsers.GetByID(representativeExpenseTable!.userId)!;
+                        Data.Models.AdminUser manager1 = bllAdminUsers.GetByID(user.manager1 ?? 0)!;
 
+                        BLLActions.RepresentativeExpenseDetail bllRepresentativeExpenseDetail = new BLLActions.RepresentativeExpenseDetail(_configuration, _env);
+                        Data.Models.RepresentativeExpenseDetail representativeExpenseDetail = new Data.Models.RepresentativeExpenseDetail();
+                        representativeExpenseDetail.enabled = true;
+                        representativeExpenseDetail.approved = null;
+                        representativeExpenseDetail.isReplied = false;
+                        representativeExpenseDetail.repId = representativeExpenseTable.Id;
+                        representativeExpenseDetail.userId = user.manager1 ?? 0;
+                        representativeExpenseDetail.guid = Guid.NewGuid();
+                        representativeExpenseDetail.createdDate = (DateTime.Now);
+                        await bllRepresentativeExpenseDetail.Add(representativeExpenseDetail);
+
+                        EmailMessage emailMessage = new EmailMessage();
+                        emailMessage.subject = "Bekleyen Harcama Onayı hk.";
+                        emailMessage.toAddress = manager1.email;
+
+                        BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
+
+
+                        BLLActions.EmailReaderFile bllEmailReaderFile = new BLLActions.EmailReaderFile();
+                        string mailMessage = bllEmailReaderFile.BuildEmailTemplate(_configuration, _env, "Sayın " + manager1.name +
+                        " Harcama Onayı hk.",
+                                    representativeExpenseTable.Id.ToString() + " ID'li harcama onayınızı beklemektedir.");
+
+                        emailMessage.emailText = (mailMessage);
+                        emailMessage.mailTuru = 3;
+                        emailMessage.enabled = true;
+                        emailMessage.isSent = false;
+                        emailMessage.plannedDate = DateTime.Now;
+                        await bllEmailMessages.Add(emailMessage);
+                        return representativeExpenseTable;
+
+                    }
+                    else
+                    {
+
+                        entity.updatedUserId = userId;
+                        entity.updateDate = DateTime.Now.ToString();
+                        entity.enabled = true;
+                        return await Update(_mapper.Map<Data.Models.RepresentativeExpenseTable>(entity));
+                    }
                 }
-                else
+                catch (Exception)
                 {
 
-                    entity.updatedUserId = userId;
-                    entity.updateDate = DateTime.Now.ToString();
-                    entity.enabled = true;
-                    return await Update(_mapper.Map<Data.Models.RepresentativeExpenseTable>(entity));
+                    throw;
                 }
             }
 
@@ -287,8 +297,6 @@ namespace AskalePortal.BLL
                         typeId = u.typeId,
                         updateDate = u.updatedDate.ToString(),
                         updatedUserId = u.updatedUserId,
-
-
 
                     }).ToList();
                 result.totalElements = query.Count();

@@ -43,14 +43,18 @@ namespace AskalePortal.BLL
               
             }
 
-            public List<int> findCompanyIdByUserIdAndEnabled(int userId, bool enabled)
+            public List<int> findCompanyIdByUserIdAndEnabled(
+              int userId,
+              bool enabled)
             {
-                List<int> companyIds = dal.Get(u => u.enabled == enabled
-                           && u.userId == userId)
-                    .Select(u => u.companyId ??0)
+                return dal.Get(x =>
+                        x.enabled == enabled &&
+                        x.userId == userId &&
+                        x.companyId.HasValue
+                    )
+                    .Select(x => x.companyId.GetValueOrDefault())
+                    .Distinct()
                     .ToList();
-                return companyIds ?? [];
-
             }
 
             public EArsivFaturaYetkilerResponseDto getByUserId(int userId)

@@ -83,7 +83,9 @@ namespace AskalePortal.API.Controllers
 
 
         #endregion
-        #region finishedforexpense
+     
+        #region finished
+
         [HttpPost("finishedforexpense")]
         public ActionResult<object> finishedforexpense([FromForm] int userId)
         {

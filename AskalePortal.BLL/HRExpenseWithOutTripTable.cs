@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Printing;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AskalePortal.Constants;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.RequestModel;
@@ -14,7 +12,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace AskalePortal.BLL
 {
@@ -31,81 +28,182 @@ namespace AskalePortal.BLL
                 _env = env;
                 _mapper = mapper;
             }
+
+            private static (int PageNumber, int PageSize) GetPaging(int? page, int? size)
+            {
+                int pageNumber = Math.Max(page ?? 0, 0);
+                int pageSize = Math.Clamp(size ?? 20, 1, 200);
+                return (pageNumber, pageSize);
+            }
+
+            private static int GetRequestUserId(int? requestUserId, int? legacyUserId = null)
+            {
+                int userId = requestUserId.GetValueOrDefault() > 0
+                    ? requestUserId!.Value
+                    : legacyUserId.GetValueOrDefault();
+
+                return userId > 0 ? userId : 0;
+            }
+
+            private static DateTime? ParseOptionalDate(string? value, string parameterName)
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    return null;
+
+                string[] formats = ["yyyy-MM-dd", "dd.MM.yyyy", "dd-MM-yyyy"];
+                if (DateTime.TryParseExact(
+                    value.Trim(),
+                    formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateTime exactDate))
+                {
+                    return exactDate.Date;
+                }
+
+                if (DateTime.TryParse(
+                    value.Trim(),
+                    CultureInfo.GetCultureInfo("tr-TR"),
+                    DateTimeStyles.None,
+                    out DateTime parsedDate))
+                {
+                    return parsedDate.Date;
+                }
+
+                throw new ArgumentException(
+                    $"Geçersiz tarih değeri: '{value}'.",
+                    parameterName);
+            }
             public List<AskalePortal.Data.Models.HRExpenseWithOutTripTable> GetUserTrip(int userId, int activePage, int pageSize)
             {
-                var q = dal.Get(u => u.userId == userId && u.approval.HasValue && u.enabled == true).OrderByDescending(u => u.Id).Skip(activePage * pageSize).Take(pageSize).ToList();
+                (activePage, pageSize) = GetPaging(activePage, pageSize);
+                var q = dal.Get(u => u.userId == userId && u.approval.HasValue && u.enabled)
+                    .AsNoTracking()
+                    .OrderByDescending(u => u.Id)
+                    .Skip(activePage * pageSize)
+                    .Take(pageSize)
+                    .ToList();
                 return q;
             }
 
             public List<AskalePortal.Data.Models.HRExpenseWithOutTripTable> GetAll(int activePage, int pageSize)
             {
-                var q = dal.Get(u => u.approval.HasValue && u.enabled == true).OrderByDescending(u => u.Id).Skip(activePage * pageSize).Take(pageSize).ToList();
+                (activePage, pageSize) = GetPaging(activePage, pageSize);
+                var q = dal.Get(u => u.approval.HasValue && u.enabled)
+                    .AsNoTracking()
+                    .OrderByDescending(u => u.Id)
+                    .Skip(activePage * pageSize)
+                    .Take(pageSize)
+                    .ToList();
                 return q;
             }
 
             public List<AskalePortal.Data.Models.HRExpenseWithOutTripTable> GetLast(int userId)
             {
-                return dal.Get(u => u.userId == userId && !u.approval.HasValue && u.enabled == true).OrderByDescending(u => u.createdDate).ToList();
+                return dal.Get(u => u.userId == userId && !u.approval.HasValue && u.enabled)
+                    .AsNoTracking()
+                    .OrderByDescending(u => u.createdDate)
+                    .ToList();
             }
 
             public List<AskalePortal.Data.Models.HRExpenseWithOutTripTable> GetUserTrip(int userId)
             {
-                return dal.Get(u => u.userId == userId && u.enabled == true).OrderByDescending(u => u.Id).ToList();
+                return dal.Get(u => u.userId == userId && u.enabled)
+                    .AsNoTracking()
+                    .OrderByDescending(u => u.Id)
+                    .ToList();
             }
 
             public List<AskalePortal.Data.Models.HRExpenseWithOutTripTable> GetAllTamam(int activePage, int pageSize)
             {
-                var q = dal.Get(u => u.enabled == true).OrderByDescending(u => u.Id).Skip(activePage * pageSize).Take(pageSize).ToList();
+                (activePage, pageSize) = GetPaging(activePage, pageSize);
+                var q = dal.Get(u => u.enabled)
+                    .AsNoTracking()
+                    .OrderByDescending(u => u.Id)
+                    .Skip(activePage * pageSize)
+                    .Take(pageSize)
+                    .ToList();
                 return q;
             }
 
             public List<AskalePortal.Data.Models.HRExpenseWithOutTripTable> GetUserTripTamam(int userId, int activePage, int pageSize)
             {
-                var q = dal.Get(u => u.userId == userId && u.enabled == true).OrderByDescending(u => u.Id).Skip(activePage * pageSize).Take(pageSize).ToList();
+                (activePage, pageSize) = GetPaging(activePage, pageSize);
+                var q = dal.Get(u => u.userId == userId && u.enabled)
+                    .AsNoTracking()
+                    .OrderByDescending(u => u.Id)
+                    .Skip(activePage * pageSize)
+                    .Take(pageSize)
+                    .ToList();
                 return q;
             }
 
             public List<AskalePortal.Data.Models.HRExpenseWithOutTripTable> GetAll(string name, int? destinationLocationGidis, int? destinationLocationDonus, string gidisTarihi, string donusTarihi, string aciklama, int activePage, int pageSize)
             {
-                DateTime? gidisT = null;
-                if (!string.IsNullOrEmpty(gidisTarihi))
-                {
-                    gidisT = DateTime.Parse(gidisTarihi);
-                }
-                DateTime? gidisD = null;
-                if (!string.IsNullOrEmpty(donusTarihi))
-                {
-                    gidisD = DateTime.Parse(donusTarihi);
-                }
-                var q = dal.Get(u => (string.IsNullOrEmpty(name) ? true : u.user.name.ToLower().Contains(name)) && (destinationLocationGidis.HasValue ? u.destinationLocationId == destinationLocationGidis : true)
-                 && (destinationLocationDonus.HasValue ? u.tripDescriptionId == destinationLocationDonus : true) && (gidisT.HasValue ? u.gidisTarihi == gidisT : true)
-                 && (gidisD.HasValue ? u.gidisTarihi == gidisD : true) && (string.IsNullOrEmpty(aciklama) ? true : u.tripDesciption.Contains(aciklama))
-                 && (u.enabled == true)).OrderByDescending(u => u.Id).Skip(activePage * pageSize).Take(pageSize).ToList();
-                return q;
+                (activePage, pageSize) = GetPaging(activePage, pageSize);
+                DateTime? gidis = ParseOptionalDate(gidisTarihi, nameof(gidisTarihi));
+                DateTime? donus = ParseOptionalDate(donusTarihi, nameof(donusTarihi));
+                string? normalizedName = string.IsNullOrWhiteSpace(name)
+                    ? null
+                    : name.Trim().ToLower();
+                string? normalizedDescription = string.IsNullOrWhiteSpace(aciklama)
+                    ? null
+                    : aciklama.Trim();
+
+                return dal.Get(u =>
+                        u.enabled &&
+                        (normalizedName == null || u.user.name.ToLower().Contains(normalizedName)) &&
+                        (!destinationLocationGidis.HasValue || u.destinationLocationId == destinationLocationGidis.Value) &&
+                        (!destinationLocationDonus.HasValue || u.tripDescriptionId == destinationLocationDonus.Value) &&
+                        (!gidis.HasValue || u.gidisTarihi == gidis.Value) &&
+                        (!donus.HasValue || u.donusTarihi == donus.Value) &&
+                        (normalizedDescription == null || u.tripDesciption.Contains(normalizedDescription)))
+                    .AsNoTracking()
+                    .OrderByDescending(u => u.Id)
+                    .Skip(activePage * pageSize)
+                    .Take(pageSize)
+                    .ToList();
             }
 
             public List<AskalePortal.Data.Models.HRExpenseWithOutTripTable> GetUserTrip(int userId, string name, int? destinationLocationGidis, int? destinationLocationDonus, string gidisTarihi, string donusTarihi, string aciklama, int activePage, int pageSize)
             {
-                DateTime? gidisT = null;
-                if (!string.IsNullOrEmpty(gidisTarihi))
-                {
-                    gidisT = DateTime.Parse(gidisTarihi);
-                }
-                DateTime? gidisD = null;
-                if (!string.IsNullOrEmpty(donusTarihi))
-                {
-                    gidisT = DateTime.Parse(donusTarihi);
-                }
-                var q = dal.Get(u => (u.userId == userId) && (string.IsNullOrEmpty(name) ? true : u.user.name.ToLower().Contains(name)) && (u.userId == userId) && (u.approval == true) && (destinationLocationGidis.HasValue ? u.destinationLocationId == destinationLocationGidis : true)
-                 && (destinationLocationDonus.HasValue ? u.tripDescriptionId == destinationLocationDonus : true) && (gidisT.HasValue ? u.gidisTarihi == gidisT : true)
-                 && (gidisD.HasValue ? u.gidisTarihi == gidisD : true) && (string.IsNullOrEmpty(aciklama) ? true : u.tripDesciption.Contains(aciklama))
-                 && (u.enabled == true)).OrderByDescending(u => u.Id).Skip(activePage * pageSize).Take(pageSize).ToList();
-                return q;
+                (activePage, pageSize) = GetPaging(activePage, pageSize);
+                DateTime? gidis = ParseOptionalDate(gidisTarihi, nameof(gidisTarihi));
+                DateTime? donus = ParseOptionalDate(donusTarihi, nameof(donusTarihi));
+                string? normalizedName = string.IsNullOrWhiteSpace(name)
+                    ? null
+                    : name.Trim().ToLower();
+                string? normalizedDescription = string.IsNullOrWhiteSpace(aciklama)
+                    ? null
+                    : aciklama.Trim();
+
+                return dal.Get(u =>
+                        u.enabled &&
+                        u.userId == userId &&
+                        u.approval.HasValue &&
+                        (normalizedName == null || u.user.name.ToLower().Contains(normalizedName)) &&
+                        (!destinationLocationGidis.HasValue || u.destinationLocationId == destinationLocationGidis.Value) &&
+                        (!destinationLocationDonus.HasValue || u.tripDescriptionId == destinationLocationDonus.Value) &&
+                        (!gidis.HasValue || u.gidisTarihi == gidis.Value) &&
+                        (!donus.HasValue || u.donusTarihi == donus.Value) &&
+                        (normalizedDescription == null || u.tripDesciption.Contains(normalizedDescription)))
+                    .AsNoTracking()
+                    .OrderByDescending(u => u.Id)
+                    .Skip(activePage * pageSize)
+                    .Take(pageSize)
+                    .ToList();
             }
 
             public List<Data.Models.HRExpenseWithOutTripTable> getFinishedForExpense(int userId)
             {
-                List<Data.Models.HRExpenseWithOutTripTable> liste = dal.Get(u => u.enabled && u.userId == userId && u.approval == null).ToList();
+                List<Data.Models.HRExpenseWithOutTripTable> liste = dal.Get(u =>
+                        u.enabled &&
+                        u.userId == userId &&
+                        u.approval == null &&
+                        u.lastApproved == true)
+                    .AsNoTracking()
+                    .OrderByDescending(u => u.Id)
+                    .ToList();
                 return liste;
             }
 
@@ -114,14 +212,17 @@ namespace AskalePortal.BLL
             {
                 var result = new PageReturn<Data.Models.HRExpenseWithOutTripTable>();
 
-                int pageSize = filterPageParam.size ?? 20;
-                int pageNumber = filterPageParam.page ?? 0;
+                ArgumentNullException.ThrowIfNull(filterPageParam);
+                (int pageNumber, int pageSize) = GetPaging(filterPageParam.page, filterPageParam.size);
 
-                int userId = filterPageParam?.liste?.filterUserId ?? 0;
-                var f = filterPageParam?.liste;
+                var f = filterPageParam.liste;
+                bool hasExplicitRequestUser = filterPageParam.userId is > 0;
+                int requestUserId = GetRequestUserId(
+                    filterPageParam.userId,
+                    f?.filterUserId);
 
                 var bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                var user = bllAdminUsers.GetByID(userId);
+                var user = bllAdminUsers.GetByID(requestUserId);
 
                 if (user == null)
                     return result;
@@ -137,38 +238,47 @@ namespace AskalePortal.BLL
                         .AsNoTracking();
 
 
-                if (user.roleId == 1)
-                {
-                    
-                }
-                else if (roleDetail?.canSeeLogs == true)
+                if (user.roleId != 1 && roleDetail?.canSeeLogs == true)
                 {
                     var bllRoles = new BLLActions.Roles(_configuration, _env, _mapper);
                     var role = bllRoles.GetByID(user.roleId);
 
-                    var bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
-
-                    var companyIds = role?.companies?
+                    var companyCodes = role?.companies?
                         .Replace("[", "")
                         .Replace("]", "")
                         .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                        .Select(x => bllCompanies.getByVkorgCompany(x.Trim()).Id)
+                        .Select(x => x.Trim())
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .Distinct()
                         .ToList() ?? new();
+
+                    var companyIds = dal.dB.Company
+                        .AsNoTracking()
+                        .Where(company => companyCodes.Contains(company.vkorg))
+                        .Select(company => company.Id)
+                        .ToList();
 
                     query = query.Where(u => companyIds.Contains(u.user.companyId));
                 }
-                else
+                else if (user.roleId != 1)
                 {
-                    query = query.Where(u => u.userId == userId);
+                    query = query.Where(u => u.userId == requestUserId);
                 }
 
-             
+                if (hasExplicitRequestUser && f?.filterUserId is > 0)
+                    query = query.Where(u => u.userId == f.filterUserId.Value);
 
                 if (!string.IsNullOrWhiteSpace(f?.filterName))
-                    query = query.Where(u => u.user.name.Contains(f.filterName));
+                {
+                    string filterName = f.filterName.Trim();
+                    query = query.Where(u => u.user.name.Contains(filterName));
+                }
 
                 if (!string.IsNullOrWhiteSpace(f?.filterUsername))
-                    query = query.Where(u => u.user.username.Contains(f.filterUsername));
+                {
+                    string filterUsername = f.filterUsername.Trim();
+                    query = query.Where(u => u.user.username.Contains(filterUsername));
+                }
 
                 if (f?.filterGidisTarihi != null)
                     query = query.Where(u => u.gidisTarihi == f.filterGidisTarihi);
@@ -179,10 +289,10 @@ namespace AskalePortal.BLL
                 if (f?.filterGidisYeriId is > 0)
                     query = query.Where(u => u.destinationLocationId == f.filterGidisYeriId);
 
-              
+
                 result.totalElements = query.Count();
 
-                result.content = query 
+                result.content = query
                     .OrderByDescending(x => x.Id)
                     .Skip(pageSize * pageNumber)
                     .Take(pageSize)
@@ -197,50 +307,46 @@ namespace AskalePortal.BLL
             {
                 PageReturn<HRExpenseTripDto> result = new PageReturn<HRExpenseTripDto>();
 
-                int pageSize = filterPageParam.size ?? 20;
-                int pageNumber = filterPageParam.page ?? 0;
+                ArgumentNullException.ThrowIfNull(filterPageParam);
+                (int pageNumber, int pageSize) = GetPaging(filterPageParam.page, filterPageParam.size);
+                int userId = GetRequestUserId(
+                    filterPageParam.userId,
+                    filterPageParam.liste?.filterUser);
 
-                int? userId = filterPageParam.liste?.filterUser;
+                if (userId == 0)
+                    return result;
 
-                var baseQuery =
-                    from a in dal.dB.HRExpenseWithOutTripTable
-                        .Include(x => x.user)
-                        .Include(x => x.destinationLocation)
-                    join b in dal.dB.HRExpenseWithOutTable
-                        on a.Id equals b.tripId
-                    where a.enabled
-                          && b.currentStateId == 1
-                          && b.currentUserId == userId
-                          && b.enabled
-                    select a ;
+                var query = dal.dB.HRExpenseWithOutTripTable
+                    .AsNoTracking()
+                    .Where(a =>
+                        a.enabled &&
+                        a.HRExpenseWithOutTable.Any(b =>
+                            b.currentStateId == 1 &&
+                            b.currentUserId == userId &&
+                            b.enabled));
 
-                var distinctQuery = baseQuery.Distinct();
-                result.totalElements = distinctQuery.Count();
+                result.totalElements = query.Count();
 
-                var pagedData = distinctQuery
-                    .OrderByDescending(u=>u.Id)
+                result.content = query
+                    .OrderByDescending(u => u.Id)
                     .Skip(pageSize * pageNumber)
                     .Take(pageSize)
+                    .Select(a => new HRExpenseTripDto
+                    {
+                        id = a.Id,
+                        description = a.tripDesciption,
+                        destination = a.destinationLocation.destinationLocation,
+                        donusTarihi = a.donusTarihi.HasValue
+                            ? a.donusTarihi.Value.ToString("dd.MM.yyyy")
+                            : null,
+                        gidisTarihi = a.gidisTarihi.HasValue
+                            ? a.gidisTarihi.Value.ToString("dd.MM.yyyy")
+                            : null,
+                        kisi = a.user.name,
+                        userId = a.userId,
+                        whereareyou = a.destinationLocation.destinationLocation
+                    })
                     .ToList();
-                result.content = pagedData.Select(a => new HRExpenseTripDto
-                {
-                    id = a.Id,
-                    description = a.tripDesciption,
-                    destination = a.destinationLocation != null
-                        ? a.destinationLocation.destinationLocation
-                        : null,
-                    donusTarihi = a.donusTarihi.HasValue
-                        ? a.donusTarihi.Value.ToString("dd.MM.yyyy")
-                        : null,
-                    gidisTarihi = a.gidisTarihi.HasValue
-                        ? a.gidisTarihi.Value.ToString("dd.MM.yyyy")
-                        : null,
-                    kisi = a.user != null ? a.user.name : null,
-                    userId = a.userId,
-                    whereareyou = a.destinationLocation != null
-                        ? a.destinationLocation.destinationLocation
-                        : null
-                }).ToList();
 
                 result.number = result.content.Count;
                 result.size = pageSize;
@@ -249,105 +355,117 @@ namespace AskalePortal.BLL
             }
             public PageReturn<HRExpenseTripDto> mylistAprovalStatus(FilterPageParam<HRExpenseWitOutTripTableMyListParameter> filterPageParam)
             {
-                PageReturn<HRExpenseTripDto>? result = new PageReturn<HRExpenseTripDto>();
-                int pageSize = filterPageParam.size ?? 20;
-                int pageNumber = filterPageParam.page ?? 0;
+                var result = new PageReturn<HRExpenseTripDto>();
+                ArgumentNullException.ThrowIfNull(filterPageParam);
+                (int pageNumber, int pageSize) = GetPaging(filterPageParam.page, filterPageParam.size);
 
-                int? userId = filterPageParam?.liste?.userId;
-                DateTime? gidisTarihi = filterPageParam?.liste?.gidisTarihi;
-                DateTime? donusTarihi = filterPageParam?.liste?.donusTarihi;
-                int? filterDestination = filterPageParam?.liste?.filterDestination;
-                int? filterUserId = filterPageParam?.liste?.filterUserId;
+                var filters = filterPageParam.liste;
+                int requestUserId = GetRequestUserId(
+                    filterPageParam.userId,
+                    filters?.userId);
 
-                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                AdminUser? user = bllAdminUsers.GetByID(userId ?? 0);
+                var bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
+                AdminUser? user = bllAdminUsers.GetByID(requestUserId);
+                if (user == null)
+                    return result;
 
-                BLLActions.RoleDetails bllRoleDetails = new BLLActions.RoleDetails(_configuration, _env, _mapper);
-                RoleDetail? roleDetail = bllRoleDetails.GetByRoleIDAndModuleID(user!.roleId, (int)CommonConstants.MODULES.HR_EXPENSE_CONTROL);
-                IQueryable<Data.Models.HRExpenseWithOutTripTable> query;
-                if (user.roleId == 1 || (roleDetail != null && roleDetail.canSeeLogs))
-                {
-                    query = dal.Get(a =>
-    a.enabled &&
-    a.HRExpenseWithOutTable.Any(b => b.currentStateId == 1 && b.enabled) &&
-    (filterUserId == null || a.userId == filterUserId) &&
-    (filterDestination == null || a.destinationLocationId == filterDestination) &&
-    (gidisTarihi == null || a.gidisTarihi == gidisTarihi) &&
-    (donusTarihi == null || a.donusTarihi == donusTarihi)
-);
-                }
-                else
-                {
+                var bllRoleDetails = new BLLActions.RoleDetails(_configuration, _env, _mapper);
+                RoleDetail? roleDetail = bllRoleDetails.GetByRoleIDAndModuleID(
+                    user.roleId,
+                    (int)CommonConstants.MODULES.HR_EXPENSE_CONTROL);
+                bool canSeeAll = user.roleId == 1 || roleDetail?.canSeeLogs == true;
 
-                    query = dal.Get(a =>
-     a.enabled &&
-     a.HRExpenseWithOutTable.Any(b => b.currentStateId == 1
-                                        && b.createdUserId == userId
-                                        && b.enabled) &&
-     (filterUserId == null || a.userId == filterUserId) &&
-     (filterDestination == null || a.destinationLocationId == filterDestination) &&
-     (gidisTarihi == null || a.gidisTarihi == gidisTarihi) &&
-     (donusTarihi == null || a.donusTarihi == donusTarihi)
- );
+                IQueryable<Data.Models.HRExpenseWithOutTripTable> query = dal.Get(a =>
+                        a.enabled &&
+                        a.HRExpenseWithOutTable.Any(b =>
+                            b.currentStateId == 1 &&
+                            b.enabled &&
+                            (canSeeAll || b.createdUserId == requestUserId)))
+                    .AsNoTracking();
 
-                }
+                if (filters?.filterUserId is > 0)
+                    query = query.Where(a => a.userId == filters.filterUserId.Value);
 
-                result.content = query.OrderByDescending(u=>u.Id)
-                  .Skip(pageSize * pageNumber).Take(pageSize)
+                if (filters?.filterDestination is > 0)
+                    query = query.Where(a => a.destinationLocationId == filters.filterDestination.Value);
 
-                    .Select(u => new HRExpenseTripDto()
+                if (filters?.gidisTarihi != null)
+                    query = query.Where(a => a.gidisTarihi == filters.gidisTarihi.Value.Date);
+
+                if (filters?.donusTarihi != null)
+                    query = query.Where(a => a.donusTarihi == filters.donusTarihi.Value.Date);
+
+                result.totalElements = query.Count();
+
+                result.content = query
+                    .OrderByDescending(u => u.Id)
+                    .Skip(pageSize * pageNumber)
+                    .Take(pageSize)
+                    .Select(u => new HRExpenseTripDto
                     {
-                        description = u.tripDescription,
+                        description = u.tripDesciption,
                         destination = u.destinationLocation.destinationLocation,
-                        donusTarihi = (u.donusTarihi ?? DateTime.Now).ToString("dd.MM.yyyy"),
-                        gidisTarihi = (u.gidisTarihi ??DateTime.Now).ToString("dd.MM.yyyy"),
+                        donusTarihi = u.donusTarihi.HasValue
+                            ? u.donusTarihi.Value.ToString("dd.MM.yyyy")
+                            : null,
+                        gidisTarihi = u.gidisTarihi.HasValue
+                            ? u.gidisTarihi.Value.ToString("dd.MM.yyyy")
+                            : null,
                         id = u.Id,
                         kisi = u.user.name,
                         userId = u.userId,
-                        whereareyou = u.destinationLocation.destinationLocation,
+                        whereareyou = u.destinationLocation.destinationLocation
+                    })
+                    .ToList();
 
-                    }).ToList();
-                result.totalElements = query.Count();
-                result.number = result.content.Count();
+                result.number = result.content.Count;
                 result.size = pageSize;
-
-
                 return result;
-
             }
 
             public PageReturn<HRExpenseWithOutTripTableSaveDto> listPageable(FilterPageParam<HRExpenseWithOutTripTableFilterDtoRequest> filterPageParam)
             {
-                PageReturn<HRExpenseWithOutTripTableSaveDto>? result = new PageReturn<HRExpenseWithOutTripTableSaveDto>();
-                int pageSize = filterPageParam.size ?? 20;
-                int pageNumber = filterPageParam.page ?? 0;
+                var result = new PageReturn<HRExpenseWithOutTripTableSaveDto>();
+                ArgumentNullException.ThrowIfNull(filterPageParam);
+                (int pageNumber, int pageSize) = GetPaging(filterPageParam.page, filterPageParam.size);
 
-                string? name = filterPageParam.liste?.filterName;
-                int? filterUserId = filterPageParam.liste?.filterUserId;
-                string? filterKullaniciAdi = filterPageParam.liste?.filterUsername;
+                var filters = filterPageParam.liste;
+                bool hasExplicitRequestUser = filterPageParam.userId is > 0;
+                int requestUserId = GetRequestUserId(
+                    filterPageParam.userId,
+                    filters?.filterUserId);
 
+                var bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
+                AdminUser? user = bllAdminUsers.GetByID(requestUserId);
+                if (user == null)
+                    return result;
 
-                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                AdminUser? user = bllAdminUsers.GetByID(filterUserId ?? 0);
-                IQueryable<Data.Models.HRExpenseWithOutTripTable> query;
-                if (user?.roleId == 1)
+                IQueryable<Data.Models.HRExpenseWithOutTripTable> query =
+                    dal.Get(u => u.enabled).AsNoTracking();
+
+                if (user.roleId != 1)
+                    query = query.Where(u => u.userId == requestUserId);
+
+                if (hasExplicitRequestUser && filters?.filterUserId is > 0)
+                    query = query.Where(u => u.userId == filters.filterUserId.Value);
+
+                if (!string.IsNullOrWhiteSpace(filters?.filterName))
                 {
-                    query = dal.Get(u => u.enabled &&
-                    (name == null || name == "" ? true : u.user.name.Contains(name)) &&
-                    (filterKullaniciAdi == null || filterKullaniciAdi == "" ? true : u.user.username.Contains(filterKullaniciAdi))
-                    ).OrderByDescending(u => u.Id);
+                    string name = filters.filterName.Trim();
+                    query = query.Where(u => u.user.name.Contains(name));
                 }
-                else
+
+                if (!string.IsNullOrWhiteSpace(filters?.filterUsername))
                 {
-                    query = dal.Get(u => u.enabled &&
-                   (name == null || name == "" ? true : u.user.name.Contains(name)) &&
-                   (filterKullaniciAdi == null || filterKullaniciAdi == "" ? true : u.user.username.Contains(filterKullaniciAdi)) &&
-                   (filterUserId == null || filterUserId == 0 ? true : u.userId == filterUserId)
-                   ).OrderByDescending(u => u.Id);
+                    string username = filters.filterUsername.Trim();
+                    query = query.Where(u => u.user.username.Contains(username));
                 }
+
+                query = query.OrderByDescending(u => u.Id);
 
                 result.content = query
-                  .Skip(pageSize * pageNumber).Take(pageSize)
+                    .Skip(pageSize * pageNumber)
+                    .Take(pageSize)
 
                     .Select(u => new HRExpenseWithOutTripTableSaveDto()
                     {
@@ -357,8 +475,12 @@ namespace AskalePortal.BLL
                         createdUserId = u.createdUserId,
                         destinationLocationId = u.destinationLocationId,
                         digerDestination = u.digerDestination,
-                        donusTarihi = u.donusTarihi.ToString(),
-                        gidisTarihi = u.gidisTarihi.ToString(),
+                        donusTarihi = u.donusTarihi.HasValue
+                            ? u.donusTarihi.Value.ToString("dd.MM.yyyy")
+                            : null,
+                        gidisTarihi = u.gidisTarihi.HasValue
+                            ? u.gidisTarihi.Value.ToString("dd.MM.yyyy")
+                            : null,
                         id = u.Id,
                         lastApproved = u.lastApproved,
                         onaySirasi = u.onaySirasi,
@@ -370,7 +492,7 @@ namespace AskalePortal.BLL
 
                     }).ToList();
                 result.totalElements = query.Count();
-                result.number = result.content.Count();
+                result.number = result.content.Count;
                 result.size = pageSize;
 
                 return result;
@@ -378,108 +500,76 @@ namespace AskalePortal.BLL
 
             public PageReturn<HRExpenseTripDto> activelist(FilterPageParam<HRExpenseWithOutTripTableActiveListDtoRequest> filterPageParam)
             {
-                PageReturn<HRExpenseTripDto>? result = new PageReturn<HRExpenseTripDto>();
-                int pageSize = filterPageParam.size ?? 20;
-                int pageNumber = filterPageParam.page ?? 0;
+                var result = new PageReturn<HRExpenseTripDto>();
+                ArgumentNullException.ThrowIfNull(filterPageParam);
+                (int pageNumber, int pageSize) = GetPaging(filterPageParam.page, filterPageParam.size);
 
-                int? userId = filterPageParam.liste?.userId;
-                DateTime? gidisTarihi = filterPageParam.liste?.filterGidisTarihi != null ? DateTime.Parse(filterPageParam.liste?.filterGidisTarihi!) : null;
-                DateTime? donusTarihi = filterPageParam.liste?.filterDonusTarihi != null ? DateTime.Parse(filterPageParam.liste?.filterDonusTarihi!) : null;
-                int? filterDestination = filterPageParam.liste?.filterDestination;
-                int? filterUserId = filterPageParam.liste?.filterUserId;
+                var filters = filterPageParam.liste;
+                int requestUserId = GetRequestUserId(
+                    filterPageParam.userId,
+                    filters?.userId);
+                DateTime? gidisTarihi = ParseOptionalDate(
+                    filters?.filterGidisTarihi,
+                    nameof(filters.filterGidisTarihi));
+                DateTime? donusTarihi = ParseOptionalDate(
+                    filters?.filterDonusTarihi,
+                    nameof(filters.filterDonusTarihi));
 
-                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                AdminUser? user = bllAdminUsers.GetByID(userId ?? 0);
+                var bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
+                AdminUser? user = bllAdminUsers.GetByID(requestUserId);
+                if (user == null)
+                    return result;
 
-                BLLActions.RoleDetails bllRoleDetails = new BLLActions.RoleDetails(_configuration, _env, _mapper);
-                RoleDetail? roleDetail = bllRoleDetails.GetByRoleIDAndModuleID(user!.roleId, (int)CommonConstants.MODULES.HR_EXPENSE_CONTROL);
+                var bllRoleDetails = new BLLActions.RoleDetails(_configuration, _env, _mapper);
+                RoleDetail? roleDetail = bllRoleDetails.GetByRoleIDAndModuleID(
+                    user.roleId,
+                    (int)CommonConstants.MODULES.HR_EXPENSE_CONTROL);
+                bool canSeeAll = user.roleId == 1 || roleDetail?.canSeeLogs == true;
 
-                if (user.roleId == 1 || (roleDetail != null && roleDetail.canSeeLogs))
-                {
+                IQueryable<Data.Models.HRExpenseWithOutTripTable> query = dal.Get(a =>
+                        a.enabled &&
+                        a.HRExpenseWithOutTable.Any(b =>
+                            b.currentStateId == 1 &&
+                            b.enabled &&
+                            (canSeeAll || b.createdUserId == requestUserId)))
+                    .AsNoTracking();
 
-                    var query =
-                 from a in dal.dB.HRExpenseWithOutTripTable
-                 join b in dal.dB.HRExpenseWithOutTable on a.Id equals b.tripId
-                 where a.enabled
-                       && b.currentStateId == 1
-                       && b.enabled == true
-                       && (filterUserId == null || a.userId == filterUserId)
-                       && (filterDestination == null || a.destinationLocationId == filterDestination)
-                       && (gidisTarihi == null || a.gidisTarihi == gidisTarihi)
-                       && (donusTarihi == null || a.donusTarihi == donusTarihi)
-                
-                 select a; 
+                if (filters?.filterUserId is > 0)
+                    query = query.Where(a => a.userId == filters.filterUserId.Value);
 
-                    result.totalElements = query.Count();
+                if (filters?.filterDestination is > 0)
+                    query = query.Where(a => a.destinationLocationId == filters.filterDestination.Value);
 
-                    result.content = query
-                        .OrderByDescending(u=>u.Id)
-                        .Skip(pageSize * pageNumber)
-                        .Take(pageSize)
-                        .Select(a => new HRExpenseTripDto
-                        {
-                            description = a.tripDesciption,
-                            destination = a.destinationLocation.destinationLocation,
-                            donusTarihi =(a.donusTarihi ?? DateTime.Now).ToString("dd.MM.yyyy"),
-                            gidisTarihi = (a.gidisTarihi ?? DateTime.Now).ToString("dd.MM.yyyy"),
-                            id = a.Id,
-                            kisi = a.user.name,
-                            userId = a.userId,
-                            whereareyou = a.destinationLocation.destinationLocation,
+                if (gidisTarihi.HasValue)
+                    query = query.Where(a => a.gidisTarihi == gidisTarihi.Value);
 
-                        })
-                        .Distinct() // aynı trip birden fazla b kaydından dolayı tekrar etmesin
-                        .ToList();
+                if (donusTarihi.HasValue)
+                    query = query.Where(a => a.donusTarihi == donusTarihi.Value);
 
-                    result.number = result.content.Count();
-                    result.size = pageSize;
-                }
-                else
-                {
+                result.totalElements = query.Count();
+                result.content = query
+                    .OrderByDescending(a => a.Id)
+                    .Skip(pageSize * pageNumber)
+                    .Take(pageSize)
+                    .Select(a => new HRExpenseTripDto
+                    {
+                        description = a.tripDesciption,
+                        destination = a.destinationLocation.destinationLocation,
+                        donusTarihi = a.donusTarihi.HasValue
+                            ? a.donusTarihi.Value.ToString("dd.MM.yyyy")
+                            : null,
+                        gidisTarihi = a.gidisTarihi.HasValue
+                            ? a.gidisTarihi.Value.ToString("dd.MM.yyyy")
+                            : null,
+                        id = a.Id,
+                        kisi = a.user.name,
+                        userId = a.userId,
+                        whereareyou = a.destinationLocation.destinationLocation
+                    })
+                    .ToList();
 
-                    var query =
-                 from a in dal.dB.HRExpenseWithOutTripTable
-                 join b in dal.dB.HRExpenseWithOutTable on a.Id equals b.tripId
-                 where a.enabled
-                       && b.currentStateId == 1
-                       && b.enabled == true
-                       && b.createdUserId == userId
-                       && (filterUserId == null || a.userId == filterUserId)
-                       && (filterDestination == null || a.destinationLocationId == filterDestination)
-                       && (gidisTarihi == null || a.gidisTarihi == gidisTarihi)
-                       && (donusTarihi == null || a.donusTarihi == donusTarihi)
-                 orderby b.tripId descending
-                 select a; // şimdilik entity dön
-
-                    // toplam kayıt sayısı
-                    result.totalElements = query.Count();
-
-                    // sayfalama + DTO dönüşüm
-                    result.content = query
-                        .Skip(pageSize * pageNumber)
-                        .Take(pageSize)
-                        .Select(a => new HRExpenseTripDto
-                        {
-                            description = a.tripDesciption,
-                            destination = a.destinationLocation.destinationLocation,
-                            donusTarihi = (a.donusTarihi ?? DateTime.Now).ToString("dd.MM.yyyy"),
-                            gidisTarihi = (a.gidisTarihi ??DateTime.Now).ToString("dd.MM.yyyy"),
-                            id = a.Id,
-                            kisi = a.user.name,
-                            userId = a.userId,
-                            whereareyou = a.destinationLocation.destinationLocation,
-
-                        })
-                        .Distinct() // aynı trip birden fazla b kaydından dolayı tekrar etmesin
-                        .ToList();
-
-                    result.number = result.content.Count();
-                    result.size = pageSize;
-                }
-
-
-
-
+                result.number = result.content.Count;
+                result.size = pageSize;
                 return result;
             }
         }

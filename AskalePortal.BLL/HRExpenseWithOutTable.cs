@@ -380,7 +380,7 @@ namespace AskalePortal.BLL
                 Data.Models.HRExpenseAmount hrExpenseAmount = bllHRExpenseAmount.getbycalisanturuidandharcamaturuid(
                         user.calisanTuruId, entity!.expenseTypeId, entity.spendingTime);
 
-                if (entity.id == 0)
+                if (entity.id == null)
                 {
 
                     if (hrExpenseTypeTable.toplamaNo)

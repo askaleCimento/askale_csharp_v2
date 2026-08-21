@@ -61,11 +61,12 @@ namespace AskalePortal.API.Controllers
         public ActionResult<object> getByTripId([FromForm] int tripId)
         {
             BLLActions.HRExpenseTable bllHRExpenseTable = new BLLActions.HRExpenseTable(_configuration, _env, _mapper);
-            List<HRExpenseTable> liste = bllHRExpenseTable.listByTripId(tripId);
+            List<HRExpenseTableSaveDto> liste = bllHRExpenseTable.listByTripId(tripId);
             return Ok(liste);
 
         }
         #endregion
+
         #region save
         [HttpPost("save")]
         public async Task<ActionResult<object>> save([FromForm] HRExpenseTableSaveDto entity)
@@ -83,6 +84,7 @@ namespace AskalePortal.API.Controllers
             return Ok(expensetable);
         }
         #endregion
+
         #region upload
         [HttpPost]
         [Route("upload")]
@@ -158,6 +160,7 @@ namespace AskalePortal.API.Controllers
             return Ok(page);
         }
         #endregion
+
         #region myListExpense
         [HttpPost("myListExpense")]
 

@@ -103,30 +103,30 @@ namespace AskalePortal.BLL
 
             private async void createMailComplete(UserByNameEMailDto user, Data.Models.SozlesmeTable entity)
             {
-                BLLActions.Companies bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
-                Company company = bllCompanies.getById(entity.companyId);
+                //BLLActions.Companies bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
+                //Company company = bllCompanies.getById(entity.companyId);
 
-                BLLActions.SozlesmeCinsiTable bllSozlesmeCinsiTable = new BLLActions.SozlesmeCinsiTable(_configuration, _env);
-                Data.Models.SozlesmeCinsiTable? sozlesmeCinsiTable =  bllSozlesmeCinsiTable.GetByID(entity.sozlesmeTuruId);
+                //BLLActions.SozlesmeCinsiTable bllSozlesmeCinsiTable = new BLLActions.SozlesmeCinsiTable(_configuration, _env);
+                //Data.Models.SozlesmeCinsiTable? sozlesmeCinsiTable =  bllSozlesmeCinsiTable.GetByID(entity.sozlesmeTuruId);
 
-                BLLActions.SaticiFirmalarTable bllSaticiFirmalarTable = new BLLActions.SaticiFirmalarTable(_configuration, _env);
-                List<Data.Models.SaticiFirmalarTable> listSaticiFirmalarTable = bllSaticiFirmalarTable.findByFirmaAdiCompany(entity.firmaKodu, company.Id);
+                //BLLActions.SaticiFirmalarTable bllSaticiFirmalarTable = new BLLActions.SaticiFirmalarTable(_configuration, _env);
+                //List<Data.Models.SaticiFirmalarTable> listSaticiFirmalarTable = bllSaticiFirmalarTable.findByFirmaAdiCompany(entity.firmaKodu, company.Id);
 
-                EmailMessage emailMessage = new EmailMessage();
-                emailMessage.subject = (entity.Id.ToString() + " Nolu Sözleşme Tamamlama");
-                emailMessage.toAddress = (user.email);
-                BLLActions.EmailReaderFile bllEmailReaderFile = new BLLActions.EmailReaderFile();
+                //EmailMessage emailMessage = new EmailMessage();
+                //emailMessage.subject = (entity.Id.ToString() + " Nolu Sözleşme Tamamlama");
+                //emailMessage.toAddress = (user.email);
+                //BLLActions.EmailReaderFile bllEmailReaderFile = new BLLActions.EmailReaderFile();
 
-                string mailMessage = bllEmailReaderFile.CreateSozlesmeMailString(_configuration, _env, "Sayın" + " " + user.name, entity.Id, company.vtext,
-                        sozlesmeCinsiTable?.sozlesmeCinsi ??"", listSaticiFirmalarTable.FirstOrDefault()?.firmaAdi ?? "", entity.sozlesmeKonusu,
-                        entity.aciklama, entity.sozlesmeTutari.ToString(), entity.bitisTarihi.ToString());
-                emailMessage.emailText = (mailMessage);
-                emailMessage.mailTuru = (1);
-                emailMessage.enabled = (true);
-                emailMessage.isSent = (false);
-                emailMessage.plannedDate = (DateTime.Now);
-                BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
-                await bllEmailMessages.Add(emailMessage);
+                //string mailMessage = bllEmailReaderFile.CreateSozlesmeMailString(_configuration, _env, "Sayın" + " " + user.name, entity.Id, company.vtext,
+                //        sozlesmeCinsiTable?.sozlesmeCinsi ??"", listSaticiFirmalarTable.FirstOrDefault()?.firmaAdi ?? "", entity.sozlesmeKonusu,
+                //        entity.aciklama, entity.sozlesmeTutari.ToString(), entity.bitisTarihi.ToString());
+                //emailMessage.emailText = (mailMessage);
+                //emailMessage.mailTuru = (1);
+                //emailMessage.enabled = (true);
+                //emailMessage.isSent = (false);
+                //emailMessage.plannedDate = (DateTime.Now);
+                //BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
+                //await bllEmailMessages.Add(emailMessage);
             }
 
             public PageReturn<SozlesmeTableDto>? FilterPageableDto(FilterPageParam<SozlesmeTableListDtoParameter> filterPageParam)
@@ -406,6 +406,7 @@ namespace AskalePortal.BLL
 
             private async void createMail(UserByNameEMailDto user, Data.ResponseModels.SozlesmeTableSaveDto entity)
             {
+                
                 BLLActions.Companies bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
                 Company company = bllCompanies.getById(entity.companyId ?? 0);
                 BLLActions.SozlesmeCinsiTable bllSozlesmeCinsiTable = new BLLActions.SozlesmeCinsiTable(_configuration, _env);

@@ -1,21 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using AskalePortal.Constants;
+﻿using AskalePortal.Constants;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.RequestModel;
 using AskalePortal.Data.RequestParams;
 using AskalePortal.Data.ResponseModels;
 using AskalePortal.Data.ResponseParams;
+using AskalePortal.Data.SAP.InputParams;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using static AskalePortal.BLL.BLLActions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AskalePortal.BLL
 {
@@ -103,10 +105,47 @@ namespace AskalePortal.BLL
                 return liste;
             }
 
-            public List<Data.Models.HRExpenseTable> listByTripId(int tripId)
+            public List<HRExpenseTableSaveDto> listByTripId(int tripId)
             {
-                List<Data.Models.HRExpenseTable>? liste = dal.Get(u => u.tripId == tripId && u.enabled && u.currentStateId != 2).ToList();
-                return liste ?? [];
+                return dal.Get(u =>
+    u.tripId == tripId &&
+    u.enabled &&
+    u.currentStateId != 2
+).Select(u=> new HRExpenseTableSaveDto
+{
+    amount=u.amount,
+    approval=u.approval,
+    approvedAmount=u.approvedAmount,
+    aracTuruId=u.aracTuruId,
+    createdDate= u.createdDate,
+    createdUserId=u.createdUserId,
+    currentStateId=u.currentStateId,
+    currentUserId=u.currentUserId,
+    enabled=u.enabled,
+    expenseDescription= u.expenseDescription,
+    expenseTypeId= u.expenseTypeId,
+    fileNames=u.fileNames,
+    gunlukMu= u.gunlukMu,
+    hrNot= u.hrNot,
+    id=u.Id,
+    islemTuruId=u.islemTuruId,
+    kalinanGunSayisi=u.kalinanGunSayisi,
+    kdvDegeri=u.kdvDegeri,
+    kdvOrani=u.kdvOrani,
+    lastApproved= u.lastApproved,
+    onaySirasi= u.onaySirasi,
+    otoparkGunSayisi= u.otoparkGunSayisi,
+    plaka= u.plaka,
+    spendingTime= DateTime.ParseExact(
+    (u.spendingTime ?? DateTime.Now).ToString("dd.MM.yyyy"),
+    "dd.MM.yyyy",
+    CultureInfo.InvariantCulture
+) ,
+    totalLimitAmount = u.totalLimitAmount,
+    tripId= u.tripId, 
+    updateDate=u.updatedDate,
+    updatedUserId = u.updatedUserId
+}).ToList();
             }
 
             public async Task<Data.Models.HRExpenseTable?> save(HRExpenseTableSaveDto entity, int userId)

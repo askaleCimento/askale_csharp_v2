@@ -116,6 +116,7 @@ namespace AskalePortal.API.Controllers
 
         }
         #endregion
+       
         #region completed
         [HttpPost("completed")]
         public ActionResult<PageReturn<HRExpenseTripTableSaveDto>> listCompleted([FromForm] FilterPageParam<HRExpenseTripTableCompletedListDtoParameter> filterPageParam)

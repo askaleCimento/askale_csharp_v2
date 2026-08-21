@@ -1229,8 +1229,12 @@ namespace AskalePortal.BLL
 
             public List<Models.HRExpenseTripTable> getFinishedForExpense(int userId)
             {
-                List<Models.HRExpenseTripTable>? liste = dal.Get(u => u.userId == userId && u.approval == null && u.lastApproved == true && u.enabled).ToList();
-                return liste ?? [];
+                return dal.Get(u =>
+       u.userId == userId &&
+       u.approval == null &&
+       u.lastApproved == true &&
+       u.enabled
+   ).ToList();
             }
 
             public PageReturn<HRExpenseTripDto> myActiveExpense(FilterPageParam<HRExpenseTripTableMyListDtoParameter> filterPageParam)
