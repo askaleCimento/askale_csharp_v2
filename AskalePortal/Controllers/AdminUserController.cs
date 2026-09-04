@@ -1,4 +1,6 @@
+using AskalePortal.API.Security;
 using AskalePortal.BLL;
+using AskalePortal.Data.Functions;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.RequestModel;
 using AskalePortal.Data.RequestParams;
@@ -6,10 +8,8 @@ using AskalePortal.Data.ResponseModels;
 using AskalePortal.Data.ResponseParams;
 using AskalePortal.Data.SAP.Models;
 using AutoMapper;
-using AskalePortal.API.Security;
-using AskalePortal.Data.Functions;
-
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 using System.Security.Claims;
 
 
@@ -392,6 +392,13 @@ namespace AskalePortal.API.Controllers
             AdminUser? saveUser = await bllAdminUsers.saveHRUser(user, userId);
             return Ok(saveUser);
 
+        }
+        [HttpPost("listRoleId")]
+        public ActionResult<List<AdminUserSaveDto>> listByRoleId([FromForm] int userId)
+        {
+            BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
+            List<AdminUserSaveDto> list = bllAdminUsers.listByRoleId(userId);
+            return Ok(list);
         }
 
     }

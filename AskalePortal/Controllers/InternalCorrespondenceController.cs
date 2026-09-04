@@ -102,6 +102,7 @@ namespace AskalePortal.API.Controllers
 
         }
         #endregion
+     
         #region list
         [HttpPost("list")]
         public ActionResult<PageReturn<InternalCorrespondenceDto>> list([FromForm] FilterPageParam<InternalCorrespondenceListParameterDto> filterPageParam)
@@ -111,7 +112,6 @@ namespace AskalePortal.API.Controllers
             return Ok(page);
         }
         #endregion
-
 
         #region getDetail
         [HttpPost("getDetail")]
@@ -128,6 +128,39 @@ namespace AskalePortal.API.Controllers
             BLLActions.DahiliYazismaTable bllDahiliYazismaTable = new BLLActions.DahiliYazismaTable(_configuration, _env, _mapper);
             InternalCorrespondenceDetailDto? dto = bllDahiliYazismaTable.getDetail(internalCorrespondenceDto, userId);
             return Ok(dto);
+        }
+        #endregion
+
+        #region showPdf
+        [HttpPost("showPdf")]
+        public ActionResult<ResponseByteArray> showPdf(
+            [FromForm] int? dahiliYazismaId)
+        {
+            int id = dahiliYazismaId ?? 0;
+            if (id <= 0)
+            {
+                return BadRequest(
+                    "dahiliYazismaId veya Parameter1 sıfırdan büyük olmalıdır.");
+            }
+
+            try
+            {
+                BLLActions.DahiliYazismaReport report =
+                    new BLLActions.DahiliYazismaReport(_configuration, _env);
+
+                return Ok(report.CreatePdf(id));
+            }
+            catch (KeyNotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (FileNotFoundException exception)
+            {
+                return Problem(
+                    detail: exception.Message,
+                    title: "Dahili yazışma rapor dosyası bulunamadı.",
+                    statusCode: StatusCodes.Status500InternalServerError);
+            }
         }
         #endregion
 

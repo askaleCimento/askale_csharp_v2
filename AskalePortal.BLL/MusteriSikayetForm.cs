@@ -348,7 +348,7 @@ namespace AskalePortal.BLL
                     List<string> listFileNames = new List<string>();
                     foreach (AttachedFile attachedFile in listAttachFile)
                     {
-                        listFileNames.Add(attachedFile.filePath);
+                        listFileNames.Add(attachedFile.title);
                     }
                     complaintActionDto.fileNames=listFileNames;
 

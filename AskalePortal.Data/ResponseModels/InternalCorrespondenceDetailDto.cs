@@ -15,7 +15,7 @@ namespace AskalePortal.Data.ResponseModels
         public string? companyLongName{get;set;}
         public string? servisi{get;set;}
         public string? konu{get;set;}
-        public DateTime? createdDate{get;set;}
+        public string? createdDate{get;set;}
         public string? kanal{get;set;}
         public string? createdUser{get;set;}
         public string? icerik{get;set;}

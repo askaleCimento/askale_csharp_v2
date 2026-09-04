@@ -1,7 +1,10 @@
 using AskalePortal.Data.Models;
+using AskalePortal.Data.RequestModel;
+using AskalePortal.Data.RequestParams;
 using AskalePortal.Data.ResponseModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -34,29 +37,16 @@ namespace AskalePortal.API.Controllers
                     userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
 
                 }
-                BLL.BLLActions.ISGGunTable bllISGGunTable = new BLL.BLLActions.ISGGunTable(_configuration, _env);
+                BLL.BLLActions.ISGGunTable bllISGGunTable = new BLL.BLLActions.ISGGunTable(_configuration, _env,_mapper);
 
-                if (entity?.id != null)
-                {
-
-                    entity.updateDate = DateTime.Now;
-                    entity.updatedUserId = userId == 0 ? null : userId;
-                    await bllISGGunTable.Update(_mapper.Map<ISGGunTable>(entity));
-                    return Ok(entity);
-                }
-                else
-                {
-
-                    entity!.createdDate = DateTime.Now;
-                    entity.createdUserId = userId;
-                    entity.enabled = true;
-                    await bllISGGunTable.Add(_mapper.Map<ISGGunTable>(entity));
-                    return Ok(entity);
-                }
+                return await bllISGGunTable.save(entity, userId);
+               
             }
             return Ok(null);
         }
         #endregion
+
+
 
         #region delete
         [HttpPost("delete")]
@@ -65,7 +55,7 @@ namespace AskalePortal.API.Controllers
         {
             try
             {
-                BLL.BLLActions.ISGGunTable bllISGGunTable = new BLL.BLLActions.ISGGunTable(_configuration, _env);
+                BLL.BLLActions.ISGGunTable bllISGGunTable = new BLL.BLLActions.ISGGunTable(_configuration, _env, _mapper);
                 bllISGGunTable.Delete(id);
                 return Ok(1);
             }
@@ -82,7 +72,7 @@ namespace AskalePortal.API.Controllers
 
         public ActionResult<object> getById([FromForm] int id)
         {
-            BLL.BLLActions.ISGGunTable bllISGGunTable = new BLL.BLLActions.ISGGunTable(_configuration, _env);
+            BLL.BLLActions.ISGGunTable bllISGGunTable = new BLL.BLLActions.ISGGunTable(_configuration, _env, _mapper);
 
             ISGGunTable? isgGunTable = bllISGGunTable.GetByID(id);
             if (isgGunTable == null)
@@ -101,10 +91,21 @@ namespace AskalePortal.API.Controllers
 
         public ActionResult<object> getAll()
         {
-            BLL.BLLActions.ISGGunTable bllISGGunTable = new BLL.BLLActions.ISGGunTable(_configuration, _env);
+            BLL.BLLActions.ISGGunTable bllISGGunTable = new BLL.BLLActions.ISGGunTable(_configuration, _env, _mapper);
 
             List<ISGGunTable>? listISGGunTable = bllISGGunTable.GetAll();
             return Ok(listISGGunTable);
+
+        }
+        #endregion
+
+        #region getAllFilter
+        [HttpPost("getAllFilter")]
+        public ActionResult<List<ISGGunTableSaveDto>> getAllByPage([FromForm] FilterParam<IsgGunTableListParameterDto> filterParam)
+        {
+            BLL.BLLActions.ISGGunTable bllISGGunTable = new BLL.BLLActions.ISGGunTable(_configuration, _env, _mapper);
+            List<ISGGunTableSaveDto> liste = bllISGGunTable.getAllFilter(filterParam);
+            return Ok(liste);
 
         }
         #endregion
@@ -114,7 +115,7 @@ namespace AskalePortal.API.Controllers
         [HttpPost("numberOfAccidentFreeDays")]
         public ActionResult<List<ISGGunTableGraphDto>> numberOfAccidentFreeDays()
         {
-            BLL.BLLActions.ISGGunTable bllISGGunTable = new BLL.BLLActions.ISGGunTable(_configuration, _env);
+            BLL.BLLActions.ISGGunTable bllISGGunTable = new BLL.BLLActions.ISGGunTable(_configuration, _env, _mapper);
 
             List<ISGGunTableGraphDto>? listISGGunTable = bllISGGunTable.NumberOfAccidentFreeDays();
             return Ok(listISGGunTable);

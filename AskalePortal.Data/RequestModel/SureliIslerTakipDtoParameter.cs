@@ -9,8 +9,8 @@ namespace AskalePortal.Data.RequestModel
     public class SureliIslerTakipDtoParameter
     {
         public int? userId { get; set; }
-        public int? filterUserId { get; set; }
-        public int? filterCompanyId { get; set; }
+        public int? filterUser { get; set; }
+        public int? filterCompany { get; set; }
         public string? filterAciklama { get; set; }
 
     }

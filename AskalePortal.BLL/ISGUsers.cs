@@ -28,6 +28,11 @@ namespace AskalePortal.BLL
                  && k.enabled == true).OrderByDescending(u=>u.Id);
                 return q.Skip(pageNumber * pageSize).Take(pageSize).ToList();
             }
+
+            internal Data.Models.ISGUser? findByCompanyId(int companyId)
+            {
+                return dal.Get(u => u.enabled == true && u.companyId == companyId).FirstOrDefault();
+            }
         }
     }
 }

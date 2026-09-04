@@ -1,4 +1,4 @@
-﻿using AskalePortal.Constants;
+using AskalePortal.Constants;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.ReportDataset;
 using AskalePortal.Data.RequestModel;
@@ -8,7 +8,11 @@ using AskalePortal.Data.ResponseParams;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
+using System.Text.RegularExpressions;
+using System.Net;
+using System.Data;
+using Microsoft.Reporting.NETCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -778,6 +782,259 @@ namespace AskalePortal.BLL
                 }
                 return 4;
             }
+
+            public byte[] CreatePdf(int repId)
+            {
+                try
+                {
+                    Data.Models.RepresentativeExpenseTable? expense = dal.Get(u =>
+                            u.Id == repId && u.enabled)
+                        .AsNoTracking()
+                        .Include(u => u.user)
+                        .Include(u => u.type)
+                        .SingleOrDefault();
+
+                    if (expense == null)
+                    {
+                        throw new Exception($"{repId} numaralı temsili harcama kaydı bulunamadı.");
+                    }
+
+                    DataTable approvalData = CreateRepresentativeApprovalDataTable(repId);
+                    string reportPath = ResolveRepresentativeReportPath();
+
+                    using LocalReport localReport = new LocalReport
+                    {
+                        ReportPath = reportPath
+                    };
+
+                    localReport.DataSources.Clear();
+                    localReport.DataSources.Add(
+                        new ReportDataSource("ApprovalDataSet", approvalData));
+
+                    localReport.SetParameters(new[]
+                    {
+                        new ReportParameter("username", expense.user?.name ?? string.Empty),
+                        new ReportParameter("perno", expense.user?.perNo ?? string.Empty),
+                        new ReportParameter("harcamaId", expense.Id.ToString()),
+                        new ReportParameter("harcamaTuru", expense.type?.typeName ?? string.Empty),
+                        new ReportParameter("harcamaZamani", expense.spendingTime?.ToString("dd.MM.yyyy HH:mm") ?? string.Empty),
+                        new ReportParameter("harcamaAciklamasi", SanitizeRepresentativeExpenseHtml(expense.description)),
+                        new ReportParameter("harcamaTutari", FormatRepresentativeMoney(expense.amount)),
+                        new ReportParameter("onaylananTutar", FormatRepresentativeMoney(expense.approvedAmount))
+                    });
+
+                    byte[] pdf = localReport.Render("PDF");
+                    if (pdf == null || pdf.Length == 0)
+                    {
+                        throw new Exception("LocalReport PDF oluşturdu ancak çıktı boş geldi.");
+                    }
+
+                    return pdf;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(
+                        $"RepresentativeExpense PDF oluşturulurken hata oluştu: {ex.Message}",
+                        ex);
+                }
+            }
+
+            private DataTable CreateRepresentativeApprovalDataTable(int repId)
+            {
+                DataTable table = new DataTable("ApprovalDataSet");
+                table.Columns.Add("Photo", typeof(byte[]));
+                table.Columns.Add("PhotoMimeType", typeof(string));
+                table.Columns.Add("UserName", typeof(string));
+                table.Columns.Add("StatusText", typeof(string));
+                table.Columns.Add("StatusColor", typeof(string));
+
+                // Tamamlanmış harcamalarda geçmiş onay adımlarının tamamını göstermeliyiz.
+                // Bu yüzden enabled filtresi uygulanmıyor. Eski kayıtlarda enabled=false olsa bile
+                // onay geçmişi rapordan kaybolmuyor.
+
+                List<Data.Models.RepresentativeExpenseDetail> approvals =
+                    dal.dB.RepresentativeExpenseDetail
+                        .AsNoTracking()
+                        .Include(item => item.user)
+                        .Where(item => item.repId == repId)
+                        .OrderBy(item => item.createdDate)
+                        .ThenBy(item => item.Id)
+                        .ToList();
+
+                List<int> proxyUserIds = approvals
+                    .Where(item => item.vekaletUserId.HasValue)
+                    .Select(item => item.vekaletUserId!.Value)
+                    .Distinct()
+                    .ToList();
+
+                Dictionary<int, Data.Models.AdminUser> proxyUsers =
+                    proxyUserIds.Count == 0
+                        ? new Dictionary<int, Data.Models.AdminUser>()
+                        : dal.dB.AdminUser
+                            .AsNoTracking()
+                            .Where(item => proxyUserIds.Contains(item.Id))
+                            .ToDictionary(item => item.Id);
+
+                foreach (Data.Models.RepresentativeExpenseDetail approval in approvals)
+                {
+                    Data.Models.AdminUser? proxyUser = null;
+                    if (approval.vekaletUserId.HasValue)
+                    {
+                        proxyUsers.TryGetValue(approval.vekaletUserId.Value, out proxyUser);
+                    }
+
+                    Data.Models.AdminUser? photoUser = proxyUser ?? approval.user;
+                    (byte[]? photo, string mimeType) =
+                        ReadRepresentativeUserPhoto(photoUser?.imageUrl);
+
+                    (string statusText, string statusColor) =
+                        GetRepresentativeApprovalStatus(approval);
+
+                    DataRow row = table.NewRow();
+                    row["Photo"] = photo == null ? DBNull.Value : photo;
+                    row["PhotoMimeType"] = mimeType;
+                    row["UserName"] = GetRepresentativeApproverName(approval, proxyUser);
+                    row["StatusText"] = statusText;
+                    row["StatusColor"] = statusColor;
+                    table.Rows.Add(row);
+                }
+
+                return table;
+            }
+
+            private string ResolveRepresentativeReportPath()
+            {
+                const string reportFileName = "RepresentativeExpenseReport.rdl";
+
+                string[] candidates =
+                {
+                    Path.Combine(_env.ContentRootPath, "Raporlar", reportFileName),
+                    Path.Combine(_env.ContentRootPath, "AskalePortal.BLL", "Raporlar", reportFileName),
+                    Path.GetFullPath(Path.Combine(_env.ContentRootPath, "..", "AskalePortal.BLL", "Raporlar", reportFileName)),
+                    Path.Combine(AppContext.BaseDirectory, "Raporlar", reportFileName),
+                    Path.Combine(AppContext.BaseDirectory, "AskalePortal.BLL", "Raporlar", reportFileName)
+                };
+
+                string? reportPath = candidates.FirstOrDefault(File.Exists);
+                if (reportPath == null)
+                {
+                    throw new FileNotFoundException(
+                        $"{reportFileName} rapor dosyası bulunamadı. Kontrol edilen yollar: {string.Join("; ", candidates)}");
+                }
+
+                return reportPath;
+            }
+
+            private (byte[]? Photo, string MimeType) ReadRepresentativeUserPhoto(string? fileName)
+            {
+                if (string.IsNullOrWhiteSpace(fileName))
+                {
+                    return (null, "image/png");
+                }
+
+                string basePath;
+                if (_env.EnvironmentName == "Development")
+                {
+                    basePath = _configuration["FilePath:local"] ?? string.Empty;
+                }
+                else if (_env.EnvironmentName == "Production")
+                {
+                    basePath = _configuration["FilePath:server"] ?? string.Empty;
+                }
+                else
+                {
+                    basePath = _configuration["FilePath:test"] ?? string.Empty;
+                }
+
+                string fullPath = Path.Combine(
+                    basePath,
+                    "adminusers",
+                    "images",
+                    Path.GetFileName(fileName));
+
+                if (!File.Exists(fullPath))
+                {
+                    return (null, "image/png");
+                }
+
+                string mimeType = Path.GetExtension(fullPath).ToLowerInvariant() switch
+                {
+                    ".jpg" or ".jpeg" => "image/jpeg",
+                    ".gif" => "image/gif",
+                    ".bmp" => "image/bmp",
+                    _ => "image/png"
+                };
+
+                return (File.ReadAllBytes(fullPath), mimeType);
+            }
+
+            private static string GetRepresentativeApproverName(
+                Data.Models.RepresentativeExpenseDetail approval,
+                Data.Models.AdminUser? proxyUser)
+            {
+                string approver = approval.user?.name ?? string.Empty;
+
+                if (proxyUser == null)
+                {
+                    return approver;
+                }
+
+                string proxy = proxyUser.name ?? string.Empty;
+                return string.IsNullOrWhiteSpace(approver)
+                    ? $"{proxy} (Vekaleten)"
+                    : $"{approver} / Vekaleten: {proxy}";
+            }
+
+            private static (string StatusText, string StatusColor)
+                GetRepresentativeApprovalStatus(Data.Models.RepresentativeExpenseDetail approval)
+            {
+                if (!approval.isReplied && !approval.approved.HasValue)
+                {
+                    return ("ONAYI BEKLENİYOR...", "#D9EDF7");
+                }
+
+                string date = approval.replyDate?.ToString("dd.MM.yyyy HH:mm") ?? string.Empty;
+
+                return approval.approved switch
+                {
+                    true => ($"Onaylandı - {date}", "#DFF0D8"),
+                    false => ($"Reddedildi - {date}", "#F2DEDE"),
+                    null => ("YANITLANDI", "#FCF8E3")
+                };
+            }
+
+            private static string FormatRepresentativeMoney(decimal value)
+            {
+                return $"{value:N2} TL";
+            }
+
+            private static string SanitizeRepresentativeExpenseHtml(string? html)
+            {
+                if (string.IsNullOrWhiteSpace(html))
+                {
+                    return string.Empty;
+                }
+
+                string text = Regex.Replace(
+                    html,
+                    @"<(script|style)\b[^>]*>.*?</\1>",
+                    string.Empty,
+                    RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+                text = Regex.Replace(text, @"<\s*strong\b[^>]*>", "<b>", RegexOptions.IgnoreCase);
+                text = Regex.Replace(text, @"<\s*/\s*strong\s*>", "</b>", RegexOptions.IgnoreCase);
+                text = Regex.Replace(text, @"<\s*b\b[^>]*>", "<b>", RegexOptions.IgnoreCase);
+                text = Regex.Replace(text, @"<\s*br\b[^>]*\/?>", "<br/>", RegexOptions.IgnoreCase);
+                text = Regex.Replace(text, @"<\s*p\b[^>]*>", "<p>", RegexOptions.IgnoreCase);
+                text = Regex.Replace(
+                    text,
+                    @"<(?!/?(?:b|br|p)\b)[^>]+>",
+                    string.Empty,
+                    RegexOptions.IgnoreCase);
+
+                return text.Trim();
+            }
+
 
         }
 

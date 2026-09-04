@@ -189,6 +189,52 @@ namespace AskalePortal.BLL
 
                 return lstData;
             }
+
+            public List<int> getByRoleIdCompany(int roleId)
+            {
+                List<int> listCompanyId = new List<int>();
+
+                BLLActions.Roles bllRoles =
+                    new BLLActions.Roles(
+                        _configuration,
+                        _env,
+                        _mapper);
+
+                Role? role = bllRoles.GetByID(roleId);
+
+                if (role == null ||
+                    string.IsNullOrWhiteSpace(role.companies))
+                {
+                    return listCompanyId;
+                }
+
+                string text = role.companies
+                    .Replace("[", "")
+                    .Replace("]", "");
+
+                List<string> listVkorgs = text
+                    .Split(
+                        ',',
+                        StringSplitOptions.RemoveEmptyEntries |
+                        StringSplitOptions.TrimEntries)
+                    .ToList();
+
+                foreach (string vkorg in listVkorgs)
+                {
+                    Company? company = dal
+                        .Get(x => x.vkorg == vkorg)
+                        .FirstOrDefault();
+
+                    if (company != null)
+                    {
+                        listCompanyId.Add(company.Id);
+                    }
+                }
+
+                return listCompanyId
+                    .Distinct()
+                    .ToList();
+            }
         }
     }
 }

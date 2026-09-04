@@ -11,8 +11,8 @@ namespace AskalePortal.Data.ResponseModels
         public int? id{get;set;}
         public string? fabrika{get;set;}
         public string? isinTanimi{get;set;}
-        public DateTime? baslamaTarihi{get;set;}
-        public DateTime? terminTarihi{get;set;}
+        public string? baslamaTarihi{get;set;}
+        public string? terminTarihi{get;set;}
         public int? mailSuresi{get;set;}
         public string? takipSorumlusu{get;set;}
         public string? ilgililer{get;set;}

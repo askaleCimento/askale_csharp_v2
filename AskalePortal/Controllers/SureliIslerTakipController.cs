@@ -36,6 +36,7 @@ namespace AskalePortal.API.Controllers
             return Ok(liste);
         }
         #endregion
+
         #region save
         [HttpPost("save")]
         public async Task<ActionResult<object>> save([FromForm] SureliIsTakipSaveDto entity, [FromForm] SureliIsTakipSaveDto? eski)
@@ -53,18 +54,26 @@ namespace AskalePortal.API.Controllers
         #endregion
 
         #region deleteData
-        [HttpPost("deleteData")]
-        public async Task<ActionResult<object>> deleteData([FromForm] int id)
+        [HttpPost("delete")]
+        public ActionResult<object> delete([FromForm] int id)
         {
-            BLLActions.SureliIsTakipTable bllSureliIsTakipTable = new BLLActions.SureliIsTakipTable(_configuration, _env, _mapper);
-            int userId = 0;
-            if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
+            try
             {
-                userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
+                BLLActions.SureliIsTakipTable bllSureliIsTakipTable = new BLLActions.SureliIsTakipTable(_configuration, _env, _mapper);
+                int userId = 0;
+                if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
+                {
+                    userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
 
+                }
+                bllSureliIsTakipTable.Delete(id);
+                return Ok(1);
             }
-            SureliIsTakipTable? table = await bllSureliIsTakipTable.deleteData(id, userId);
-            return Ok(table);
+            catch (Exception)
+            {
+                return Ok(0);
+            }
+
         }
         #endregion
 
@@ -140,7 +149,7 @@ namespace AskalePortal.API.Controllers
         {
             BLLActions.SureliIsTakipTable bllSureliIsTakipTable = new BLLActions.SureliIsTakipTable(_configuration, _env, _mapper);
 
-            SureliIsTakipTable? sureliIsTakipTable = bllSureliIsTakipTable.GetByID(id);
+            SureliIsTakipSaveDto? sureliIsTakipTable = _mapper.Map< SureliIsTakipSaveDto > (bllSureliIsTakipTable.GetByID(id));
 
             return Ok(sureliIsTakipTable);
         }

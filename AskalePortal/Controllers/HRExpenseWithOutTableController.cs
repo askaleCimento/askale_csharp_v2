@@ -92,7 +92,6 @@ namespace AskalePortal.API.Controllers
         }
         #endregion
 
-
         #region upload
         [HttpPost]
         [Route("upload")]
@@ -172,6 +171,36 @@ namespace AskalePortal.API.Controllers
 
             return Ok(responseByteArray);
 
+        }
+        #endregion
+
+        #region showPdf
+        [HttpPost("showPdf")]
+        public ActionResult<ResponseByteArray> Pdf([FromForm] int tripId)
+        {
+            if (tripId <= 0)
+            {
+                return BadRequest("tripId sıfırdan büyük olmalıdır.");
+            }
+
+            try
+            {
+                BLLActions.HRExpenseWithOutReport report =
+                    new BLLActions.HRExpenseWithOutReport(_configuration, _env);
+
+                byte[] pdf = report.CreatePdf(tripId);
+
+                return Ok(new ResponseByteArray
+                {
+                    file = pdf,
+                    fileName = $"HarcamaRaporu_{tripId}.pdf",
+                    name = "application/pdf"
+                });
+            }
+            catch (KeyNotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
         }
         #endregion
 

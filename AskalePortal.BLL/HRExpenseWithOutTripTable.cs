@@ -207,40 +207,53 @@ namespace AskalePortal.BLL
                 return liste;
             }
 
-            public PageReturn<Data.Models.HRExpenseWithOutTripTable> listCompleted(
-         FilterPageParam<HRExpenseWithOutTripTableDtoParameter> filterPageParam)
+            public PageReturn<HRExpenseWithOutTripTableSaveDto> listCompleted(
+      FilterPageParam<HRExpenseWithOutTripTableDtoParameter> filterPageParam)
             {
-                var result = new PageReturn<Data.Models.HRExpenseWithOutTripTable>();
+                var result = new PageReturn<HRExpenseWithOutTripTableSaveDto>();
 
                 ArgumentNullException.ThrowIfNull(filterPageParam);
-                (int pageNumber, int pageSize) = GetPaging(filterPageParam.page, filterPageParam.size);
+
+                (int pageNumber, int pageSize) =
+                    GetPaging(filterPageParam.page, filterPageParam.size);
 
                 var f = filterPageParam.liste;
-                bool hasExplicitRequestUser = filterPageParam.userId is > 0;
+
                 int requestUserId = GetRequestUserId(
                     filterPageParam.userId,
                     f?.filterUserId);
 
-                var bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
+                var bllAdminUsers =
+                    new BLLActions.AdminUsers(_configuration, _env, _mapper);
+
                 var user = bllAdminUsers.GetByID(requestUserId);
 
                 if (user == null)
                     return result;
 
-                var bllRoleDetails = new BLLActions.RoleDetails(_configuration, _env, _mapper);
+                var bllRoleDetails =
+                    new BLLActions.RoleDetails(_configuration, _env, _mapper);
+
                 var roleDetail = bllRoleDetails.GetByRoleIDAndModuleID(
                     user.roleId,
                     (int)CommonConstants.MODULES.HR_EXPENSE_CONTROL
                 );
 
                 IQueryable<Data.Models.HRExpenseWithOutTripTable> query =
-                     dal.Get(u => u.enabled && u.approval == true)
+                    dal.Get(u => u.enabled && u.approval == true)
                         .AsNoTracking();
 
-
-                if (user.roleId != 1 && roleDetail?.canSeeLogs == true)
+                // ADMIN -> TÜM TAMAMLANMIŞ KAYITLARI GÖRÜR
+                if (user.roleId == 1)
                 {
-                    var bllRoles = new BLLActions.Roles(_configuration, _env, _mapper);
+                    // Kullanıcı bazlı herhangi bir filtre uygulanmaz.
+                }
+                // LOG GÖRME YETKİSİ VARSA -> YETKİLİ OLDUĞU ŞİRKETLER
+                else if (roleDetail?.canSeeLogs == true)
+                {
+                    var bllRoles =
+                        new BLLActions.Roles(_configuration, _env, _mapper);
+
                     var role = bllRoles.GetByID(user.roleId);
 
                     var companyCodes = role?.companies?
@@ -258,42 +271,93 @@ namespace AskalePortal.BLL
                         .Select(company => company.Id)
                         .ToList();
 
-                    query = query.Where(u => companyIds.Contains(u.user.companyId));
+                    query = query.Where(
+                        u => companyIds.Contains(u.user.companyId));
                 }
-                else if (user.roleId != 1)
+                // NORMAL KULLANICI -> SADECE KENDİ KAYITLARI
+                else
                 {
-                    query = query.Where(u => u.userId == requestUserId);
+                    query = query.Where(
+                        u => u.userId == requestUserId);
                 }
 
-                if (hasExplicitRequestUser && f?.filterUserId is > 0)
-                    query = query.Where(u => u.userId == f.filterUserId.Value);
+                /*
+                 * Kullanıcı filtresi
+                 *
+                 * Admin için uygulanmıyor.
+                 * Çünkü frontend filterUserId alanına giriş yapan kullanıcının
+                 * ID'sini otomatik gönderdiği için admin sadece kendi
+                 * kayıtlarını görüyordu.
+                 */
+                if (user.roleId != 1 && f?.filterUserId is > 0)
+                {
+                    query = query.Where(
+                        u => u.userId == f.filterUserId.Value);
+                }
 
+                // AD SOYAD FİLTRESİ
                 if (!string.IsNullOrWhiteSpace(f?.filterName))
                 {
                     string filterName = f.filterName.Trim();
-                    query = query.Where(u => u.user.name.Contains(filterName));
+
+                    query = query.Where(
+                        u => u.user.name.Contains(filterName));
                 }
 
+                // KULLANICI ADI FİLTRESİ
                 if (!string.IsNullOrWhiteSpace(f?.filterUsername))
                 {
                     string filterUsername = f.filterUsername.Trim();
-                    query = query.Where(u => u.user.username.Contains(filterUsername));
+
+                    query = query.Where(
+                        u => u.user.username.Contains(filterUsername));
                 }
 
+                // GİDİŞ TARİHİ
                 if (f?.filterGidisTarihi != null)
-                    query = query.Where(u => u.gidisTarihi == f.filterGidisTarihi);
+                {
+                    query = query.Where(
+                        u => u.gidisTarihi == f.filterGidisTarihi);
+                }
 
+                // DÖNÜŞ TARİHİ
                 if (f?.filterDonusTarihi != null)
-                    query = query.Where(u => u.donusTarihi == f.filterDonusTarihi);
+                {
+                    query = query.Where(
+                        u => u.donusTarihi == f.filterDonusTarihi);
+                }
 
+                // GİDİŞ YERİ
                 if (f?.filterGidisYeriId is > 0)
-                    query = query.Where(u => u.destinationLocationId == f.filterGidisYeriId);
+                {
+                    query = query.Where(
+                        u => u.destinationLocationId == f.filterGidisYeriId);
+                }
 
-
+                // TOPLAM KAYIT SAYISI
                 result.totalElements = query.Count();
 
-                result.content = query
-                    .OrderByDescending(x => x.Id)
+                // SAYFALAMA
+                result.content = query.Select(u=> new HRExpenseWithOutTripTableSaveDto
+                {
+                    approval=u.approval,
+                    createdDate=u.createdDate.ToString(),
+                    createdUserId=u.createdUserId,
+                    destinationLocationId=u.destinationLocationId,
+                    digerDestination=u.digerDestination,
+                    donusTarihi= u.donusTarihi.HasValue ? u.donusTarihi.Value.ToString("dd.MM.yyyy") : null,
+                    enabled =u.enabled,
+                    gidisTarihi = u.gidisTarihi.HasValue ? u.gidisTarihi.Value.ToString("dd.MM.yyyy") : null,
+                    id=u.Id,
+                    lastApproved=u.lastApproved,
+                    onaySirasi=u.onaySirasi,
+                    tripDescription=u.tripDescription,
+                    tripDescriptionId=u.tripDescriptionId,
+                    updateDate=u.updatedDate.ToString(),
+                    updatedUserId=u.updatedUserId,
+                    userId = u.userId
+                })
+                    .OrderByDescending(x => x.id)
                     .Skip(pageSize * pageNumber)
                     .Take(pageSize)
                     .ToList();

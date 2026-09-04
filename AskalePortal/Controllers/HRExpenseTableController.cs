@@ -67,6 +67,42 @@ namespace AskalePortal.API.Controllers
         }
         #endregion
 
+        #region showPdf
+        [HttpPost("showPdf")]
+        public ActionResult<ResponseByteArray> showPdf([FromForm] int tripId)
+        {
+            if (tripId <= 0)
+            {
+                return BadRequest("tripId sıfırdan büyük olmalıdır.");
+            }
+
+            try
+            {
+                BLLActions.HRExpenseReport report =
+                    new BLLActions.HRExpenseReport(_configuration, _env);
+                byte[] pdf = report.CreatePdf(tripId);
+
+                return Ok(new ResponseByteArray
+                {
+                    file = pdf,
+                    fileName = $"HarcamaRaporu_{tripId}.pdf",
+                    name = "application/pdf"
+                });
+            }
+            catch (KeyNotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (FileNotFoundException exception)
+            {
+                return Problem(
+                    detail: exception.Message,
+                    title: "Harcama rapor dosyası bulunamadı.",
+                    statusCode: StatusCodes.Status500InternalServerError);
+            }
+        }
+        #endregion
+
         #region save
         [HttpPost("save")]
         public async Task<ActionResult<object>> save([FromForm] HRExpenseTableSaveDto entity)

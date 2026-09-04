@@ -21,4 +21,23 @@
     <ProjectReference Include="..\AskalePortal.Data\AskalePortal.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Raporlar\DahiliYazisma\DahiliYazisma.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <TargetPath>Raporlar\DahiliYazisma\DahiliYazisma.rdl</TargetPath>
+    </None>
+    <None Update="Raporlar\YillikIzin\YillikIzin.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <TargetPath>Raporlar\YillikIzin\YillikIzin.rdl</TargetPath>
+    </None>
+
+    <None Update="Raporlar\RepresentativeExpenseReport.rdl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <TargetPath>Raporlar\RepresentativeExpenseReport.rdl</TargetPath>
+    </None>
+  </ItemGroup>
+
 </Project>

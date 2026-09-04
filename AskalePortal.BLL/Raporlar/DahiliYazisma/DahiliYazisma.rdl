@@ -1,18 +1,92 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="ApprovalDataSource">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>7e5347f9-824e-4f65-b202-01e779fcd04b</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="ApprovalDataSet">
+      <Query>
+        <DataSourceName>ApprovalDataSource</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Photo">
+          <DataField>Photo</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
+        </Field>
+        <Field Name="PhotoMimeType">
+          <DataField>PhotoMimeType</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="UserName">
+          <DataField>UserName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="StatusText">
+          <DataField>StatusText</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="StatusColor">
+          <DataField>StatusColor</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
   <ReportSections>
     <ReportSection>
       <Body>
         <ReportItems>
+          <Textbox xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" Name="CorporateTitle">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>DAHİLİ YAZIŞMA FORMU</Value>
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>15pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#B42318</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.63cm</Top>
+            <Left>5.7cm</Left>
+            <Height>0.72cm</Height>
+            <Width>14.1cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+            </Style>
+          </Textbox>
           <Image Name="Image1">
             <Source>Embedded</Source>
             <Value>AskaleLogo</Value>
             <Sizing>FitProportional</Sizing>
-            <Top>0.86995cm</Top>
-            <Left>0.79058cm</Left>
-            <Height>1.5cm</Height>
-            <Width>4.78083cm</Width>
+            <Top>0.55cm</Top>
+            <Left>0.8cm</Left>
+            <Height>1.35cm</Height>
+            <Width>4.3cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -20,14 +94,16 @@
             </Style>
           </Image>
           <Line Name="Line1">
-            <Top>2.64266cm</Top>
-            <Left>0.79058cm</Left>
+            <Top>2.25cm</Top>
+            <Left>0.8cm</Left>
             <Height>0cm</Height>
-            <Width>20.01542cm</Width>
+            <Width>19.1cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
+                <Color>#B42318</Color>
                 <Style>Solid</Style>
+                <Width>2pt</Width>
               </Border>
             </Style>
           </Line>
@@ -39,26 +115,33 @@
                 <TextRuns>
                   <TextRun>
                     <Value>Konu            </Value>
-                    <Style />
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>8.5pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#475467</Color>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>3.59544cm</Top>
-            <Left>0.79058cm</Left>
-            <Height>0.6cm</Height>
-            <Width>2.5cm</Width>
+            <Top>4.17cm</Top>
+            <Left>0.8cm</Left>
+            <Height>0.68cm</Height>
+            <Width>3.35cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Color>#D0D5DD</Color>
+                <Style>Solid</Style>
+                <Width>0.5pt</Width>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <BackgroundColor>#F8FAFC</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+              <PaddingRight>5pt</PaddingRight>
             </Style>
           </Textbox>
           <Textbox Name="Textbox2">
@@ -69,26 +152,33 @@
                 <TextRuns>
                   <TextRun>
                     <Value>Servisi          </Value>
-                    <Style />
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>8.5pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#475467</Color>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>2.81905cm</Top>
-            <Left>0.79058cm</Left>
-            <Height>0.6cm</Height>
-            <Width>2.5cm</Width>
+            <Top>3.37cm</Top>
+            <Left>0.8cm</Left>
+            <Height>0.68cm</Height>
+            <Width>3.35cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Color>#D0D5DD</Color>
+                <Style>Solid</Style>
+                <Width>0.5pt</Width>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <BackgroundColor>#F8FAFC</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+              <PaddingRight>5pt</PaddingRight>
             </Style>
           </Textbox>
           <Textbox Name="Textbox8">
@@ -106,19 +196,16 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>2.81905cm</Top>
-            <Left>3.46696cm</Left>
-            <Height>0.6cm</Height>
-            <Width>0.33042cm</Width>
+            <Top>0cm</Top>
+            <Left>0cm</Left>
+            <Height>0cm</Height>
+            <Width>0cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <Color>#FFFFFF</Color>
             </Style>
           </Textbox>
           <Textbox Name="Textbox9">
@@ -129,26 +216,33 @@
                 <TextRuns>
                   <TextRun>
                     <Value>Kanal</Value>
-                    <Style />
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>8.5pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#475467</Color>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>5.9246cm</Top>
-            <Left>0.79058cm</Left>
-            <Height>0.6cm</Height>
-            <Width>2.5cm</Width>
+            <Top>6.57cm</Top>
+            <Left>0.8cm</Left>
+            <Height>0.68cm</Height>
+            <Width>3.35cm</Width>
             <ZIndex>5</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Color>#D0D5DD</Color>
+                <Style>Solid</Style>
+                <Width>0.5pt</Width>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <BackgroundColor>#F8FAFC</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+              <PaddingRight>5pt</PaddingRight>
             </Style>
           </Textbox>
           <Textbox Name="Textbox10">
@@ -159,26 +253,33 @@
                 <TextRuns>
                   <TextRun>
                     <Value>Sayı              </Value>
-                    <Style />
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>8.5pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#475467</Color>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>5.14821cm</Top>
-            <Left>0.79058cm</Left>
-            <Height>0.6cm</Height>
-            <Width>2.5cm</Width>
+            <Top>5.77cm</Top>
+            <Left>0.8cm</Left>
+            <Height>0.68cm</Height>
+            <Width>3.35cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Color>#D0D5DD</Color>
+                <Style>Solid</Style>
+                <Width>0.5pt</Width>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <BackgroundColor>#F8FAFC</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+              <PaddingRight>5pt</PaddingRight>
             </Style>
           </Textbox>
           <Textbox Name="Textbox11">
@@ -189,26 +290,33 @@
                 <TextRuns>
                   <TextRun>
                     <Value>Tarih             </Value>
-                    <Style />
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>8.5pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#475467</Color>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>4.37183cm</Top>
-            <Left>0.79058cm</Left>
-            <Height>0.6cm</Height>
-            <Width>2.5cm</Width>
+            <Top>4.97cm</Top>
+            <Left>0.8cm</Left>
+            <Height>0.68cm</Height>
+            <Width>3.35cm</Width>
             <ZIndex>7</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Color>#D0D5DD</Color>
+                <Style>Solid</Style>
+                <Width>0.5pt</Width>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <BackgroundColor>#F8FAFC</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+              <PaddingRight>5pt</PaddingRight>
             </Style>
           </Textbox>
           <Textbox Name="Textbox12">
@@ -226,19 +334,16 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>3.59544cm</Top>
-            <Left>3.46696cm</Left>
-            <Height>0.6cm</Height>
-            <Width>0.33042cm</Width>
+            <Top>0cm</Top>
+            <Left>0cm</Left>
+            <Height>0cm</Height>
+            <Width>0cm</Width>
             <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <Color>#FFFFFF</Color>
             </Style>
           </Textbox>
           <Textbox Name="Textbox13">
@@ -256,19 +361,16 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>4.37183cm</Top>
-            <Left>3.46696cm</Left>
-            <Height>0.6cm</Height>
-            <Width>0.33042cm</Width>
+            <Top>0cm</Top>
+            <Left>0cm</Left>
+            <Height>0cm</Height>
+            <Width>0cm</Width>
             <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <Color>#FFFFFF</Color>
             </Style>
           </Textbox>
           <Textbox Name="Textbox15">
@@ -286,19 +388,16 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>5.9246cm</Top>
-            <Left>3.46696cm</Left>
-            <Height>0.6cm</Height>
-            <Width>0.33042cm</Width>
+            <Top>0cm</Top>
+            <Left>0cm</Left>
+            <Height>0cm</Height>
+            <Width>0cm</Width>
             <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <Color>#FFFFFF</Color>
             </Style>
           </Textbox>
           <Textbox Name="Textbox14">
@@ -316,19 +415,16 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>5.14821cm</Top>
-            <Left>3.46696cm</Left>
-            <Height>0.6cm</Height>
-            <Width>0.33042cm</Width>
+            <Top>0cm</Top>
+            <Left>0cm</Left>
+            <Height>0cm</Height>
+            <Width>0cm</Width>
             <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <Color>#FFFFFF</Color>
             </Style>
           </Textbox>
           <Textbox Name="Textbox18">
@@ -339,26 +435,32 @@
                 <TextRuns>
                   <TextRun>
                     <Value>=Parameters!ReportParameter1.Value</Value>
-                    <Style />
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <Color>#101828</Color>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox18</rd:DefaultName>
-            <Top>2.81905cm</Top>
-            <Left>4.09787cm</Left>
-            <Height>0.6cm</Height>
-            <Width>12.39542cm</Width>
+            <Top>3.37cm</Top>
+            <Left>4.15cm</Left>
+            <Height>0.68cm</Height>
+            <Width>15.65cm</Width>
             <ZIndex>12</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Color>#D0D5DD</Color>
+                <Style>Solid</Style>
+                <Width>0.5pt</Width>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <BackgroundColor>#FFFFFF</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+              <PaddingRight>7pt</PaddingRight>
             </Style>
           </Textbox>
           <Textbox Name="Textbox19">
@@ -369,26 +471,32 @@
                 <TextRuns>
                   <TextRun>
                     <Value>=Parameters!ReportParameter2.Value</Value>
-                    <Style />
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <Color>#101828</Color>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox18</rd:DefaultName>
-            <Top>3.59544cm</Top>
-            <Left>4.09787cm</Left>
-            <Height>0.6cm</Height>
-            <Width>12.39542cm</Width>
+            <Top>4.17cm</Top>
+            <Left>4.15cm</Left>
+            <Height>0.68cm</Height>
+            <Width>15.65cm</Width>
             <ZIndex>13</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Color>#D0D5DD</Color>
+                <Style>Solid</Style>
+                <Width>0.5pt</Width>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <BackgroundColor>#FFFFFF</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+              <PaddingRight>7pt</PaddingRight>
             </Style>
           </Textbox>
           <Textbox Name="Textbox20">
@@ -399,26 +507,32 @@
                 <TextRuns>
                   <TextRun>
                     <Value>=Parameters!ReportParameter3.Value</Value>
-                    <Style />
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <Color>#101828</Color>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox18</rd:DefaultName>
-            <Top>4.37183cm</Top>
-            <Left>4.09787cm</Left>
-            <Height>0.6cm</Height>
-            <Width>12.39542cm</Width>
+            <Top>4.97cm</Top>
+            <Left>4.15cm</Left>
+            <Height>0.68cm</Height>
+            <Width>15.65cm</Width>
             <ZIndex>14</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Color>#D0D5DD</Color>
+                <Style>Solid</Style>
+                <Width>0.5pt</Width>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <BackgroundColor>#FFFFFF</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+              <PaddingRight>7pt</PaddingRight>
             </Style>
           </Textbox>
           <Textbox Name="Textbox21">
@@ -429,26 +543,32 @@
                 <TextRuns>
                   <TextRun>
                     <Value>=Parameters!ReportParameter4.Value</Value>
-                    <Style />
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <Color>#101828</Color>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox18</rd:DefaultName>
-            <Top>5.14821cm</Top>
-            <Left>4.09787cm</Left>
-            <Height>0.6cm</Height>
-            <Width>12.39542cm</Width>
+            <Top>5.77cm</Top>
+            <Left>4.15cm</Left>
+            <Height>0.68cm</Height>
+            <Width>15.65cm</Width>
             <ZIndex>15</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Color>#D0D5DD</Color>
+                <Style>Solid</Style>
+                <Width>0.5pt</Width>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <BackgroundColor>#FFFFFF</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+              <PaddingRight>7pt</PaddingRight>
             </Style>
           </Textbox>
           <Textbox Name="Textbox22">
@@ -459,98 +579,119 @@
                 <TextRuns>
                   <TextRun>
                     <Value>=Parameters!ReportParameter5.Value</Value>
-                    <Style />
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <Color>#101828</Color>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox18</rd:DefaultName>
-            <Top>5.9246cm</Top>
-            <Left>4.09786cm</Left>
-            <Height>0.6cm</Height>
-            <Width>12.39542cm</Width>
+            <Top>6.57cm</Top>
+            <Left>4.15cm</Left>
+            <Height>0.68cm</Height>
+            <Width>15.65cm</Width>
             <ZIndex>16</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Color>#D0D5DD</Color>
+                <Style>Solid</Style>
+                <Width>0.5pt</Width>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <BackgroundColor>#FFFFFF</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+              <PaddingRight>7pt</PaddingRight>
             </Style>
           </Textbox>
-          <Tablix Name="Tablix1">
+          <Tablix Name="ApprovalTablix">
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.46167cm</Width>
+                  <Width>1.8cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>10.93375cm</Width>
+                  <Width>17.3cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>1.68479cm</Height>
+                  <Height>1.72cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox30">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style />
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox30</rd:DefaultName>
+                        <Image Name="ApprovalPhoto">
+                          <Source>Database</Source>
+                          <Value>=Fields!Photo.Value</Value>
+                          <MIMEType>=Fields!PhotoMimeType.Value</MIMEType>
+                          <Sizing>FitProportional</Sizing>
+                          <Visibility>
+                            <Hidden>=IsNothing(Fields!Photo.Value)</Hidden>
+                          </Visibility>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
+                              <Color>#D0D5DD</Color>
                               <Style>Solid</Style>
+                              <Width>0.6pt</Width>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <BackgroundColor>=Fields!StatusColor.Value</BackgroundColor>
+                            <PaddingLeft>3pt</PaddingLeft>
+                            <PaddingRight>3pt</PaddingRight>
+                            <PaddingTop>3pt</PaddingTop>
+                            <PaddingBottom>3pt</PaddingBottom>
                           </Style>
-                        </Textbox>
+                        </Image>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox29">
+                        <Textbox Name="ApprovalInfo">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
-                                  <Style />
+                                  <Value>=Fields!UserName.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>#101828</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!StatusText.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <Color>#475467</Color>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox29</rd:DefaultName>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
+                              <Color>#D0D5DD</Color>
                               <Style>Solid</Style>
+                              <Width>0.6pt</Width>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <BackgroundColor>=Fields!StatusColor.Value</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>10pt</PaddingLeft>
+                            <PaddingRight>7pt</PaddingRight>
+                            <PaddingTop>5pt</PaddingTop>
+                            <PaddingBottom>5pt</PaddingBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -568,14 +709,15 @@
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="Details" />
+                  <Group Name="ApprovalDetails" />
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <Top>9.01912cm</Top>
-            <Left>4.09786cm</Left>
-            <Height>1.68479cm</Height>
-            <Width>12.39542cm</Width>
+            <DataSetName>ApprovalDataSet</DataSetName>
+            <Top>11.27cm</Top>
+            <Left>0.8cm</Left>
+            <Height>1.72cm</Height>
+            <Width>19.1cm</Width>
             <ZIndex>17</ZIndex>
             <Style>
               <Border>
@@ -591,47 +733,140 @@
                 <TextRuns>
                   <TextRun>
                     <Value>=Parameters!ReportParameter6.Value</Value>
-                    <Style />
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>9.5pt</FontSize>
+                      <Color>#344054</Color>
+                    </Style>
                   </TextRun>
                 </TextRuns>
                 <Style />
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox31</rd:DefaultName>
-            <Top>7.45808cm</Top>
-            <Left>0.79058cm</Left>
-            <Height>0.6cm</Height>
-            <Width>20.01542cm</Width>
+            <Top>8.37cm</Top>
+            <Left>0.8cm</Left>
+            <Height>1.65cm</Height>
+            <Width>19.1cm</Width>
             <ZIndex>18</ZIndex>
+            <Style>
+              <Border>
+                <Color>#D0D5DD</Color>
+                <Style>Solid</Style>
+                <Width>0.6pt</Width>
+              </Border>
+              <BackgroundColor>#FFFFFF</BackgroundColor>
+              <PaddingLeft>10pt</PaddingLeft>
+              <PaddingRight>10pt</PaddingRight>
+              <PaddingTop>8pt</PaddingTop>
+              <PaddingBottom>8pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" Name="InfoHeading">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>YAZIŞMA BİLGİLERİ</Value>
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#9B1C1C</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>2.65cm</Top>
+            <Left>0.8cm</Left>
+            <Height>0.62cm</Height>
+            <Width>19.1cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
+              <BackgroundColor>#FDECEC</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+            </Style>
+          </Textbox>
+          <Textbox xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" Name="ContentHeading">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>YAZIŞMA İÇERİĞİ</Value>
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#9B1C1C</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>7.65cm</Top>
+            <Left>0.8cm</Left>
+            <Height>0.62cm</Height>
+            <Width>19.1cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <BackgroundColor>#FDECEC</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
+            </Style>
+          </Textbox>
+          <Textbox xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" Name="ApprovalHeading">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>ONAY SÜRECİ</Value>
+                    <Style>
+                      <FontFamily>Segoe UI</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#344054</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>10.55cm</Top>
+            <Left>0.8cm</Left>
+            <Height>0.62cm</Height>
+            <Width>19.1cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <BackgroundColor>#F2F4F7</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>9pt</PaddingLeft>
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>5.70175in</Height>
+        <Height>16.2cm</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
-          <TopBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </TopBorder>
-          <BottomBorder>
-            <Color>Black</Color>
-            <Style>Solid</Style>
-            <Width>1pt</Width>
-          </BottomBorder>
         </Style>
       </Body>
-      <Width>8.45082in</Width>
+      <Width>19.9cm</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
@@ -639,6 +874,8 @@
         <BottomMargin>1cm</BottomMargin>
         <ColumnSpacing>0.13cm</ColumnSpacing>
         <Style />
+        <LeftMargin>0.5cm</LeftMargin>
+        <RightMargin>0.5cm</RightMargin>
       </Page>
     </ReportSection>
   </ReportSections>

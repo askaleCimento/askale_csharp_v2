@@ -101,7 +101,7 @@ namespace AskalePortal.API.Controllers
         {
             BLLActions.HRExpenseWithOutTripTable bllHRExpenseWithOutTripTable = new BLLActions.HRExpenseWithOutTripTable(_configuration, _env, _mapper);
 
-            PageReturn<HRExpenseWithOutTripTable> liste = bllHRExpenseWithOutTripTable.listCompleted(filterPageParam);
+            PageReturn<HRExpenseWithOutTripTableSaveDto> liste = bllHRExpenseWithOutTripTable.listCompleted(filterPageParam);
             return Ok(liste);
         }
         #endregion

@@ -159,9 +159,9 @@ namespace AskalePortal.BLL
             public string getMusteriEmailText(IConfiguration _configuration, IWebHostEnvironment env, Data.Models.MusteriSikayetForm entity, string companyName, string sikayetTipi,
         string categoryName, string createdUserName, List<AttachedFile> attachedFiles)
             {
-                string? filePath = Path.Combine(env.IsDevelopment() ? _configuration["FilePath:local"]! : env.IsProduction() ? _configuration["FilePath:server"]! :
-                _configuration["FilePath:test"]!, "templates\\Email\\emailMusteriSikayet.html");
-                //filePath = "C:\\Users\\dilek.sariyerlioglu\\Source\\Repos\\askaleportalccore\\AskalePortal.BLL\\templates\\Email\\emailSozlesme.html";
+                //string? filePath = Path.Combine(env.IsDevelopment() ? _configuration["FilePath:local"]! : env.IsProduction() ? _configuration["FilePath:server"]! :
+                //_configuration["FilePath:test"]!, "templates\\Email\\emailMusteriSikayet.html");
+                string? filePath = "C:\\Users\\dilek.sariyerlioglu\\Source\\Repos\\askaleportalccore\\AskalePortal.BLL\\templates\\Email\\emailSozlesme.html";
 
                 StreamReader reader = new StreamReader(filePath);
                 string content = reader.ReadToEnd();
@@ -185,6 +185,19 @@ namespace AskalePortal.BLL
                 content = content.Replace("{noLink}", CommonConstants.OkNoLinks.NO_LINK);
                 return content;
 
+            }
+            public string IsgAksiyonEmailTemplate(IConfiguration _configuration, IWebHostEnvironment env, string title, string description)
+            {
+                //string? filePath = Path.Combine(env.IsDevelopment() ? _configuration["FilePath:local"]! : env.IsProduction() ? _configuration["FilePath:server"]! :
+                //_configuration["FilePath:test"]!, "templates\\Email\\emailIsg.html");
+                string? filePath = "C:\\Users\\dilek.sariyerlioglu\\source\\repos\\askale_csharp_v2\\AskalePortal.BLL\\templates\\Email\\emailIsg.html";
+                StreamReader reader = new StreamReader(filePath);
+                string content = reader.ReadToEnd();
+
+                content.Replace("{title}", title);
+                content.Replace("{description}", description);
+                content.Replace("{footer}", "Copyright &copy; 2016 Aşkale Çimento");
+                return content;
             }
         }
     }

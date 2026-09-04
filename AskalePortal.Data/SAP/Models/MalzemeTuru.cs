@@ -1,4 +1,5 @@
-﻿using SapNwRfc;
+﻿using Newtonsoft.Json;
+using SapNwRfc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,17 +12,16 @@ namespace AskalePortal.Data.SAP.Models
     {
         //[SapName("ID")]
         //public int? ID { get; set; }
-
         [SapName("MATNR")]
-        public string? MATNR { get; set; }
+        public string? matnr { get; set; }
 
         [SapName("MAKTX")]
-        public string? MAKTX { get; set; }
+        public string? maktx { get; set; }
 
         [SapName("MATKL")]
-        public string? MATKL { get; set; }
+        public string? matkl { get; set; }
 
         [SapName("WERKS")]
-        public string? WERKS { get; set; }
+        public string? werks { get; set; }
     }
 }

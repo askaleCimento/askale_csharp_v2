@@ -35,6 +35,7 @@ namespace AskalePortal.API.Controllers
             return Ok(liste ?? []);
         }
         #endregion
+      
         #region createfolderleft
         [HttpPost("createfolderleft")]
 
@@ -78,8 +79,6 @@ namespace AskalePortal.API.Controllers
             return Ok(kvkDocuments);
         }
         #endregion
-
-
 
         #region upload
         [HttpPost]
@@ -129,7 +128,6 @@ namespace AskalePortal.API.Controllers
         }
         #endregion
 
-
         #region download
         [HttpPost("download")]
         public ActionResult<ResponseByteArray> download([FromForm] string file)
@@ -141,6 +139,25 @@ namespace AskalePortal.API.Controllers
             ResponseByteArray responseByteArray = FileConverter.convertByte(filePath, file, file);
 
             return Ok(responseByteArray);
+
+        }
+        #endregion
+
+        #region delete
+        [HttpPost("delete")]
+
+        public ActionResult<int> delete([FromForm] int id)
+        {
+            try
+            {
+                BLLActions.KVKDocuments bllKVKDocuments = new BLLActions.KVKDocuments(_configuration, _env,_mapper);
+                bllKVKDocuments.Delete(id);
+                return Ok(1);
+            }
+            catch
+            {
+                return Ok(0);
+            }
 
         }
         #endregion

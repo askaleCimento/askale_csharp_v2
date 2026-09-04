@@ -155,6 +155,13 @@ namespace AskalePortal.API.Mapper
             CreateMap<MusteriSikayetForm, CustomerComplaintSaveDto>();
             CreateMap<CustomerComplaintActionSaveDto, MusteriSikayetAction>();
             CreateMap<MusteriSikayetAction, CustomerComplaintActionSaveDto>();
+            CreateMap<ISGAksiyonTableSaveDto, ISGAksiyonTable>();
+            CreateMap<ISGAksiyonTable, ISGAksiyonTableSaveDto>();
+            CreateMap<ISGAksiyonTakipTableSaveDto, ISGAksiyonTakipTable>();
+            CreateMap<ISGAksiyonTakipTable, ISGAksiyonTakipTableSaveDto>();
+            
+
+
         }
 
         private static DateTime ParseRequiredDate(string? value, string fieldName)

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,55 +37,340 @@ namespace AskalePortal.BLL
                 return saveTable;
             }
 
-            public PageReturn<SureliIsTakipDto>? FilterPageableDto(FilterPageParam<SureliIslerTakipDtoParameter> filterPageParam)
+            public PageReturn<SureliIsTakipDto> FilterPageableDto(
+      FilterPageParam<SureliIslerTakipDtoParameter> filterPageParam)
             {
-                PageReturn<SureliIsTakipDto>? result = new PageReturn<SureliIsTakipDto>();
-                int pageSize = filterPageParam.size ?? 20;
-                int pageNumber = filterPageParam.page ?? 0;
+                PageReturn<SureliIsTakipDto> result = new();
+
+                int pageSize = filterPageParam.size.GetValueOrDefault(20);
+                int pageNumber = filterPageParam.page.GetValueOrDefault(0);
+
+                if (pageSize <= 0)
+                {
+                    pageSize = 20;
+                }
+
+                if (pageNumber < 0)
+                {
+                    pageNumber = 0;
+                }
 
                 int? userId = filterPageParam.liste?.userId;
-                int? filterUserId= filterPageParam.liste?.filterUserId;
-                int? filterCompanyId= filterPageParam.liste?.filterCompanyId;
-                string? filterAciklama = filterPageParam.liste?.filterAciklama;
+                int? filterUserId = filterPageParam.liste?.filterUser;
+                int? filterCompanyId = filterPageParam.liste?.filterCompany;
 
+                string filterAciklama =
+                    filterPageParam.liste?.filterAciklama?.Trim() ?? "";
 
-                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                AdminUser user = bllAdminUsers.GetByID(userId??0);
-                IQueryable<Data.Models.SureliIsTakipTable> query = dal.Get(u => u.enabled &&
-                user.roleId == 1 ? true : u.createdUserId == userId
-                && ((filterUserId == null || filterUserId == 0) ? true : u.createdUserId == filterUserId)
-                && (filterCompanyId == null || filterCompanyId == 0 ? true : u.companyId == filterCompanyId)
-                && (filterAciklama == null || filterAciklama == "" ? true : u.aciklama.Contains(filterAciklama))
+                // Dropdown'daki "Seçiniz" değeri 0 gelirse filtre uygulanmasın.
+                if (filterUserId == 0)
+                {
+                    filterUserId = null;
+                }
 
-                ).OrderByDescending(u=>u.Id);
-                result.content = query
-                  .Skip(pageSize * pageNumber).Take(pageSize)
+                if (filterCompanyId == 0)
+                {
+                    filterCompanyId = null;
+                }
 
-                    .Select(u => new SureliIsTakipDto()
-                    {
-                        aciklama=u.aciklama,
-                        baslamaTarihi=u.baslamaTarihi,
-                        fabrika=u.company.vtext,
-                        fileNames=u.files,
-                        id=u.Id,
-                        ilgililer=u.muhattaplar,
-                        isinTanimi=u.isinTanimi,
-                        mailSuresi=u.mailSuresi,
-                        olusturanKisi=u.createdUser.name,
-                        olusturanKisiId=u.createdUserId,
-                        takipSorumlusu=u.takipSorumlusu,
-                        tamamlandimi=u.tamamlandi,
-                        terminTarihi = u.terminTarihi
+                if (!userId.HasValue || userId.Value <= 0)
+                {
+                    result.content = new List<SureliIsTakipDto>();
+                    result.totalElements = 0;
+                    result.number = 0;
+                    result.size = pageSize;
 
+                    return result;
+                }
 
-                    }).ToList();
+                BLLActions.AdminUsers bllAdminUsers =
+                    new BLLActions.AdminUsers(
+                        _configuration,
+                        _env,
+                        _mapper);
+
+                AdminUser? user =
+                    bllAdminUsers.GetByID(userId.Value);
+
+                if (user == null)
+                {
+                    result.content = new List<SureliIsTakipDto>();
+                    result.totalElements = 0;
+                    result.number = 0;
+                    result.size = pageSize;
+
+                    return result;
+                }
+
+                /*
+                 * Önce bütün kullanıcılar için geçerli ortak koşullar ekleniyor.
+                 *
+                 * Java:
+                 * c.enabled = true
+                 * filterUser
+                 * filterCompany
+                 * filterAciklama
+                 */
+                IQueryable<Data.Models.SureliIsTakipTable> query =
+                    dal.Get(u => u.enabled)
+                        .Where(u =>
+                            (!filterUserId.HasValue ||
+                                u.createdUserId == filterUserId.Value) &&
+
+                            (!filterCompanyId.HasValue ||
+                                u.companyId == filterCompanyId.Value) &&
+
+                            (string.IsNullOrEmpty(filterAciklama) ||
+                                (u.aciklama != null &&
+                                 u.aciklama.Contains(filterAciklama))));
+
+                /*
+                 * Java:
+                 *
+                 * roleId == 1:
+                 *     findByEnabled(...)
+                 *
+                 * roleId != 1:
+                 *     findByEnabledByUserId(...)
+                 */
+                if (user.roleId != 1)
+                {
+                    query = query.Where(
+                        u => u.createdUserId == userId.Value);
+                }
+
+                // Sayfalama yapılmadan önce sıralama uygulanmalı.
+                query = ApplySureliIsTakipSorting(
+                    query,
+                    filterPageParam);
+
+                // Count mutlaka Skip/Take işleminden önce alınmalı.
                 result.totalElements = query.Count();
-                result.number = result.content.Count();
+
+                List<SureliIsTakipDto> content =
+                    query
+                        .Skip(pageNumber * pageSize)
+                        .Take(pageSize)
+                        .Select(u => new SureliIsTakipDto
+                        {
+                            id = u.Id,
+
+                            fabrika = u.company != null
+                                ? u.company.vtext
+                                : "",
+
+                            isinTanimi = u.isinTanimi,
+
+                            baslamaTarihi =
+                                u.baslamaTarihi.ToString("dd.MM.yyyy"),
+
+                            terminTarihi =
+                                u.terminTarihi.ToString("dd.MM.yyyy"),
+
+                            mailSuresi = u.mailSuresi,
+
+                            /*
+                             * Bu iki alan şu aşamada kullanıcı ID listesidir.
+                             * Aşağıda kullanıcı adlarına çevrilecek.
+                             */
+                            takipSorumlusu = u.takipSorumlusu,
+                            ilgililer = u.muhattaplar,
+
+                            tamamlandimi = u.tamamlandi,
+                            aciklama = u.aciklama,
+                            fileNames = u.files,
+
+                            olusturanKisi = u.createdUser != null
+                                ? u.createdUser.name
+                                : "",
+
+                            olusturanKisiId = u.createdUserId
+                        })
+                        .ToList();
+
+                /*
+                 * Java kodundaki muhattaplar ve takipSorumlusu ID'lerini
+                 * kullanıcı adlarına çeviren bölüm.
+                 */
+                foreach (SureliIsTakipDto item in content)
+                {
+                    item.ilgililer = ResolveUserNames(
+                        item.ilgililer,
+                        bllAdminUsers);
+
+                    item.takipSorumlusu = ResolveUserNames(
+                        item.takipSorumlusu,
+                        bllAdminUsers);
+                }
+
+                result.content = content;
+                result.number = content.Count;
                 result.size = pageSize;
 
                 return result;
             }
 
+            private static IQueryable<Data.Models.SureliIsTakipTable>
+    ApplySureliIsTakipSorting(
+        IQueryable<Data.Models.SureliIsTakipTable> query,
+        FilterPageParam<SureliIslerTakipDtoParameter> filterPageParam)
+            {
+                IOrderedQueryable<Data.Models.SureliIsTakipTable>?
+                    orderedQuery = null;
+
+                void ApplyOrder<TKey>(
+                    Expression<Func<
+                        Data.Models.SureliIsTakipTable,
+                        TKey>> expression,
+                    bool descending)
+                {
+                    if (orderedQuery == null)
+                    {
+                        orderedQuery = descending
+                            ? query.OrderByDescending(expression)
+                            : query.OrderBy(expression);
+                    }
+                    else
+                    {
+                        orderedQuery = descending
+                            ? orderedQuery.ThenByDescending(expression)
+                            : orderedQuery.ThenBy(expression);
+                    }
+                }
+
+                if (filterPageParam.sorting != null)
+                {
+                    foreach (var sorting in filterPageParam.sorting)
+                    {
+                        bool isAscending =
+                            sorting.sorting == "sorting_asc";
+
+                        bool isDescending =
+                            sorting.sorting == "sorting_desc";
+
+                        // "none" veya tanımsız değer geldiyse sıralama uygulama.
+                        if (!isAscending && !isDescending)
+                        {
+                            continue;
+                        }
+
+                        switch (sorting.key)
+                        {
+                            case "id":
+                                ApplyOrder(
+                                    u => u.Id,
+                                    isDescending);
+                                break;
+
+                            case "fabrika":
+                            case "companyId":
+                                ApplyOrder(
+                                    u => u.companyId,
+                                    isDescending);
+                                break;
+
+                            case "isinTanimi":
+                                ApplyOrder(
+                                    u => u.isinTanimi,
+                                    isDescending);
+                                break;
+
+                            case "baslamaTarihi":
+                                ApplyOrder(
+                                    u => u.baslamaTarihi,
+                                    isDescending);
+                                break;
+
+                            case "terminTarihi":
+                                ApplyOrder(
+                                    u => u.terminTarihi,
+                                    isDescending);
+                                break;
+
+                            case "mailSuresi":
+                                ApplyOrder(
+                                    u => u.mailSuresi,
+                                    isDescending);
+                                break;
+
+                            case "takipSorumlusu":
+                                ApplyOrder(
+                                    u => u.takipSorumlusu,
+                                    isDescending);
+                                break;
+
+                            case "ilgililer":
+                            case "muhattaplar":
+                                ApplyOrder(
+                                    u => u.muhattaplar,
+                                    isDescending);
+                                break;
+
+                            case "tamamlandimi":
+                            case "tamamlandi":
+                                ApplyOrder(
+                                    u => u.tamamlandi,
+                                    isDescending);
+                                break;
+
+                            case "aciklama":
+                                ApplyOrder(
+                                    u => u.aciklama,
+                                    isDescending);
+                                break;
+
+                            case "olusturanKisi":
+                            case "createdUserId":
+                                ApplyOrder(
+                                    u => u.createdUserId,
+                                    isDescending);
+                                break;
+                        }
+                    }
+                }
+
+                // Geçerli bir sıralama gönderilmediyse varsayılan.
+                return orderedQuery ??
+                       query.OrderByDescending(u => u.Id);
+            }
+
+            private static string ResolveUserNames(
+    string? userIds,
+    BLLActions.AdminUsers bllAdminUsers)
+            {
+                if (string.IsNullOrWhiteSpace(userIds))
+                {
+                    return "";
+                }
+
+                List<string> names = new();
+
+                string[] values = userIds.Split(
+                    ',',
+                    StringSplitOptions.RemoveEmptyEntries |
+                    StringSplitOptions.TrimEntries);
+
+                foreach (string value in values)
+                {
+                    if (!int.TryParse(value, out int id))
+                    {
+                        continue;
+                    }
+
+                    AdminUser? relatedUser =
+                        bllAdminUsers.GetByID(id);
+
+                    if (relatedUser == null ||
+                        string.IsNullOrWhiteSpace(relatedUser.name))
+                    {
+                        continue;
+                    }
+
+                    names.Add(relatedUser.name);
+                }
+
+                return string.Join(",", names);
+            }
             public List<AskalePortal.Data.Models.SureliIsTakipTable> GetByUserId(int ID)
             {
                 return dal.Get(u => (u.muhattaplar.Contains(ID.ToString()) || u.takipSorumlusu.Contains(ID.ToString()) || u.createdUserId == ID) && u.enabled == true).ToList();

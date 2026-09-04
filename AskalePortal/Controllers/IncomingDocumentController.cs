@@ -173,7 +173,6 @@ namespace AskalePortal.API.Controllers
         }
         #endregion
 
-
         #region download
         [HttpGet("download")]
         public ActionResult<ResponseByteArray> download([FromForm] string file)
@@ -181,14 +180,13 @@ namespace AskalePortal.API.Controllers
 
             string? filePath = Path.Combine(_env.IsDevelopment() ? _configuration["FilePath:local"]! : _env.IsProduction() ?
                    _configuration["FilePath:server"]! : _configuration["FilePath:test"]!, "documents\\");
-
+            
             ResponseByteArray responseByteArray = FileConverter.convertByte(filePath, file, file);
 
             return Ok(responseByteArray);
 
         }
         #endregion
-
 
         #region delete 
         [HttpPost("delete")]

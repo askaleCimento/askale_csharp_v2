@@ -1267,6 +1267,112 @@ namespace AskalePortal.BLL
                 List<AdminUser> liste = dal.Get(u => u.enabled == true && listRoleId.Contains(u.roleId) && u.role.enabled == true).ToList();
                 return liste;
             }
+
+            public List<AdminUserSaveDto> listByRoleId(int userId)
+            {
+                AdminUser user = GetByID(userId);
+                BLLActions.Companies bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
+                List<int> listCompany = bllCompanies.getByRoleIdCompany(user.roleId);
+
+                List<AdminUserSaveDto> list = dal.Get(user =>
+            user.enabled &&
+            listCompany.Contains(user.companyId)).Select(u => new AdminUserSaveDto
+            {
+                adminType = u.adminType,
+                adrfr = u.adrfr,
+                approval = u.approval,
+                aracOnayId = u.aracOnayId,
+                bank = u.bank,
+                bankl = u.bankl,
+                bdate = u.bdate.ToString(),
+                belgeNo = u.belgeNo,
+                bldgr = u.bldgr,
+                brpcl = u.brpcl,
+                btext = u.btext,
+                btrtl = u.btrtl,
+                calisanTuruId = u.calisanTuruId,
+                cinsy = u.cinsy,
+                companyId = u.companyId,
+                createdDate = u.createdDate.ToString(),
+                createdUserId = u.createdUserId,
+                dataOrder = u.dataOrder,
+                departmanId = u.departmanId,
+                documentUserId = u.documentUserId,
+                eindt = u.eindt.ToString(),
+                email = u.email,
+                enabled = u.enabled,
+                fredk = u.fredk.ToString(),
+                helpDeskRoleId = u.helpDeskRoleId,
+                hrchanger1 = u.hrchanger1,
+                hrchanger2 = u.hrchanger2,
+                hrchanger3 = u.hrchanger3,
+                hrchanger4 = u.hrchanger4,
+                hrchanger5 = u.hrchanger5,
+                hremployer1 = u.hremployer1,
+                hremployer2 = u.hremployer2,
+                hrmanager = u.hrmanager,
+                hrmanager1 = u.hrmanager1,
+                hrmanager2 = u.hrmanager2,
+                hrmanager3 = u.hrmanager3,
+                hrmanager4 = u.hrmanager4,
+                hrmanager5 = u.hrmanager5,
+                hrManagerId = u.hrmanager,
+                hrvekalet1 = u.hrvekalet1,
+                hrvekalet2 = u.hrvekalet2,
+                hrvekalet3 = u.hrvekalet3,
+                hrvekalet4 = u.hrvekalet4,
+                hrvekalet5 = u.hrvekalet5,
+                iban = u.iban,
+                id = u.Id,
+                imageUrl = u.imageUrl,
+                izinGunleri = u.izinGunleri,
+                izinOnayId = u.izinOnayId,
+                kidem = u.kidem,
+                kostl = u.kostl,
+                manager1 = u.manager1,
+                manager2 = u.manager2,
+                manager3 = u.manager3,
+                manager4 = u.manager4,
+                mandt = u.mandt,
+                merni = u.merni,
+                mobile = u.mobile,
+                mrsta = u.mrsta,
+                name = u.name,
+                numch = u.numch,
+                orgeh = u.orgeh,
+                orgtx = u.orgtx,
+                password = u.password,
+                perNo = u.perNo,
+                pernr = u.pernr,
+                persg = u.persg,
+                persk = u.persk,
+                pgtxt = u.pgtxt,
+                phone = u.phone,
+                pktxt = u.pktxt,
+                plans = u.plans,
+                plstx = u.plstx,
+                roleId = u.roleId,
+                sapUser = u.sapUser,
+                schem = u.schem,
+                sectionId = u.sectionId,
+                shortDescription = u.shortDescription,
+                slstext = u.slstext,
+                sstxt = u.sstxt,
+                stat2 = u.stat2,
+                statx = u.statx,
+                stell = u.stell,
+                stltx = u.stltx,
+                updateDate = u.updatedDate.ToString(),
+                updatedUserId = u.updatedUserId,
+                username = u.username,
+                waers = u.waers,
+                werks = u.werks
+
+            })
+        .ToList(); ;
+
+                return list;
+            }
         }
     }
 

@@ -159,14 +159,33 @@ namespace AskalePortal.API.Controllers
         }
         #endregion
 
-        #region list
+        #region showPdf
         [HttpPost("showPdf")]
-        public ActionResult<ResponseByteArray?> showPdf([FromForm] int izinTalepId)
+        public ActionResult<ResponseByteArray> showPdf([FromForm] int annualLeaveId)
         {
+            if (annualLeaveId <= 0)
+            {
+                return BadRequest("izinTalepId sıfırdan büyük olmalıdır.");
+            }
 
-            BLLActions.AnnualLeaveTable bllAnnualLeaveTable = new BLLActions.AnnualLeaveTable(_configuration, _env, _mapper);
-            ResponseByteArray? liste = bllAnnualLeaveTable.showPdf(izinTalepId);
-            return Ok(liste);
+            try
+            {
+                BLLActions.AnnualLeaveReport report =
+                    new BLLActions.AnnualLeaveReport(_configuration, _env);
+
+                return Ok(report.CreatePdf(annualLeaveId));
+            }
+            catch (KeyNotFoundException exception)
+            {
+                return NotFound(exception.Message);
+            }
+            catch (FileNotFoundException exception)
+            {
+                return Problem(
+                    detail: exception.Message,
+                    title: "Yıllık izin rapor dosyası bulunamadı.",
+                    statusCode: StatusCodes.Status500InternalServerError);
+            }
         }
         #endregion
 

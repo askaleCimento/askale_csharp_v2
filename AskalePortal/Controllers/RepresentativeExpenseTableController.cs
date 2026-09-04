@@ -225,92 +225,22 @@ namespace AskalePortal.API.Controllers
 
         #endregion
 
-        #region pdf
-        [HttpPost("pdf")]
-        public ActionResult<ResponseByteArray> AracTalepFormFinishedDetail([FromForm] int repId)
+        #region showPdf
+        [HttpPost("showPdf")]
+        public ActionResult<ResponseByteArray> showPdf([FromForm] int repId)
         {
+            BLLActions.RepresentativeExpenseTable bllRepresentativeExpenseTable =
+                new BLLActions.RepresentativeExpenseTable(_configuration, _env, _mapper);
 
-            BLLActions.RepresentativeExpenseTable bllTemsiliHarcama = new BLLActions.RepresentativeExpenseTable(_configuration, _env, _mapper);
-            Data.Models.RepresentativeExpenseTable? harcama = bllTemsiliHarcama.GetByID(repId);
+            byte[] pdfBytes = bllRepresentativeExpenseTable.CreatePdf(repId);
 
-            string filePath = Path.Combine("C:\\Users\\dilek.sariyerlioglu\\Source\\Repos\\askaleportalccore\\AskalePortal.BLL\\Raporlar");
-            string fileFull = Path.Combine(filePath, "RepresentativeExpenseReport.rdl");
-            BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-            AdminUser? user = bllAdminUsers.GetByID(harcama!.userId);
-
-            BLLActions.RepresentativeExpenseDetail bllRepresentativeExpenseDetail = new BLLActions.RepresentativeExpenseDetail(_configuration, _env);
-            List<AracTalepDataSource> liste = bllRepresentativeExpenseDetail.getByReport(repId);
-
-            ReportParameter username = (new ReportParameter("username", user?.name ?? ""));
-            ReportParameter perno = (new ReportParameter("perno", user?.perNo ?? ""));
-            ReportParameter harcamaId = (new ReportParameter("harcamaId", repId.ToString()));
-            ReportParameter harcamaTuru = (new ReportParameter("harcamaTuru", harcama?.type?.typeName ?? ""));
-            ReportParameter harcamaZamani = (new ReportParameter("harcamaZamani", harcama?.spendingTime.ToString()));
-            ReportParameter harcamaAciklamasi = (new ReportParameter("harcamaAciklamasi", harcama?.description ?? ""));
-            ReportParameter harcamaTutari = (new ReportParameter("harcamaTutari", harcama?.amount.ToString() ?? ""));
-            ReportParameter onaylananTutar = (new ReportParameter("onaylananTutar", harcama?.approvedAmount.ToString() ?? ""));
-
-
-            List<ReportParameter> listReportParameter = new List<ReportParameter>();
-            listReportParameter.Add(username);
-            listReportParameter.Add(perno);
-            listReportParameter.Add(harcamaId);
-            listReportParameter.Add(harcamaTuru);
-            listReportParameter.Add(harcamaZamani);
-            listReportParameter.Add(harcamaAciklamasi);
-            listReportParameter.Add(harcamaTutari);
-            listReportParameter.Add(onaylananTutar);
-
-
-
-
-            // LocalReport nesnesi oluştur
-            using (var localReport = new LocalReport())
+            ResponseByteArray responseByteArray = new ResponseByteArray
             {
-                // RDL dosyasını yükle
-                localReport.ReportPath = fileFull;
+                file = pdfBytes,
+                fileName = $"TemsiliHarcama_{repId}.pdf"
+            };
 
-                // Parametreleri ayarla
-                localReport.SetParameters(listReportParameter);
-
-                // Veri kaynağı ekle (örnek bir DataTable)
-                DataTable dataTable = new DataTable();
-                dataTable.Columns.Add("approved", typeof(string));
-                dataTable.Columns.Add("username", typeof(string));
-                dataTable.Columns.Add("shortDescription", typeof(string));
-                foreach (var item in liste)
-                {
-                    dataTable.Rows.Add(item.approved, item.username, item.shortDescription);
-                }
-
-
-                localReport.DataSources.Add(new ReportDataSource("DataSet", dataTable)); // DataSet adı RDL'dekiyle eşleşmeli
-
-                // Raporu PDF olarak render et
-                string mimeType;
-                string encoding;
-                string fileNameExtension;
-                string[] streams;
-                Warning[] warnings;
-
-                byte[] pdfBytes = localReport.Render(
-                    "PDF",
-                    null,
-                    out mimeType,
-                    out encoding,
-                    out fileNameExtension,
-                    out streams,
-                    out warnings);
-
-
-
-                ResponseByteArray responseByteArray = new ResponseByteArray();
-
-                responseByteArray.file = pdfBytes;
-                responseByteArray.fileName = "Rapor.pdf";
-                return Ok(responseByteArray);
-            }
-
+            return Ok(responseByteArray);
         }
         #endregion
     }

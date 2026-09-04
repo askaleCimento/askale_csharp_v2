@@ -133,6 +133,7 @@ namespace AskalePortal.API.Controllers
 
         }
         #endregion
+       
         #region downloadById
         [HttpPost("downloadById")]
         public ActionResult<List<ResponseByteArray>> downloadById([FromForm] int id)
@@ -167,6 +168,7 @@ namespace AskalePortal.API.Controllers
 
         }
         #endregion
+        
         #region listCustomerComplaintAction
         [HttpPost("listCustomerComplaintAction")]
         public ActionResult<List<CustomerComplaintActionDto>> listCustomerComplaintAction([FromForm] int customerComplaintId)

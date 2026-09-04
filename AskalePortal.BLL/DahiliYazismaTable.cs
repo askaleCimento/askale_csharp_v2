@@ -1,28 +1,20 @@
-﻿using AskalePortal.Constants;
+using AskalePortal.Constants;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.RequestModel;
 using AskalePortal.Data.RequestParams;
 using AskalePortal.Data.ResponseModels;
 using AskalePortal.Data.ResponseParams;
 using AutoMapper;
-using Azure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Reporting.Map.WebForms.BingMaps;
-using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
-using Org.BouncyCastle.Bcpg;
-using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
-using static AskalePortal.BLL.BLLActions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AskalePortal.BLL
 {
@@ -40,6 +32,67 @@ namespace AskalePortal.BLL
                 _env = env;
                 _mapper = mapper;
             }
+
+            private static IEnumerable<(string key, string direction)>? GetSortings<T>(FilterPageParam<T>? filterPageParam)
+            {
+                return filterPageParam?.sorting?.Select(x => (x.key, x.sorting));
+            }
+
+            private static IQueryable<Data.Models.DahiliYazismaTable> ApplySorting(
+                IQueryable<Data.Models.DahiliYazismaTable> query,
+                IEnumerable<(string key, string direction)>? sortings)
+            {
+                IOrderedQueryable<Data.Models.DahiliYazismaTable>? orderedQuery = null;
+
+                void ApplyOrder<TKey>(Expression<Func<Data.Models.DahiliYazismaTable, TKey>> expression, bool descending)
+                {
+                    orderedQuery = orderedQuery == null
+                        ? descending ? query.OrderByDescending(expression) : query.OrderBy(expression)
+                        : descending ? orderedQuery.ThenByDescending(expression) : orderedQuery.ThenBy(expression);
+                }
+
+                foreach ((string key, string direction) in sortings ?? [])
+                {
+                    bool descending = direction == "sorting_desc";
+                    switch (key)
+                    {
+                        case "id": ApplyOrder(x => x.Id, descending); break;
+                        case "companyId": ApplyOrder(x => x.companyId, descending); break;
+                        case "servisi": ApplyOrder(x => x.servisi, descending); break;
+                        case "konu": ApplyOrder(x => x.konu, descending); break;
+                        case "tarih": ApplyOrder(x => x.tarih, descending); break;
+                        case "kanalId": ApplyOrder(x => x.kanalId, descending); break;
+                        case "createdDate": ApplyOrder(x => x.createdDate, descending); break;
+                        case "redEttiMi": ApplyOrder(x => x.redEttiMi, descending); break;
+                        case "bittiMi": ApplyOrder(x => x.bittiMi, descending); break;
+                    }
+                }
+
+                return orderedQuery ?? query.OrderByDescending(x => x.Id);
+            }
+
+            public Data.Models.DahiliYazismaTable? getById(int id)
+            {
+                return GetByID(id);
+            }
+
+            public List<Data.Models.DahiliYazismaTable> listAllByEnabled(bool enabled)
+            {
+                return dal.Get(x => x.enabled == enabled).ToList();
+            }
+
+            public async Task<int> deleteByTemprory(int id)
+            {
+                Data.Models.DahiliYazismaTable? entity = GetByID(id);
+                if (entity == null)
+                {
+                    return 0;
+                }
+
+                entity.enabled = false;
+                await Update(entity);
+                return 1;
+            }
             public List<AskalePortal.Data.Models.DahiliYazismaTable> GetByCreatedUserID(int ID)
             {
                 return dal.Get(u => u.createdUserId == ID).ToList();
@@ -51,7 +104,7 @@ namespace AskalePortal.BLL
             }
             public AskalePortal.Data.Models.DahiliYazismaTable GetByApprovedCeoID(int id)
             {
-                return dal.Get(u => u.onaylandiMi == true && u.Id == id && u.bittiMi == false).FirstOrDefault() ?? new AskalePortal.Data.Models.DahiliYazismaTable();
+                return dal.Get(u => u.enabled == true && u.onaylandiMi == true && u.Id == id && u.bittiMi == false).FirstOrDefault() ?? new AskalePortal.Data.Models.DahiliYazismaTable();
             }
             public List<AskalePortal.Data.Models.DahiliYazismaTable> GetAllByKanalGorusu(int userId)
             {
@@ -60,7 +113,7 @@ namespace AskalePortal.BLL
 
             public AskalePortal.Data.Models.DahiliYazismaTable GetByKanalGorusu(int userId, int id)
             {
-                return dal.Get(u => u.enabled == true && u.onaylandiMi == true && (u.kanalGorusuUserId == userId || u.lastUserId == userId) && u.bittiMi == false && u.kanalGorusuOkmi == false && u.redEttiMi == false).FirstOrDefault() ?? new AskalePortal.Data.Models.DahiliYazismaTable();
+                return dal.Get(u => u.Id == id && u.enabled == true && u.onaylandiMi == true && (u.kanalGorusuUserId == userId || u.lastUserId == userId) && u.bittiMi == false && u.kanalGorusuOkmi == false && u.redEttiMi == false).FirstOrDefault() ?? new AskalePortal.Data.Models.DahiliYazismaTable();
             }
 
             public List<AskalePortal.Data.Models.DahiliYazismaTable> GetByBitis(int userId)
@@ -150,7 +203,22 @@ namespace AskalePortal.BLL
                     entity.onay4Ok = false;
                     entity.onaylandiMi = false;
                     entity.redEttiMi = false;
-                    Data.Models.DahiliYazismaTable? dahiliYazismaTableDto = _mapper.Map<Data.Models.DahiliYazismaTable>(entity);
+                    Data.Models.DahiliYazismaTable dahiliYazismaTableDto = _mapper.Map<Data.Models.DahiliYazismaTable>(entity);
+                    dahiliYazismaTableDto.createdUserId = userId;
+                    dahiliYazismaTableDto.createdDate = DateTime.Now;
+                    dahiliYazismaTableDto.birimAmiriId = entity.birimAmiriId ?? userId;
+                    dahiliYazismaTableDto.bilgiBittiMi = false;
+                    dahiliYazismaTableDto.bittiMi = false;
+                    dahiliYazismaTableDto.kanalBittiMi = false;
+                    dahiliYazismaTableDto.kanalGorusuOkmi = false;
+                    dahiliYazismaTableDto.mudurBittiMi = false;
+                    dahiliYazismaTableDto.onay1Ok = false;
+                    dahiliYazismaTableDto.onay2Ok = false;
+                    dahiliYazismaTableDto.onay3Ok = false;
+                    dahiliYazismaTableDto.onay4Ok = false;
+                    dahiliYazismaTableDto.onaylandiMi = false;
+                    dahiliYazismaTableDto.redEttiMi = false;
+                    dahiliYazismaTableDto.enabled = entity.enabled ?? true;
                     Data.Models.DahiliYazismaTable? dahiliYazismaTable = await Add(dahiliYazismaTableDto);
                     BLLActions.BolumUserHierarchyTable bllBolumUserHierarchyTable = new BLLActions.BolumUserHierarchyTable(_configuration, _env);
                     Data.Models.BolumUserHierarchyTable? bolumUserHierarchyTable = dahiliYazismaTable?.kanalId == null ? null
@@ -257,7 +325,16 @@ namespace AskalePortal.BLL
                 {
                     entity.updatedUserId = userId;
                     entity.updateDate = DateTime.Now.ToString();
-                    Data.Models.DahiliYazismaTable updateDto = await Update(_mapper.Map<Data.Models.DahiliYazismaTable>(entity));
+                    Data.Models.DahiliYazismaTable? currentEntity = GetByID(entity.id.Value);
+                    if (currentEntity == null)
+                    {
+                        return new InternalCorrespondenceSaveDto();
+                    }
+
+                    _mapper.Map(entity, currentEntity);
+                    currentEntity.updatedUserId = userId;
+                    currentEntity.updatedDate = DateTime.Now;
+                    Data.Models.DahiliYazismaTable updateDto = await Update(currentEntity);
                     return _mapper.Map<InternalCorrespondenceSaveDto>(updateDto);
                 }
 
@@ -305,11 +382,15 @@ namespace AskalePortal.BLL
                 int? companyId = filterPageParam?.liste?.companyId;
                 string? servisi = filterPageParam?.liste?.servisi;
                 string? konu = filterPageParam?.liste?.konu;
+                string? aciklama = filterPageParam?.liste?.aciklama;
                 bool? bittiMi = filterPageParam?.liste?.bittimi;
                 bool? redEttiMi = filterPageParam?.liste?.redEttiMi;
                 int userId = filterPageParam?.liste?.userId ?? 0;
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
                 AdminUser? user = bllAdminUsers.GetByID(userId);
+                IQueryable<Data.Models.DahiliYazismaTable> sortedQuery = ApplySorting(
+                    dal.dB.DahiliYazismaTable,
+                    GetSortings(filterPageParam));
                 if (user != null)
                 {
                     BLLActions.RoleDetails bllRoleDetails = new BLLActions.RoleDetails(_configuration, _env, _mapper);
@@ -319,7 +400,7 @@ namespace AskalePortal.BLL
 
 
                         var query =
-    from u in dal.dB.DahiliYazismaTable
+    from u in sortedQuery
     join nu in dal.dB.AdminUser
         on u.noteUserId equals nu.Id into noteUserJoin
     from nu in noteUserJoin.DefaultIfEmpty()
@@ -327,11 +408,11 @@ namespace AskalePortal.BLL
         u.enabled &&
         (id == null || u.Id == id) &&
         (string.IsNullOrEmpty(konu) || u.konu.Contains(konu)) &&
-        (companyId == null || companyId == 0 || u.companyId == companyId) &&
-        (string.IsNullOrEmpty(servisi) || u.servisi.Contains(servisi)) &&
+        (string.IsNullOrEmpty(aciklama) || u.icerik.Contains(aciklama)) &&
+        (companyId == null || u.companyId == companyId) &&
+        (string.IsNullOrEmpty(servisi) || u.servisi == servisi) &&
         (redEttiMi == null || u.redEttiMi == redEttiMi) &&
-        (bittiMi == null || u.bittiMi == bittiMi)
-    orderby u.Id descending
+        u.bittiMi == bittiMi
     select new
     {
         u,
@@ -345,7 +426,7 @@ namespace AskalePortal.BLL
         id = x.u.Id,
         companyName = x.u.company.vtext,
         servisi = x.u.servisi,
-        createdDate = x.u.createdDate,
+        createdDate = (x.u.tarih ?? DateTime.Now).ToString("dd.MM.yyyy") ?? "",
         lastApproveName = "",
         note = x.u.note,
         noteUserName = x.NoteUserName,
@@ -360,7 +441,7 @@ namespace AskalePortal.BLL
 
 
                         result.totalElements = query.Count();
-                        result.number = result.content.Count();
+                        result.number = pageNumber;
                         result.size = pageSize;
 
                         return result;
@@ -369,16 +450,19 @@ namespace AskalePortal.BLL
                     {
                         BLLActions.Roles bllRoles = new BLLActions.Roles(_configuration, _env, _mapper);
                         Role? role = bllRoles.GetByID(user.roleId);
-                        string[] listCompanyIds = role?.companies.Replace("[", "").Replace("]", "").Split(",") ?? [];
+                        string[] listCompanyIds = role?.companies?.Replace("[", "").Replace("]", "").Split(",") ?? [];
                         List<int> listCompanyIdsint = new List<int>();
-                        foreach (string ids in listCompanyIds)
+                        foreach (string ids in listCompanyIds.Select(x => x.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)))
                         {
                             BLLActions.Companies bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
-                            Company company = bllCompanies.getByVkorgCompany(ids);
-                            listCompanyIdsint.Add(company.Id);
+                            Company? company = bllCompanies.getByVkorgCompany(ids);
+                            if (company != null)
+                            {
+                                listCompanyIdsint.Add(company.Id);
+                            }
                         }
                         var query =
-    from u in dal.dB.DahiliYazismaTable
+    from u in sortedQuery
     join nu in dal.dB.AdminUser
         on u.noteUserId equals nu.Id into noteUserJoin
     from nu in noteUserJoin.DefaultIfEmpty()
@@ -386,12 +470,12 @@ namespace AskalePortal.BLL
         u.enabled &&
         (id == null || u.Id == id) &&
         (string.IsNullOrEmpty(konu) || u.konu.Contains(konu)) &&
-        ((companyId == null || companyId == 0) || u.companyId == companyId) &&
-        (string.IsNullOrEmpty(servisi) || u.servisi.Contains(servisi)) &&
+        (string.IsNullOrEmpty(aciklama) || u.icerik.Contains(aciklama)) &&
+        (companyId == null || u.companyId == companyId) &&
+        (string.IsNullOrEmpty(servisi) || u.servisi == servisi) &&
         (redEttiMi == null || u.redEttiMi == redEttiMi) &&
-        (bittiMi == null || u.bittiMi == bittiMi) &&
+        u.bittiMi == bittiMi &&
         listCompanyIdsint.Contains(u.companyId)
-    orderby u.Id descending
     select new
     {
         u,
@@ -406,7 +490,7 @@ namespace AskalePortal.BLL
         id = x.u.Id,
         companyName = x.u.company.vtext,
         servisi = x.u.servisi,
-        createdDate = x.u.createdDate,
+        createdDate = (x.u.tarih ?? DateTime.Now).ToString("dd.MM.yyyy"),
         lastApproveName = "",
         note = x.u.note,
         noteUserName = x.NoteUserName,
@@ -419,7 +503,7 @@ namespace AskalePortal.BLL
     })
     .ToList();
                         result.totalElements = query.Count();
-                        result.number = result.content.Count();
+                        result.number = pageNumber;
                         result.size = pageSize;
 
                         return result;
@@ -429,7 +513,7 @@ namespace AskalePortal.BLL
                     {
 
                         var query =
-    from u in dal.dB.DahiliYazismaTable
+    from u in sortedQuery
     join nu in dal.dB.AdminUser
         on u.noteUserId equals nu.Id into noteUserJoin
     from nu in noteUserJoin.DefaultIfEmpty()
@@ -437,10 +521,11 @@ namespace AskalePortal.BLL
         u.enabled &&
         (id == null || u.Id == id) &&
         (string.IsNullOrEmpty(konu) || u.konu.Contains(konu)) &&
-        ((companyId == null || companyId == 0) || u.companyId == companyId) &&
-        (string.IsNullOrEmpty(servisi) || u.servisi.Contains(servisi)) &&
+        (string.IsNullOrEmpty(aciklama) || u.icerik.Contains(aciklama)) &&
+        (companyId == null || u.companyId == companyId) &&
+        (string.IsNullOrEmpty(servisi) || u.servisi == servisi) &&
         (redEttiMi == null || u.redEttiMi == redEttiMi) &&
-        (bittiMi == null || u.bittiMi == bittiMi) &&
+        u.bittiMi == bittiMi &&
         (
             u.lastUserId == userId ||
             u.lastUserId2 == userId ||
@@ -452,7 +537,6 @@ namespace AskalePortal.BLL
             u.kanalGorusuUserId == userId ||
             u.kanal.userId == userId
         )
-    orderby u.Id descending
     select new
     {
         u,
@@ -467,7 +551,7 @@ namespace AskalePortal.BLL
         id = x.u.Id,
         companyName = x.u.company.vtext,
         servisi = x.u.servisi,
-        createdDate = x.u.createdDate,
+        createdDate = (x.u.tarih ??DateTime.Now).ToString("dd.MM.yyyy"),
         lastApproveName = "",
         note = x.u.note,
         noteUserName = x.NoteUserName,
@@ -526,7 +610,7 @@ namespace AskalePortal.BLL
                             }
                         }
                         result.totalElements = query.Count();
-                        result.number = result.content.Count();
+                        result.number = pageNumber;
                         result.size = pageSize;
 
                         return result;
@@ -538,14 +622,66 @@ namespace AskalePortal.BLL
                 }
             }
 
+            public PageReturn<Data.Models.DahiliYazismaTable>? listPageable(
+                FilterPageParam<InternalCorrespondencePageableListBilgiDtoParameter> filterPageParam)
+            {
+                int pageSize = filterPageParam.size ?? 20;
+                int pageNumber = filterPageParam.page ?? 0;
+                int? id = filterPageParam.liste?.id;
+                int? companyId = filterPageParam.liste?.companyId;
+                string? servisi = filterPageParam.liste?.servisi;
+                string? konu = filterPageParam.liste?.konu;
+                bool? bittiMi = filterPageParam.liste?.bittiMi;
+                bool? redEttiMi = filterPageParam.liste?.redEttiMi;
+                int userId = filterPageParam.liste?.userId ?? 0;
+
+                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
+                AdminUser? user = bllAdminUsers.GetByID(userId);
+                if (user == null)
+                {
+                    return null;
+                }
+
+                IQueryable<Data.Models.DahiliYazismaTable> query = dal.Get(x =>
+                    x.enabled &&
+                    (id == null || x.Id == id) &&
+                    (string.IsNullOrEmpty(konu) || x.konu.Contains(konu)) &&
+                    (companyId == null || x.companyId == companyId) &&
+                    (string.IsNullOrEmpty(servisi) || x.servisi == servisi) &&
+                    (redEttiMi == null || x.redEttiMi == redEttiMi) &&
+                    x.bittiMi == bittiMi &&
+                    (user.roleId == 1 ||
+                     x.createdUserId == userId ||
+                     x.onaylayici1 == userId ||
+                     x.onaylayici2 == userId ||
+                     x.onaylayici3 == userId ||
+                     x.onaylayici4 == userId ||
+                     x.kanalGorusuUserId == userId ||
+                     (x.kanalId != null && x.kanal.userId == userId)));
+
+                query = ApplySorting(query, GetSortings(filterPageParam));
+
+                PageReturn<Data.Models.DahiliYazismaTable> result = new PageReturn<Data.Models.DahiliYazismaTable>();
+                result.totalElements = query.Count();
+                result.content = query.Skip(pageSize * pageNumber).Take(pageSize).ToList();
+                result.number = pageNumber;
+                result.size = pageSize;
+                return result;
+            }
+
             public InternalCorrespondenceDetailDto? getDetail(InternalCorrespondenceDto internalCorrespondenceDto, int userId)
             {
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                AdminUser user = bllAdminUsers.GetByID(userId)!;
+                AdminUser? user = bllAdminUsers.GetByID(userId);
                 BLLActions.AuditorTable bllAuditorTable = new BLLActions.AuditorTable(_configuration, _env);
                 List<Data.Models.AuditorTable> listAuditorTables = bllAuditorTable.listAllByEnabled(true);
                 BLLActions.CeoTable bllCeoTable = new BLLActions.CeoTable(_configuration, _env);
-                Data.Models.CeoTable ceoTable = bllCeoTable.GetByID(1)!;
+                Data.Models.CeoTable? ceoTable = bllCeoTable.GetByID(1);
+
+                if (user == null || ceoTable == null)
+                {
+                    return null;
+                }
 
                 Data.Models.DahiliYazismaTable? dahiliYazisma = GetByID(internalCorrespondenceDto.id ?? 0);
                 if (dahiliYazisma != null)
@@ -564,7 +700,7 @@ namespace AskalePortal.BLL
 
                     correspondenceDetailDto.id = internalCorrespondenceDto.id;
                     correspondenceDetailDto.companyName = internalCorrespondenceDto.companyName;
-                    correspondenceDetailDto.createdDate = dahiliYazisma.tarih;
+                    correspondenceDetailDto.createdDate = (dahiliYazisma.tarih ?? DateTime.Now).ToString("dd.MM.yyyy");
                     correspondenceDetailDto.createdUser = internalCorrespondenceDto.createdUser;
                     correspondenceDetailDto.konu = internalCorrespondenceDto.konu;
                     correspondenceDetailDto.servisi = internalCorrespondenceDto.servisi;
@@ -669,7 +805,7 @@ namespace AskalePortal.BLL
                         InternalCorrespondenceMessageDto correspondenceMessageDto = new InternalCorrespondenceMessageDto();
                         correspondenceMessageDto.id = dahiliYazismaMessage.Id;
                         correspondenceMessageDto.message = dahiliYazismaMessage.message;
-                        correspondenceMessageDto.time = dahiliYazismaMessage.createdDate.ToString("dd.MM.yyyy hh:mm:ss");
+                        correspondenceMessageDto.time = dahiliYazismaMessage.createdDate.ToString("dd.MM.yyyy HH:mm:ss");
                         correspondenceMessageDto.username = userByNameEMailDto.name;
                         listeCorrespondenceMessageDtos.Add(correspondenceMessageDto);
                     }
@@ -688,30 +824,31 @@ namespace AskalePortal.BLL
 
                 if (user != null)
                 {
-                    string filename = user.imageUrl;
-
-                    string directoryName = _env.IsDevelopment()
-        ? _configuration["FilePath:local"]!
-        : _env.IsProduction()
-            ? _configuration["FilePath:server"]!
-            : _configuration["FilePath:test"]! + "adminusers/images/";
-                    string fullPath = Path.Combine(directoryName, filename);
+                    string filename = user.imageUrl ?? "";
+                    string basePath = _env.IsDevelopment()
+                        ? _configuration["FilePath:local"] ?? ""
+                        : _env.IsProduction()
+                            ? _configuration["FilePath:server"] ?? ""
+                            : _configuration["FilePath:test"] ?? "";
+                    string fullPath = Path.Combine(basePath, "adminusers", "images", filename);
 
                     List<int> listInt = new List<int>();
-
-
-                    byte[] contentInBytes = File.ReadAllBytes(fullPath);
-
-                    foreach (byte b in contentInBytes)
+                    try
                     {
-                        int byteSayi = b;
-                        listInt.Add(byteSayi);
+                        if (!string.IsNullOrWhiteSpace(filename) && File.Exists(fullPath))
+                        {
+                            listInt.AddRange(File.ReadAllBytes(fullPath).Select(x => (int)x));
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Java tarafındaki davranışla aynı şekilde imza resmi okunamazsa boş liste dönülür.
                     }
 
 
                     onaylayiciDto.userName = user.name;
                     bool onaylayiciVarMi;
-                    if (Objects.Equals(userId, ceoTable.userId))
+                    if (userId == ceoTable.userId)
                     {
                         onaylayiciVarMi = listDahiliYazismalarDetayTables.Any(u => u.userId.Equals(userId));
                     }
@@ -807,23 +944,25 @@ namespace AskalePortal.BLL
                 int pageSize = filterPageParam?.size ?? 20;
                 int pageNumber = filterPageParam?.page ?? 0;
 
-                IQueryable<Data.Models.DahiliYazismaTable> query = dal.Get(u => u.enabled
-               && id == null ? true : u.Id == id
-               && (konu == null || konu == "" ? true : u.konu.Contains(konu))
-               && ((companyId == null || companyId == 0) ? true : u.companyId == companyId)
-               && (servisi == null || servisi == "" ? true : u.servisi.Contains(servisi))
-               && (redEttiMi == null ? true : u.redEttiMi == redEttiMi)
-               && u.bittiMi == bittiMi
-               && (u.bilgiUserId1 == userId || u.bilgiUserId2 == userId || u.bilgiUserId3 == userId || u.bilgiUserId4 == userId || u.bilgiUserId5 == userId)
-               && u.enabled);
+                IQueryable<Data.Models.DahiliYazismaTable> query = ApplySorting(dal.Get(u =>
+                    u.enabled &&
+                    (id == null || u.Id == id) &&
+                    (string.IsNullOrEmpty(konu) || u.konu.Contains(konu)) &&
+                    (companyId == null || u.companyId == companyId) &&
+                    (string.IsNullOrEmpty(servisi) || u.servisi == servisi) &&
+                    (redEttiMi == null || u.redEttiMi == redEttiMi) &&
+                    u.bittiMi == bittiMi &&
+                    (u.bilgiUserId1 == userId || u.bilgiUserId2 == userId || u.bilgiUserId3 == userId ||
+                     u.bilgiUserId4 == userId || u.bilgiUserId5 == userId)),
+                    GetSortings(filterPageParam));
 
-                result.content = query.OrderByDescending(u => u.Id)
+                result.content = query
                   .Skip(pageSize * pageNumber).Take(pageSize)
 
                     .Select(u => new InternalCorrespondenceDto()
                     {
 
-                        createdDate = u.createdDate,
+                        createdDate = (u.tarih ?? DateTime.Now).ToString("dd.MM.yyyy"),
                         createdUserId = u.createdUserId,
                         id = u.Id,
                         companyName = u.company.companyLongName,
@@ -837,7 +976,7 @@ namespace AskalePortal.BLL
 
                     }).ToList();
                 result.totalElements = query.Count();
-                result.number = result.content.Count();
+                result.number = pageNumber;
                 result.size = pageSize;
 
                 return result;
@@ -851,6 +990,7 @@ namespace AskalePortal.BLL
                 int? companyId = filterPageParam?.liste?.companyId;
                 string? servisi = filterPageParam?.liste?.servisi;
                 string? konu = filterPageParam?.liste?.konu;
+                string? aciklama = filterPageParam?.liste?.aciklama;
                 bool? bittiMi = filterPageParam?.liste?.bittimi;
                 bool? redEttiMi = filterPageParam?.liste?.redEttiMi;
                 int? userId = filterPageParam?.liste?.userId;
@@ -858,6 +998,9 @@ namespace AskalePortal.BLL
                 PageReturn<InternalCorrespondenceDto>? result = new PageReturn<InternalCorrespondenceDto>();
                 int pageSize = filterPageParam?.size ?? 20;
                 int pageNumber = filterPageParam?.page ?? 0;
+                IQueryable<Data.Models.DahiliYazismaTable> sortedQuery = ApplySorting(
+                    dal.dB.DahiliYazismaTable,
+                    GetSortings(filterPageParam));
 
                 BLLActions.AuditorTable bllAuditorTable = new BLLActions.AuditorTable(_configuration, _env);
                 List<Data.Models.AuditorTable> listAuditorTable = bllAuditorTable.listAllByEnabled(true);
@@ -865,7 +1008,7 @@ namespace AskalePortal.BLL
                 if (listAuditorTable.Any(u => u.userId == userId))
                 {
                     var query =
-     from a in dal.dB.DahiliYazismaTable
+     from a in sortedQuery
      join c in dal.dB.Company
          on a.companyId equals c.Id
      join d in dal.dB.AdminUser
@@ -880,18 +1023,18 @@ namespace AskalePortal.BLL
          a.enabled &&
          (id == null || a.Id == id) &&
          (string.IsNullOrEmpty(konu) || a.konu.Contains(konu)) &&
+         (string.IsNullOrEmpty(aciklama) || a.icerik.Contains(aciklama)) &&
          (companyId == null || a.companyId == companyId) &&
          (string.IsNullOrEmpty(servisi) || a.servisi == servisi) &&
          (redEttiMi == null || a.redEttiMi == redEttiMi) &&
-         (bittiMi == null || a.bittiMi == bittiMi)
-     orderby a.Id descending
+         a.bittiMi == bittiMi
      select new InternalCorrespondenceDto
      {
          id = a.Id,
          companyName = c.vtext,
          servisi = a.servisi,
          konu = a.konu,
-         createdDate = a.tarih,
+         createdDate = (a.tarih??DateTime.Now).ToString("dd.MM.yyyy"),
          kanal = b != null ? b.bolumAdi : "",
          createdUser = d.name,
          status = a.redEttiMi,
@@ -915,7 +1058,7 @@ namespace AskalePortal.BLL
                 else
                 {
                     var query =
-       from a in dal.dB.DahiliYazismaTable
+       from a in sortedQuery
 
        join c in dal.dB.Company
            on a.companyId equals c.Id
@@ -940,12 +1083,10 @@ namespace AskalePortal.BLL
             b.approved == null && b.enabled && b.userId == userId && a.onaylandiMi == false &&
             ((konu == "" && a.konu == null) || a.konu.Contains(konu ?? "")) &&
             (a.companyId == companyId || (companyId == null)) &&
-            ((servisi == "" || servisi == null) || a.servisi.Contains(servisi ?? "")) &&
+            (string.IsNullOrEmpty(servisi) || a.servisi == servisi) &&
             (a.redEttiMi == redEttiMi || redEttiMi == null) &&
             (a.bittiMi == bittiMi) &&
             a.enabled
-
-       orderby a.Id descending
 
        select new InternalCorrespondenceDto
        {
@@ -953,7 +1094,7 @@ namespace AskalePortal.BLL
            companyName = c.vtext,
            servisi = a.servisi,
            konu = a.konu,
-           createdDate = a.tarih,
+           createdDate = (a.tarih??DateTime.Now).ToString("dd.MM.yyyy"),
            kanal = e != null ? e.bolumAdi : "",
            createdUser = d.name,
            status = a.redEttiMi,
@@ -990,6 +1131,9 @@ namespace AskalePortal.BLL
                 PageReturn<InternalCorrespondenceDto>? result = new PageReturn<InternalCorrespondenceDto>();
                 int pageSize = filterPageParam?.size ?? 20;
                 int pageNumber = filterPageParam?.page ?? 0;
+                IQueryable<Data.Models.DahiliYazismaTable> sortedCanalQuery = ApplySorting(
+                    dal.dB.DahiliYazismaTable,
+                    GetSortings(filterPageParam));
 
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
 
@@ -998,7 +1142,7 @@ namespace AskalePortal.BLL
                 if (user != null && user.roleId == 1)
                 {
                     var query =
-    from a in dal.dB.DahiliYazismaTable
+    from a in sortedCanalQuery
     join c in dal.dB.Company
         on a.companyId equals c.Id
     join d in dal.dB.AdminUser
@@ -1018,15 +1162,14 @@ namespace AskalePortal.BLL
         (companyId == null || a.companyId == companyId) &&
         (string.IsNullOrEmpty(servisi) || a.servisi == servisi) &&
         (redEttiMi == null || a.redEttiMi == redEttiMi) &&
-        (bittiMi == null || a.bittiMi == bittiMi)
-    orderby a.Id descending
+        a.bittiMi == bittiMi
     select new InternalCorrespondenceDto
     {
         id = a.Id,
         companyName = c.vtext,
         servisi = a.servisi,
         konu = a.konu,
-        createdDate = a.tarih,
+        createdDate = (a.tarih ?? DateTime.Now).ToString("dd.MM.yyyy"),
         kanal = e != null ? e.bolumAdi : "",
         createdUser = d.name,
         status = a.redEttiMi,
@@ -1049,7 +1192,7 @@ namespace AskalePortal.BLL
                 else
                 {
                     var query =
-    from a in dal.dB.DahiliYazismaTable
+    from a in sortedCanalQuery
     join c in dal.dB.Company
         on a.companyId equals c.Id
     join d in dal.dB.AdminUser
@@ -1070,15 +1213,14 @@ namespace AskalePortal.BLL
         (companyId == null || a.companyId == companyId) &&
         (string.IsNullOrEmpty(servisi) || a.servisi == servisi) &&
         (redEttiMi == null || a.redEttiMi == redEttiMi) &&
-        (bittiMi == null || a.bittiMi == bittiMi)
-    orderby a.Id descending
+        a.bittiMi == bittiMi
     select new InternalCorrespondenceDto
     {
         id = a.Id,
         companyName = c.vtext,
         servisi = a.servisi,
         konu = a.konu,
-        createdDate = a.tarih,
+        createdDate = (a.tarih ?? DateTime.Now).ToString("dd.MM.yyyy"),
         kanal = e != null ? e.bolumAdi : "",
         createdUser = d.name,
         status = a.redEttiMi,
@@ -3048,13 +3190,16 @@ namespace AskalePortal.BLL
                 PageReturn<InternalCorrespondenceDto>? result = new PageReturn<InternalCorrespondenceDto>();
                 int pageSize = filterPageParam?.size ?? 20;
                 int pageNumber = filterPageParam?.page ?? 0;
+                IQueryable<Data.Models.DahiliYazismaTable> sortedLastOperationQuery = ApplySorting(
+                    dal.dB.DahiliYazismaTable,
+                    GetSortings(filterPageParam));
 
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
                 AdminUser? user = bllAdminUsers.GetByID(userId ?? 0);
                 if (user?.roleId == 1)
                 {
                     var query =
-    from a in dal.dB.DahiliYazismaTable
+    from a in sortedLastOperationQuery
     join c in dal.dB.Company
         on a.companyId equals c.Id
     join d in dal.dB.AdminUser
@@ -3068,21 +3213,22 @@ namespace AskalePortal.BLL
     where
         a.enabled &&
         a.onaylandiMi == true &&
-        a.kanalGorusuOkmi == false &&
+        a.kanalGorusuOkmi == true &&
+        ((a.lastUserId != null && a.mudurBittiMi == false) ||
+         (a.lastUserId2 != null && a.mudurBittiMi == true)) &&
         (id == null || a.Id == id) &&
         (string.IsNullOrEmpty(konu) || a.konu.Contains(konu)) &&
         (companyId == null || a.companyId == companyId) &&
         (string.IsNullOrEmpty(servisi) || a.servisi == servisi) &&
         (redEttiMi == null || a.redEttiMi == redEttiMi) &&
-        (bittiMi == null || a.bittiMi == bittiMi)
-    orderby a.Id descending
+        a.bittiMi == bittiMi
     select new InternalCorrespondenceDto
     {
         id = a.Id,
         companyName = c.vtext,
         servisi = a.servisi,
         konu = a.konu,
-        createdDate = a.tarih,
+        createdDate = (a.tarih??DateTime.Now).ToString("dd.MM.yyyy"),
         kanal = e != null ? e.bolumAdi : "",
         createdUser = d.name,
         status = a.redEttiMi,
@@ -3106,7 +3252,7 @@ namespace AskalePortal.BLL
                 else
                 {
                     var query =
-    from a in dal.dB.DahiliYazismaTable
+    from a in sortedLastOperationQuery
     join c in dal.dB.Company
         on a.companyId equals c.Id
     join d in dal.dB.AdminUser
@@ -3120,22 +3266,22 @@ namespace AskalePortal.BLL
     where
         a.enabled &&
         a.onaylandiMi == true &&
-        a.kanalGorusuOkmi == false &&
-        a.kanalGorusuUserId == userId &&
+        a.kanalGorusuOkmi == true &&
+        ((a.lastUserId == userId && a.mudurBittiMi == false) ||
+         (a.lastUserId2 == userId && a.mudurBittiMi == true)) &&
         (id == null || a.Id == id) &&
         (string.IsNullOrEmpty(konu) || a.konu.Contains(konu)) &&
         (companyId == null || a.companyId == companyId) &&
         (string.IsNullOrEmpty(servisi) || a.servisi == servisi) &&
         (redEttiMi == null || a.redEttiMi == redEttiMi) &&
-        (bittiMi == null || a.bittiMi == bittiMi)
-    orderby a.Id descending
+        a.bittiMi == bittiMi
     select new InternalCorrespondenceDto
     {
         id = a.Id,
         companyName = c.vtext,
         servisi = a.servisi,
         konu = a.konu,
-        createdDate = a.tarih,
+        createdDate = (a.tarih ?? DateTime.Now).ToString("dd.MM.yyyy"),
         kanal = e != null ? e.bolumAdi : "",
         createdUser = d.name,
         status = a.redEttiMi,
