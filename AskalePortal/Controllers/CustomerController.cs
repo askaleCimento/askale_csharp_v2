@@ -1,6 +1,7 @@
 using AskalePortal.BLL;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.ResponseModels;
+using AskalePortal.Data.SAP.Models;
 using AskalePortal.Data.SAP.OutputParams;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -49,13 +50,14 @@ namespace AskalePortal.API.Controllers
 
         #region getcustomer
         [HttpPost("getcustomer")]
-        public ActionResult<CustomerCreditSap> getCustomer([FromForm] string kunnr)
+        public ActionResult<CustomerCreditList> getCustomer([FromForm] string kunnr)
         {
             BLLActions.Customers bllCustomers = new BLLActions.Customers(_configuration, _env);
-
-            return Ok(bllCustomers.getCustomerCredit(kunnr));
+            CustomerCreditList? data = bllCustomers.getCustomerCredit(kunnr);
+            return Ok(data ?? new CustomerCreditList());
         }
         #endregion
+
         #region getCustomerDocument
         [HttpPost("getCustomerDocument")]
 

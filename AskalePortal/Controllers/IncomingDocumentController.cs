@@ -9,6 +9,7 @@ using AutoMapper;
 using Azure;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using static AskalePortal.BLL.BLLActions;
 
 namespace AskalePortal.API.Controllers
 {
@@ -79,10 +80,10 @@ namespace AskalePortal.API.Controllers
         #region Save
         [HttpPost("save")]
 
-        public async Task<ActionResult<IncomingDocumentSaveDto?>> save([FromForm] IncomingDocumentSaveDto incomingDocument)
+        public async Task<ActionResult<IncomingDocumentSaveDto?>> save([FromForm] IncomingDocumentSaveDto entity)
         {
 
-            if (incomingDocument != null)
+            if (entity != null)
             {
                 int userId = 0;
                 if (HttpContext.User.Identity is ClaimsIdentity claimsIdentity)
@@ -92,22 +93,22 @@ namespace AskalePortal.API.Controllers
                 }
                 BLL.BLLActions.IncomingDocuments bllIncomingDocuments = new BLL.BLLActions.IncomingDocuments(_configuration, _env, _mapper);
 
-                if (incomingDocument?.id != 0)
+                if (entity?.id != null)
                 {
 
-                    incomingDocument!.updateDate = DateTime.Now.ToString();
-                    incomingDocument.updatedUserId = userId == 0 ? null : userId;
-                    await bllIncomingDocuments.Update(_mapper.Map<Data.Models.IncomingDocument>(incomingDocument));
-                    return Ok(incomingDocument);
+                    entity!.updateDate = DateTime.Now.ToString();
+                    entity.updatedUserId = userId == 0 ? null : userId;
+                    await bllIncomingDocuments.Update(_mapper.Map<Data.Models.IncomingDocument>(entity));
+                    return Ok(entity);
                 }
                 else
                 {
 
-                    incomingDocument.createdDate = DateTime.Now.ToString();
-                    incomingDocument.createdUserId = userId;
-                    incomingDocument.enabled = true;
-                    await bllIncomingDocuments.Add(_mapper.Map<Data.Models.IncomingDocument>(incomingDocument));
-                    return Ok(incomingDocument);
+                    entity.createdDate = DateTime.Now.ToString();
+                    entity.createdUserId = userId;
+                    entity.enabled = true;
+                    await bllIncomingDocuments.Add(_mapper.Map<Data.Models.IncomingDocument>(entity));
+                    return Ok(entity);
                 }
             }
             return Ok(null);

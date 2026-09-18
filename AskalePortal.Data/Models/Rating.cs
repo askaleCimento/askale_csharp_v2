@@ -25,6 +25,10 @@ public partial class Rating
 
     public int? updatedUserId { get; set; }
 
+    public bool? isBeyazYaka { get; set; }
+
+    public bool? isMaviYaka { get; set; }
+
     public virtual ICollection<RatingQuestion> RatingQuestion { get; set; } = new List<RatingQuestion>();
 
     public virtual ICollection<RatingQuestionVote> RatingQuestionVote { get; set; } = new List<RatingQuestionVote>();

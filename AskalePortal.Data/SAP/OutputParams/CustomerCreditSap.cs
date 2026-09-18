@@ -11,6 +11,6 @@ namespace AskalePortal.Data.SAP.OutputParams
     public class CustomerCreditSap
     {
         [SapName("OUTPUT")]
-        public CustomerCredit[]? listcCustomerCredit { get; set; }
+        public CustomerCreditList[]? listcCustomerCredit { get; set; }
     }
 }

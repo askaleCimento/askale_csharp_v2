@@ -27,7 +27,11 @@ public partial class DBDataContext : DbContext
 
     public virtual DbSet<ActiveProcess> ActiveProcess { get; set; }
 
+    public virtual DbSet<ActiveProcessChecks> ActiveProcessChecks { get; set; }
+
     public virtual DbSet<ActiveProcessDetail> ActiveProcessDetail { get; set; }
+
+    public virtual DbSet<ActiveProcessInvoice> ActiveProcessInvoice { get; set; }
 
     public virtual DbSet<ActiveProcessVekalet> ActiveProcessVekalet { get; set; }
 
@@ -380,22 +384,13 @@ public partial class DBDataContext : DbContext
     public virtual DbSet<UserTelephoneTable> UserTelephoneTable { get; set; }
 
     public virtual DbSet<Vekalet> Vekalet { get; set; }
+
     public virtual DbSet<VersionTable> VersionTable { get; set; }
+
     public virtual DbSet<WallPost> WallPost { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
-        modelBuilder.Entity<VersionTable>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-
-            entity.Property(e => e.type);
-            entity.Property(e => e.currentVersion).HasMaxLength(50);
-
-
-
-        });
         modelBuilder.Entity<AccountPaymentKalemSAPTable>(entity =>
         {
             entity.Property(e => e.aciklama).HasMaxLength(100);
@@ -571,6 +566,7 @@ public partial class DBDataContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK_ActiveProcesses");
 
+            entity.Property(e => e.belgeTutari).HasMaxLength(50);
             entity.Property(e => e.createdDate).HasColumnType("datetime");
             entity.Property(e => e.customFields).IsUnicode(false);
             entity.Property(e => e.dagitimKanali)
@@ -627,6 +623,26 @@ public partial class DBDataContext : DbContext
                 .HasConstraintName("FK_ActiveProcesses_AdminUsers1");
         });
 
+        modelBuilder.Entity<ActiveProcessChecks>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ActivePr__3214EC073C91FC38");
+
+            entity.Property(e => e.belnr)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.createdDate).HasColumnType("datetime");
+            entity.Property(e => e.kunnr)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.name1)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.netdt)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.updatedDate).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<ActiveProcessDetail>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_ActiveProcessDetails");
@@ -650,6 +666,32 @@ public partial class DBDataContext : DbContext
             entity.HasOne(d => d.vekalet).WithMany(p => p.ActiveProcessDetailvekalet)
                 .HasForeignKey(d => d.vekaletId)
                 .HasConstraintName("FK_ActiveProcessDetails_AdminUsers1");
+        });
+
+        modelBuilder.Entity<ActiveProcessInvoice>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ActivePr__3214EC073FFDC4C5");
+
+            entity.Property(e => e.belnr)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.bldat)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.bukrs)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.createdDate).HasColumnType("datetime");
+            entity.Property(e => e.dagitimkanali)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.faedt)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.updatedDate).HasColumnType("datetime");
+            entity.Property(e => e.zterm)
+                .HasMaxLength(255)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<ActiveProcessVekalet>(entity =>
@@ -735,6 +777,9 @@ public partial class DBDataContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.imageUrl)
                 .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.izinGunleri)
+                .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.kidem)
                 .HasMaxLength(50)
@@ -958,7 +1003,8 @@ public partial class DBDataContext : DbContext
                 .IsRequired()
                 .HasMaxLength(100);
             entity.Property(e => e.startDate).HasColumnType("datetime");
-       
+            entity.Property(e => e.type).HasMaxLength(255);
+
             entity.HasOne(d => d.currentUser).WithMany(p => p.AnnualLeaveTablecurrentUser)
                 .HasForeignKey(d => d.currentUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -1129,6 +1175,7 @@ public partial class DBDataContext : DbContext
                 .HasConstraintName("FK_AuditorTable_AuditorTable");
         });
 
+     
         modelBuilder.Entity<BolumUserHierarchyTable>(entity =>
         {
             entity.Property(e => e.bolumAdi)
@@ -1802,6 +1849,7 @@ public partial class DBDataContext : DbContext
                 .IsRequired()
                 .IsUnicode(false);
             entity.Property(e => e.enabled).HasDefaultValue(true);
+            entity.Property(e => e.isSentEmailControl).HasDefaultValue(false);
             entity.Property(e => e.plannedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -1811,10 +1859,6 @@ public partial class DBDataContext : DbContext
             entity.Property(e => e.toAddress)
                 .IsRequired()
                 .IsUnicode(false);
-
-            entity.HasOne(d => d.meetingDetail).WithMany(p => p.EmailMessage)
-                .HasForeignKey(d => d.meetingDetailId)
-                .HasConstraintName("FK_EmailMessages_MeetingDetails");
         });
 
         modelBuilder.Entity<EmailMessageKurumsal>(entity =>
@@ -4367,13 +4411,11 @@ public partial class DBDataContext : DbContext
 
         modelBuilder.Entity<TransferPaymentKalemSAPTable>(entity =>
         {
-            entity.Property(e => e.aciklama).HasMaxLength(50);
             entity.Property(e => e.banka).HasMaxLength(60);
             entity.Property(e => e.bankl).HasMaxLength(50);
             entity.Property(e => e.bankn).HasMaxLength(50);
             entity.Property(e => e.brnch).HasMaxLength(50);
             entity.Property(e => e.createdDate).HasColumnType("datetime");
-            entity.Property(e => e.firma).HasMaxLength(50);
             entity.Property(e => e.henum)
                 .IsRequired()
                 .HasMaxLength(50);
@@ -4516,6 +4558,9 @@ public partial class DBDataContext : DbContext
             entity.Property(e => e.createdDate).HasColumnType("datetime");
             entity.Property(e => e.factoryInternal).HasMaxLength(50);
             entity.Property(e => e.factoryNumber).HasMaxLength(50);
+            entity.Property(e => e.image)
+                .HasMaxLength(255)
+                .IsUnicode(false);
             entity.Property(e => e.phoneNumber).HasMaxLength(50);
             entity.Property(e => e.shortCode).HasMaxLength(50);
             entity.Property(e => e.updatedDate).HasColumnType("datetime");
@@ -4533,6 +4578,14 @@ public partial class DBDataContext : DbContext
             entity.Property(e => e.createdDate).HasPrecision(6);
             entity.Property(e => e.tarih).HasPrecision(6);
             entity.Property(e => e.updatedDate).HasPrecision(6);
+        });
+
+        modelBuilder.Entity<VersionTable>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.currentVersion)
+                .IsRequired()
+                .HasMaxLength(50);
         });
 
         modelBuilder.Entity<WallPost>(entity =>

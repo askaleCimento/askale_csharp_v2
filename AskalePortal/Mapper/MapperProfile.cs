@@ -138,7 +138,7 @@ namespace AskalePortal.API.Mapper
             CreateMap<FaqSaveDto, Faq>();
             CreateMap<Faq, FaqSaveDto>();
             CreateMap<DocumentArchiveSaveDto, DocumentArchive>();
-            CreateMap<DocumentArchive, DocumentArchiveSaveDto>(); 
+            CreateMap<DocumentArchive, DocumentArchiveSaveDto>();
             CreateMap<AnnualCalenderTableSaveDto, AnnualCalenderTable>();
             CreateMap<AnnualCalenderTable, AnnualCalenderTableSaveDto>();
             CreateMap<KurumsalDocumentSaveDto, KurumsalDocument>();
@@ -159,9 +159,25 @@ namespace AskalePortal.API.Mapper
             CreateMap<ISGAksiyonTable, ISGAksiyonTableSaveDto>();
             CreateMap<ISGAksiyonTakipTableSaveDto, ISGAksiyonTakipTable>();
             CreateMap<ISGAksiyonTakipTable, ISGAksiyonTakipTableSaveDto>();
+            CreateMap<IcYazismaHierarchyTableSaveDto, IcYazismaHierarchyTable>();
+            CreateMap<IcYazismaHierarchyTable, IcYazismaHierarchyTableSaveDto>();
+            CreateMap<BolumUserHierarchyTableSaveDto, BolumUserHierarchyTable>();
+            CreateMap<BolumUserHierarchyTable, BolumUserHierarchyTableSaveDto>();
+            CreateMap<PressAnnouncementSaveDto, PressAnnouncement>();
+            CreateMap<PressAnnouncement, PressAnnouncementSaveDto>();
+            CreateMap<MeetingPerformanceUserSaveDto, MeetingPerformanceUser>();
+            CreateMap<MeetingPerformanceUser, MeetingPerformanceUserSaveDto>();
+            CreateMap<MeetingUserSaveDto, MeetingUser>();
+            CreateMap<MeetingUser, MeetingUserSaveDto>();
+            CreateMap<MeetingDetailSaveDto, MeetingDetail>();
+            CreateMap<MeetingDetail, MeetingDetailSaveDto>();
+            CreateMap<FactoryManagerMeetingPerformanceUserSaveDto, FactoryManagerMeetingPerformanceUser>();
+            CreateMap<FactoryManagerMeetingPerformanceUser, FactoryManagerMeetingPerformanceUserSaveDto>();
+            CreateMap<FactoryManagerMeetingUserSaveDto, FactoryManagerMeetingUser>();
+            CreateMap<FactoryManagerMeetingUser, FactoryManagerMeetingUserSaveDto>();
+            CreateMap<ActiveProcessSaveDto, ActiveProcess>();
+            CreateMap<ActiveProcess, ActiveProcessSaveDto>();
             
-
-
         }
 
         private static DateTime ParseRequiredDate(string? value, string fieldName)
@@ -228,5 +244,5 @@ namespace AskalePortal.API.Mapper
         }
 
     }
-    
+
 }

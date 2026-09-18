@@ -51,6 +51,7 @@ public partial class AnnualLeaveTable
 
     public int? updatedUserId { get; set; }
 
+    public byte[] type { get; set; }
 
     public virtual ICollection<AnnualLeaveDetail> AnnualLeaveDetail { get; set; } = new List<AnnualLeaveDetail>();
 

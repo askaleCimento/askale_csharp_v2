@@ -28,7 +28,7 @@ namespace AskalePortal.API.Controllers
         {
             BLL.BLLActions.Meetings bllMeetings = new BLL.BLLActions.Meetings(_configuration, _env);
 
-            List<Meeting>? listMeeting = bllMeetings.GetAll();
+            List<MeetingSaveDto>? listMeeting = bllMeetings.gelAllDto();
             return Ok(listMeeting);
 
         }

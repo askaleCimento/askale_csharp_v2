@@ -43,7 +43,15 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[ActiveProcessChecks]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[ActiveProcessDetail]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ActiveProcessInvoice]",
          "ObjectType": 0
       },
       {
@@ -112,6 +120,10 @@
       },
       {
          "Name": "[dbo].[AuditorTable]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AuthRefreshTokens]",
          "ObjectType": 0
       },
       {
@@ -748,6 +760,10 @@
       },
       {
          "Name": "[dbo].[Vekalet]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[VersionTable]",
          "ObjectType": 0
       },
       {

@@ -99,9 +99,9 @@ public partial class DahiliYazismaTable
 
     public int? updatedUserId { get; set; }
 
-    public string? note {  get; set; }
+    public string note { get; set; }
 
-    public int? noteUserId {  get; set; }
+    public int? noteUserId { get; set; }
 
     public virtual ICollection<DahiliYazismaMessage> DahiliYazismaMessage { get; set; } = new List<DahiliYazismaMessage>();
 
@@ -112,5 +112,6 @@ public partial class DahiliYazismaTable
     public virtual Company company { get; set; }
 
     public virtual AdminUser createdUser { get; set; }
+
     public virtual BolumUserHierarchyTable kanal { get; set; }
 }

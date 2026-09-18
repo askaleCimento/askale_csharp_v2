@@ -181,7 +181,7 @@ namespace AskalePortal.BLL
                 if (icraDocument != null)
                 {
                     
-                    if (icraDocument?.Id != 0)
+                    if (icraDocument?.Id != null)
                     {
 
                         icraDocument!.updatedDate = DateTime.Now;

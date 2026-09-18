@@ -31,5 +31,7 @@ public partial class UserTelephoneTable
 
     public bool? kvkkOnay { get; set; }
 
+    public string image { get; set; }
+
     public virtual AdminUser user { get; set; }
 }

@@ -36,7 +36,7 @@ namespace AskalePortal.API.Controllers
 
         public ActionResult<object> getById([FromForm] int id)
         {
-            BLL.BLLActions.FactoryManagerMeetingDetails bllFactoryManagerMeetingDetail = new BLL.BLLActions.FactoryManagerMeetingDetails(_configuration, _env);
+            BLLActions.FactoryManagerMeetingDetails bllFactoryManagerMeetingDetail = new BLLActions.FactoryManagerMeetingDetails(_configuration, _env);
 
             FactoryManagerMeetingDetail? meetingDetail = bllFactoryManagerMeetingDetail.GetByID(id);
             if (meetingDetail == null)
@@ -48,7 +48,6 @@ namespace AskalePortal.API.Controllers
 
         }
         #endregion
-
 
         #region Save
         [HttpPost("save")]
@@ -64,7 +63,7 @@ namespace AskalePortal.API.Controllers
                     userId = int.Parse(claimsIdentity?.FindFirst("userId")?.Value ?? "0");
 
                 }
-                BLL.BLLActions.FactoryManagerMeetingDetails bllFactoryManagerMeetingDetails = new BLL.BLLActions.FactoryManagerMeetingDetails(_configuration, _env);
+                BLLActions.FactoryManagerMeetingDetails bllFactoryManagerMeetingDetails = new BLLActions.FactoryManagerMeetingDetails(_configuration, _env);
 
                 if (entity?.id != null)
                 {
@@ -88,5 +87,34 @@ namespace AskalePortal.API.Controllers
         }
         #endregion
 
+        #region getAll
+        [HttpPost("getAll")]
+        public ActionResult<object> getAll()
+        {
+            BLLActions.FactoryManagerMeetingDetails bllFactoryManagerMeetingDetails = new BLLActions.FactoryManagerMeetingDetails(_configuration, _env);
+
+            List<FactoryManagerMeetingDetailSaveDto> list = bllFactoryManagerMeetingDetails.GetAllDto();
+            return Ok(list);
+
+        }
+        #endregion
+
+        #region delete
+        [HttpPost("delete")]
+        public ActionResult<int> delete([FromForm] int id)
+        {
+            try
+            {
+                BLLActions.FactoryManagerMeetingDetails bllFactoryManagerMeetingDetails = new BLLActions.FactoryManagerMeetingDetails(_configuration, _env);
+                bllFactoryManagerMeetingDetails.Delete(id);
+                return Ok(1);
+            }
+            catch
+            {
+                return Ok(0);
+            }
+
+        }
+        #endregion
     }
 }

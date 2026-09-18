@@ -57,7 +57,7 @@ namespace AskalePortal.API.Controllers
                 ratingQuestionVote.userId = entity.userId??0;
                 ratingQuestionVote.questionId = entity.questionId??0;
 
-                if (ratingQuestionVote?.Id != 0)
+                if (ratingQuestionVote?.Id != null)
                 {
 
                     ratingQuestionVote!.updatedDate = DateTime.Now;

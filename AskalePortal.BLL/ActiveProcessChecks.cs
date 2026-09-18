@@ -1,4 +1,6 @@
-﻿using AskalePortal.Data.SAP.InputParams;
+﻿using AskalePortal.Data.Contracts.Detached;
+using AskalePortal.Data.ResponseModels;
+using AskalePortal.Data.SAP.InputParams;
 using AskalePortal.Data.SAP.OutputParams;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
@@ -112,6 +114,29 @@ namespace AskalePortal.BLL
                     // TODO: handle exception
                 }
                 return [];
+            }
+
+            public List<ActiveProcessChecksSaveDto> getByActiveProcessIdDto(int activeProcessId)
+            {
+
+                List<ActiveProcessChecksSaveDto> liste = dal.Get(u => u.enabled == true && u.activeProcessId == activeProcessId).Select(u =>
+                new ActiveProcessChecksSaveDto()
+                {
+                    activeProcessId = u.activeProcessId,
+                    enabled = u.enabled,
+                    belnr = u.belnr,
+                    createdDate = u.createdDate.HasValue ? u.createdDate.Value.ToString("dd.MM.yyyy"):"",
+                    createdUserId = u.createdUserId,
+                    id = u.Id,
+                    kunnr = u.kunnr,
+                    name1 = u.name1,
+                    netdt = u.netdt,
+                    updateDate = u.updatedDate.HasValue? u.updatedDate.Value.ToString("dd.MM.yyyy"):"",
+                    updatedUserId = u.updatedUserId,
+                    wrbtr = u.wrbtr
+                }
+                ).ToList();
+                return liste;
             }
         }
     }

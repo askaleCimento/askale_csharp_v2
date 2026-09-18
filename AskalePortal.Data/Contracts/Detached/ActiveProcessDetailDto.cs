@@ -16,11 +16,11 @@ public sealed class ActiveProcessDetailDto
 
     public bool? approved { get; set; }
 
-    public DateTime createdDate { get; set; }
+    public string? createdDate { get; set; }
 
     public bool isReplied { get; set; }
 
-    public DateTime? replyDate { get; set; }
+    public string? replyDate { get; set; }
 
     public string description { get; set; }
 

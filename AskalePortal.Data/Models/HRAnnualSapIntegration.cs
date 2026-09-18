@@ -37,6 +37,8 @@ public partial class HRAnnualSapIntegration
 
     public int? updatedUserId { get; set; }
 
+    public bool sapControl { get; set; }
+
     public virtual AdminUser user { get; set; }
 
     public virtual AnnualLeaveTable yillikIzin { get; set; }

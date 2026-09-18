@@ -6,6 +6,7 @@ using AskalePortal.Data.ResponseModels;
 using AskalePortal.Data.ResponseParams;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Reporting.Map.WebForms.BingMaps;
@@ -46,13 +47,16 @@ namespace AskalePortal.BLL
                 return count;
             }
 
-            public async Task<IcYazismalarTableSaveDto?> save(IcYazismalarTableSaveDto entity, int userId)
+            public async Task<IcYazismalarTableSaveDto?> save(
+    IcYazismalarTableSaveDto entity,
+    int userId)
             {
-
-
+                // ============================================================
+                // YENİ KAYIT
+                // ============================================================
                 if (entity.id == null)
                 {
-
+                    // Birim amirini en son onaylayıcıya göre belirle
                     if (entity.onaylayici4 != null)
                     {
                         entity.birimAmiriId = entity.onaylayici4;
@@ -73,168 +77,580 @@ namespace AskalePortal.BLL
                     {
                         entity.birimAmiriId = userId;
                     }
+
                     entity.createdUserId = userId;
                     entity.createdDate = DateTime.Now.ToString();
+
                     entity.bittiMi = false;
+
                     entity.onay1Ok = false;
                     entity.onay2Ok = false;
                     entity.onay3Ok = false;
                     entity.onay4Ok = false;
+
                     entity.onaylandiMi = false;
                     entity.redEttiMi = false;
 
-                    Data.Models.IcYazismalarTable? icYazismaTable = await Add(_mapper.Map<Data.Models.IcYazismalarTable>(entity));
 
-                    BLLActions.IcYazismaHierarchyTable bllIcYazismaHierarchyTable = new BLLActions.IcYazismaHierarchyTable(_configuration, _env);
-                    Data.Models.IcYazismaHierarchyTable? icYazismaHierarchyTable = icYazismaTable?.kanalId == null ? null
-                            : bllIcYazismaHierarchyTable.GetByID(icYazismaTable.kanalId ?? 0);
+                    // ------------------------------------------------------------
+                    // ANA KAYDI EKLE
+                    // ------------------------------------------------------------
+                    Data.Models.IcYazismalarTable? icYazismaTable =
+                        await Add(
+                            _mapper.Map<Data.Models.IcYazismalarTable>(entity)
+                        );
 
-                    BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                    UserByNameEMailDto? kanalUser = icYazismaHierarchyTable == null ? null
-                            : bllAdminUsers.getUserByNameAndEmail(icYazismaHierarchyTable.userId ?? 0);
-                    if (icYazismaTable?.onaylayici1 == null)
+
+                    if (icYazismaTable == null)
                     {
-                        if (icYazismaTable?.kanalId != null)
+                        return null;
+                    }
+
+
+                    // ------------------------------------------------------------
+                    // KANAL BİLGİSİNİ AL
+                    // ------------------------------------------------------------
+                    BLLActions.IcYazismaHierarchyTable bllIcYazismaHierarchyTable =
+                        new BLLActions.IcYazismaHierarchyTable(
+                            _configuration,
+                            _env
+                        );
+
+
+                    Data.Models.IcYazismaHierarchyTable? icYazismaHierarchyTable =
+                        icYazismaTable.kanalId == null
+                            ? null
+                            : bllIcYazismaHierarchyTable.GetByID(
+                                icYazismaTable.kanalId ?? 0
+                            );
+
+
+                    // ------------------------------------------------------------
+                    // ADMIN USER BLL
+                    // ------------------------------------------------------------
+                    BLLActions.AdminUsers bllAdminUsers =
+                        new BLLActions.AdminUsers(
+                            _configuration,
+                            _env,
+                            _mapper
+                        );
+
+
+                    UserByNameEMailDto? kanalUser =
+                        icYazismaHierarchyTable == null
+                            ? null
+                            : bllAdminUsers.getUserByNameAndEmail(
+                                icYazismaHierarchyTable.userId ?? 0
+                            );
+
+
+                    // ============================================================
+                    // ONAYLAYICI 1 YOKSA
+                    // KANAL KULLANICISINA GÖNDER
+                    // ============================================================
+                    if (icYazismaTable.onaylayici1 == null)
+                    {
+                        if (icYazismaTable.kanalId != null)
                         {
-                            Data.Models.IcYazismalarDetayTable icYazismalarDetayTable = new Data.Models.IcYazismalarDetayTable();
+                            Data.Models.IcYazismalarDetayTable icYazismalarDetayTable =
+                                new Data.Models.IcYazismalarDetayTable();
+
                             icYazismalarDetayTable.createdDate = DateTime.Now;
-                            icYazismalarDetayTable.userId = icYazismaHierarchyTable?.userId;
-                            icYazismalarDetayTable.icYazismaId = icYazismaTable.Id;
+                            icYazismalarDetayTable.userId =
+                                icYazismaHierarchyTable?.userId;
+
+                            icYazismalarDetayTable.icYazismaId =
+                                icYazismaTable.Id;
+
                             icYazismalarDetayTable.enabled = true;
 
-                            BLLActions.IcYazismalarDetayTable bllIcYazismalarDetayTable = new BLLActions.IcYazismalarDetayTable(_configuration, _env);
-                            await bllIcYazismalarDetayTable.Add(icYazismalarDetayTable);
 
-                            EmailMessage emailMessage = new EmailMessage();
-                            emailMessage.subject = icYazismaTable.konu + " hk.";
-                            emailMessage.toAddress = kanalUser?.email;
+                            BLLActions.IcYazismalarDetayTable bllIcYazismalarDetayTable =
+                                new BLLActions.IcYazismalarDetayTable(
+                                    _configuration,
+                                    _env
+                                );
 
-                            string mailMessage = buildIcYazisma(icYazismaTable);
-                            emailMessage.emailText = mailMessage;
+
+                            await bllIcYazismalarDetayTable.Add(
+                                icYazismalarDetayTable
+                            );
+
+
+                            // ----------------------------------------------------
+                            // MAIL
+                            // ----------------------------------------------------
+                            EmailMessage emailMessage =
+                                new EmailMessage();
+
+                            emailMessage.subject =
+                                icYazismaTable.konu + " hk.";
+
+                            emailMessage.toAddress =
+                                kanalUser?.email;
+
+                            string mailMessage =
+                                buildIcYazisma(icYazismaTable);
+
+                            emailMessage.emailText =
+                                mailMessage;
+
                             emailMessage.mailTuru = 4;
                             emailMessage.enabled = true;
                             emailMessage.isSent = false;
                             emailMessage.plannedDate = DateTime.Now;
 
-                            BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
-                            await bllEmailMessages.Add(emailMessage);
-                        }
 
+                            BLLActions.EmailMessages bllEmailMessages =
+                                new BLLActions.EmailMessages(
+                                    _configuration,
+                                    _env
+                                );
+
+
+                            await bllEmailMessages.Add(
+                                emailMessage
+                            );
+                        }
                     }
+
+
+                    // ============================================================
+                    // ONAYLAYICI 1 VARSA
+                    // İLK ONAYLAYICIYA GÖNDER
+                    // ============================================================
                     else
                     {
-                        UserByNameEMailDto nextUser = bllAdminUsers.getUserByNameAndEmail(icYazismaTable.onaylayici1 ?? 0);
-                        Data.Models.IcYazismalarDetayTable icYazismalarDetayTable = new Data.Models.IcYazismalarDetayTable();
+                        UserByNameEMailDto nextUser =
+                            bllAdminUsers.getUserByNameAndEmail(
+                                icYazismaTable.onaylayici1 ?? 0
+                            );
+
+
+                        Data.Models.IcYazismalarDetayTable icYazismalarDetayTable =
+                            new Data.Models.IcYazismalarDetayTable();
+
                         icYazismalarDetayTable.createdDate = DateTime.Now;
-                        icYazismalarDetayTable.userId = icYazismaTable.onaylayici1;
-                        icYazismalarDetayTable.icYazismaId = icYazismaTable.Id;
+
+                        icYazismalarDetayTable.userId =
+                            icYazismaTable.onaylayici1;
+
+                        icYazismalarDetayTable.icYazismaId =
+                            icYazismaTable.Id;
+
                         icYazismalarDetayTable.enabled = true;
-                        BLLActions.IcYazismalarDetayTable bllIcYazismalarDetayTable = new BLLActions.IcYazismalarDetayTable(_configuration, _env);
-                        await bllIcYazismalarDetayTable.Add(icYazismalarDetayTable);
-                        EmailMessage emailMessage = new EmailMessage();
-                        emailMessage.subject = icYazismaTable.konu + " hk.";
-                        emailMessage.toAddress = nextUser.email;
-                        string mailMessage = buildIcYazisma(icYazismaTable);
-                        emailMessage.emailText = mailMessage;
+
+
+                        BLLActions.IcYazismalarDetayTable bllIcYazismalarDetayTable =
+                            new BLLActions.IcYazismalarDetayTable(
+                                _configuration,
+                                _env
+                            );
+
+
+                        await bllIcYazismalarDetayTable.Add(
+                            icYazismalarDetayTable
+                        );
+
+
+                        // --------------------------------------------------------
+                        // MAIL
+                        // --------------------------------------------------------
+                        EmailMessage emailMessage =
+                            new EmailMessage();
+
+                        emailMessage.subject =
+                            icYazismaTable.konu + " hk.";
+
+                        emailMessage.toAddress =
+                            nextUser.email;
+
+                        string mailMessage =
+                            buildIcYazisma(icYazismaTable);
+
+                        emailMessage.emailText =
+                            mailMessage;
+
                         emailMessage.mailTuru = 4;
                         emailMessage.enabled = true;
                         emailMessage.isSent = false;
                         emailMessage.plannedDate = DateTime.Now;
 
-                        BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
-                        await bllEmailMessages.Add(emailMessage);
+
+                        BLLActions.EmailMessages bllEmailMessages =
+                            new BLLActions.EmailMessages(
+                                _configuration,
+                                _env
+                            );
+
+
+                        await bllEmailMessages.Add(
+                            emailMessage
+                        );
                     }
-                    return _mapper.Map<IcYazismalarTableSaveDto>(icYazismaTable);
+
+
+                    return _mapper.Map<IcYazismalarTableSaveDto>(
+                        icYazismaTable
+                    );
                 }
+
+
+                // ================================================================
+                // GÜNCELLEME
+                // ================================================================
                 else
                 {
-                    Data.Models.IcYazismalarTable? eskiYazisma = GetByID(entity.id ?? 0);
-                    Data.Models.IcYazismalarTable yeniYazisma = _mapper.Map<Data.Models.IcYazismalarTable>(entity);
-                    if (eskiYazisma != null)
+                    /*
+                     * ÖNEMLİ:
+                     *
+                     * GetByID + yeni AutoMapper entity + Attach yapmıyoruz.
+                     *
+                     * Entity'yi doğrudan bu DbContext üzerinden çekiyoruz.
+                     * Böylece EF aynı Id için TEK nesneyi takip ediyor.
+                     */
+                    Data.Models.IcYazismalarTable? eskiYazisma =
+                        await dal.dB.IcYazismalarTable
+                            .FirstOrDefaultAsync(
+                                x => x.Id == entity.id.Value
+                            );
+
+
+                    if (eskiYazisma == null)
                     {
-                        if (yeniYazisma.onaylayici1 != eskiYazisma.onaylayici1
-                                || yeniYazisma.onaylayici2 != eskiYazisma.onaylayici2
-                                || yeniYazisma.onaylayici3 != eskiYazisma.onaylayici3
-                                || yeniYazisma.onaylayici4 != eskiYazisma.onaylayici4
-                                || yeniYazisma.kanalId != eskiYazisma.kanalId)
+                        return null;
+                    }
+
+
+                    // ============================================================
+                    // ESKİ DEĞERLERİ SAKLA
+                    // ============================================================
+
+                    int? eskiOnaylayici1 =
+                        eskiYazisma.onaylayici1;
+
+                    int? eskiOnaylayici2 =
+                        eskiYazisma.onaylayici2;
+
+                    int? eskiOnaylayici3 =
+                        eskiYazisma.onaylayici3;
+
+                    int? eskiOnaylayici4 =
+                        eskiYazisma.onaylayici4;
+
+                    int? eskiKanalId =
+                        eskiYazisma.kanalId;
+
+
+                    /*
+                     * Created alanlarının update sırasında yanlışlıkla
+                     * değişmemesi için saklıyoruz.
+                     */
+                    var eskiCreatedUserId =
+                        eskiYazisma.createdUserId;
+
+                    var eskiCreatedDate =
+                        eskiYazisma.createdDate;
+
+
+                    // ============================================================
+                    // DTO DEĞERLERİNİ TRACKED ENTITY ÜZERİNE YAZ
+                    // ============================================================
+
+                    _mapper.Map(
+                        entity,
+                        eskiYazisma
+                    );
+
+
+                    /*
+                     * Update sırasında created bilgileri korunuyor.
+                     */
+                    eskiYazisma.createdUserId =
+                        eskiCreatedUserId;
+
+                    eskiYazisma.createdDate =
+                        eskiCreatedDate;
+
+
+                    eskiYazisma.updatedUserId =
+                        userId;
+
+                    eskiYazisma.updatedDate =
+                        DateTime.Now;
+
+
+                    // ============================================================
+                    // ONAYLAYICILAR / KANAL DEĞİŞMİŞ Mİ?
+                    // ============================================================
+
+                    bool onayAkisiDegisti =
+                        eskiOnaylayici1 != eskiYazisma.onaylayici1
+                        ||
+                        eskiOnaylayici2 != eskiYazisma.onaylayici2
+                        ||
+                        eskiOnaylayici3 != eskiYazisma.onaylayici3
+                        ||
+                        eskiOnaylayici4 != eskiYazisma.onaylayici4
+                        ||
+                        eskiKanalId != eskiYazisma.kanalId;
+
+
+                    // ============================================================
+                    // ONAY AKIŞI DEĞİŞTİYSE
+                    // ============================================================
+                    if (onayAkisiDegisti)
+                    {
+                        BLLActions.IcYazismalarDetayTable bllIcYazismalarDetayTable =
+                            new BLLActions.IcYazismalarDetayTable(
+                                _configuration,
+                                _env
+                            );
+
+
+                        // --------------------------------------------------------
+                        // ESKİ DETAY KAYITLARINI PASİF / SİL
+                        // --------------------------------------------------------
+                        List<Data.Models.IcYazismalarDetayTable>
+                            icYazismalarDetayTableSilinecek =
+                                bllIcYazismalarDetayTable
+                                    .findAllByEnabledAndIcYazismaId(
+                                        true,
+                                        eskiYazisma.Id
+                                    );
+
+
+                        foreach (
+                            Data.Models.IcYazismalarDetayTable detay
+                            in icYazismalarDetayTableSilinecek
+                        )
                         {
+                            bllIcYazismalarDetayTable.Delete(
+                                detay.Id
+                            );
+                        }
 
-                            // olanları silme
-                            BLLActions.IcYazismalarDetayTable bllIcYazismalarDetayTable = new BLLActions.IcYazismalarDetayTable(_configuration, _env);
-                            List<Data.Models.IcYazismalarDetayTable> icYazismalarDetayTableSilinecek = new List<Data.Models.IcYazismalarDetayTable>();
-                            icYazismalarDetayTableSilinecek = bllIcYazismalarDetayTable.findAllByEnabledAndIcYazismaId(true,
-                                    yeniYazisma.Id);
-                            foreach (Data.Models.IcYazismalarDetayTable icYazismalarDetayTable in icYazismalarDetayTableSilinecek)
+
+                        // ========================================================
+                        // YENİ KANAL BİLGİSİNİ AL
+                        // ========================================================
+                        BLLActions.IcYazismaHierarchyTable bllIcYazismaHierarchyTable =
+                            new BLLActions.IcYazismaHierarchyTable(
+                                _configuration,
+                                _env
+                            );
+
+
+                        Data.Models.IcYazismaHierarchyTable? icYazismaHierarchyTable =
+                            eskiYazisma.kanalId == null
+                                ? null
+                                : bllIcYazismaHierarchyTable.GetByID(
+                                    eskiYazisma.kanalId ?? 0
+                                );
+
+
+                        BLLActions.AdminUsers bllAdminUsers =
+                            new BLLActions.AdminUsers(
+                                _configuration,
+                                _env,
+                                _mapper
+                            );
+
+
+                        UserByNameEMailDto? kanalUser =
+                            icYazismaHierarchyTable == null
+                                ? null
+                                : bllAdminUsers.getUserByNameAndEmail(
+                                    icYazismaHierarchyTable.userId ?? 0
+                                );
+
+
+                        // ========================================================
+                        // ONAYLAYICI 1 YOK
+                        // ========================================================
+                        if (eskiYazisma.onaylayici1 == null)
+                        {
+                            /*
+                             * Onaylayıcı yoksa kanal kullanıcısına
+                             * detay kaydı oluştur.
+                             */
+                            if (eskiYazisma.kanalId != null)
                             {
-                                bllIcYazismalarDetayTable.Delete(icYazismalarDetayTable.Id);
-                            }
-                            BLLActions.IcYazismaHierarchyTable bllIcYazismaHierarchyTable = new BLLActions.IcYazismaHierarchyTable(_configuration, _env);
-                            Data.Models.IcYazismaHierarchyTable? icYazismaHierarchyTable = yeniYazisma.kanalId == null ? null
-                                    : bllIcYazismaHierarchyTable.GetByID(yeniYazisma.kanalId ?? 0);
+                                Data.Models.IcYazismalarDetayTable
+                                    icYazismalarDetayTable =
+                                        new Data.Models.IcYazismalarDetayTable();
 
-                            BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                            UserByNameEMailDto? kanalUser = icYazismaHierarchyTable == null ? null
-                                    : bllAdminUsers.getUserByNameAndEmail(icYazismaHierarchyTable.userId ?? 0);
-                            if (yeniYazisma.onaylayici1 == null)
-                            {
-                                if (yeniYazisma.kanalId != null)
-                                {
-                                    Data.Models.IcYazismalarDetayTable icYazismalarDetayTable = new Data.Models.IcYazismalarDetayTable();
-                                    icYazismalarDetayTable.createdDate = DateTime.Now;
-                                    icYazismalarDetayTable.userId = icYazismaHierarchyTable?.userId;
-                                    icYazismalarDetayTable.icYazismaId = yeniYazisma.Id;
-                                    icYazismalarDetayTable.enabled = true;
-                                    await bllIcYazismalarDetayTable.Add(icYazismalarDetayTable);
 
-                                    EmailMessage emailMessage = new EmailMessage();
-                                    emailMessage.subject = yeniYazisma.konu + " hk.";
-                                    emailMessage.toAddress = kanalUser?.email;
-                                    string mailMessage = buildIcYazisma(yeniYazisma);
-                                    emailMessage.emailText = mailMessage;
-                                    emailMessage.mailTuru = 4;
-                                    emailMessage.enabled = true;
-                                    emailMessage.isSent = false;
-                                    emailMessage.plannedDate = DateTime.Now;
-                                    BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
-                                    await bllEmailMessages.Add(emailMessage);
-                                }
+                                icYazismalarDetayTable.createdDate =
+                                    DateTime.Now;
 
-                            }
-                            else
-                            {
-                                UserByNameEMailDto nextUser = bllAdminUsers.getUserByNameAndEmail(yeniYazisma.onaylayici1 ?? 0);
-                                Data.Models.IcYazismalarDetayTable icYazismalarDetayTable = new Data.Models.IcYazismalarDetayTable();
-                                icYazismalarDetayTable.createdDate = DateTime.Now;
-                                icYazismalarDetayTable.userId = yeniYazisma.onaylayici1;
-                                icYazismalarDetayTable.icYazismaId = yeniYazisma.Id;
-                                icYazismalarDetayTable.enabled = true;
-                                await bllIcYazismalarDetayTable.Add(icYazismalarDetayTable);
+                                icYazismalarDetayTable.userId =
+                                    icYazismaHierarchyTable?.userId;
 
-                                EmailMessage emailMessage = new EmailMessage();
-                                emailMessage.subject = yeniYazisma.konu + " hk.";
-                                emailMessage.toAddress = nextUser.email;
+                                icYazismalarDetayTable.icYazismaId =
+                                    eskiYazisma.Id;
 
-                                string mailMessage = buildIcYazisma(yeniYazisma);
-                                emailMessage.emailText = mailMessage;
-                                emailMessage.mailTuru = 4;
-                                emailMessage.enabled = true;
-                                emailMessage.isSent = false;
-                                emailMessage.plannedDate = DateTime.Now;
-                                BLLActions.EmailMessages bllEmailMessages = new BLLActions.EmailMessages(_configuration, _env);
-                                await bllEmailMessages.Add(emailMessage);
+                                icYazismalarDetayTable.enabled =
+                                    true;
+
+
+                                await bllIcYazismalarDetayTable.Add(
+                                    icYazismalarDetayTable
+                                );
+
+
+                                // ------------------------------------------------
+                                // MAIL
+                                // ------------------------------------------------
+                                EmailMessage emailMessage =
+                                    new EmailMessage();
+
+                                emailMessage.subject =
+                                    eskiYazisma.konu + " hk.";
+
+                                emailMessage.toAddress =
+                                    kanalUser?.email;
+
+                                string mailMessage =
+                                    buildIcYazisma(eskiYazisma);
+
+                                emailMessage.emailText =
+                                    mailMessage;
+
+                                emailMessage.mailTuru =
+                                    4;
+
+                                emailMessage.enabled =
+                                    true;
+
+                                emailMessage.isSent =
+                                    false;
+
+                                emailMessage.plannedDate =
+                                    DateTime.Now;
+
+
+                                BLLActions.EmailMessages bllEmailMessages =
+                                    new BLLActions.EmailMessages(
+                                        _configuration,
+                                        _env
+                                    );
+
+
+                                await bllEmailMessages.Add(
+                                    emailMessage
+                                );
                             }
                         }
 
-                        entity.updatedUserId = userId;
-                        entity.updateDate = DateTime.Now.ToString();
-                        Data.Models.IcYazismalarTable updateIcYazisma = await Update(_mapper.Map<Data.Models.IcYazismalarTable>(entity));
-                        return _mapper.Map<IcYazismalarTableSaveDto>(updateIcYazisma);
+
+                        // ========================================================
+                        // ONAYLAYICI 1 VAR
+                        // ========================================================
+                        else
+                        {
+                            UserByNameEMailDto nextUser =
+                                bllAdminUsers.getUserByNameAndEmail(
+                                    eskiYazisma.onaylayici1 ?? 0
+                                );
+
+
+                            Data.Models.IcYazismalarDetayTable
+                                icYazismalarDetayTable =
+                                    new Data.Models.IcYazismalarDetayTable();
+
+
+                            icYazismalarDetayTable.createdDate =
+                                DateTime.Now;
+
+                            icYazismalarDetayTable.userId =
+                                eskiYazisma.onaylayici1;
+
+                            icYazismalarDetayTable.icYazismaId =
+                                eskiYazisma.Id;
+
+                            icYazismalarDetayTable.enabled =
+                                true;
+
+
+                            await bllIcYazismalarDetayTable.Add(
+                                icYazismalarDetayTable
+                            );
+
+
+                            // ----------------------------------------------------
+                            // MAIL
+                            // ----------------------------------------------------
+                            EmailMessage emailMessage =
+                                new EmailMessage();
+
+                            emailMessage.subject =
+                                eskiYazisma.konu + " hk.";
+
+                            emailMessage.toAddress =
+                                nextUser.email;
+
+                            string mailMessage =
+                                buildIcYazisma(eskiYazisma);
+
+                            emailMessage.emailText =
+                                mailMessage;
+
+                            emailMessage.mailTuru =
+                                4;
+
+                            emailMessage.enabled =
+                                true;
+
+                            emailMessage.isSent =
+                                false;
+
+                            emailMessage.plannedDate =
+                                DateTime.Now;
+
+
+                            BLLActions.EmailMessages bllEmailMessages =
+                                new BLLActions.EmailMessages(
+                                    _configuration,
+                                    _env
+                                );
+
+
+                            await bllEmailMessages.Add(
+                                emailMessage
+                            );
+                        }
                     }
-                    return null;
+
+
+                    // ============================================================
+                    // DATABASE UPDATE
+                    // ============================================================
+
+                    /*
+                     * eskiYazisma FirstOrDefaultAsync ile aynı DbContext'ten
+                     * çekildiği için EF zaten bu nesneyi TRACK ediyor.
+                     *
+                     * BURADA:
+                     *
+                     * Attach()
+                     * Update(new entity)
+                     * _mapper.Map<T>(entity)
+                     *
+                     * YAPMIYORUZ.
+                     */
+                    await dal.dB.SaveChangesAsync();
+
+
+                    // ============================================================
+                    // RESULT
+                    // ============================================================
+
+                    return _mapper.Map<IcYazismalarTableSaveDto>(
+                        eskiYazisma
+                    );
                 }
-
             }
-
             public string buildIcYazisma(Data.Models.IcYazismalarTable? icYazismaTable)
             {
                 if (icYazismaTable != null)
@@ -271,9 +687,11 @@ namespace AskalePortal.BLL
                 else { return ""; }
             }
 
-            public PageReturn<IcYazismaTableDto> list(FilterPageParam<InternalCorrespondencePageableListBilgiDtoParameter> filterPageParam)
+            public PageReturn<IcYazismaTableDto> list(
+     FilterPageParam<InternalCorrespondencePageableListBilgiDtoParameter> filterPageParam)
             {
-                PageReturn<IcYazismaTableDto>? result = new PageReturn<IcYazismaTableDto>();
+                PageReturn<IcYazismaTableDto> result = new PageReturn<IcYazismaTableDto>();
+
                 int pageSize = filterPageParam.size ?? 20;
                 int pageNumber = filterPageParam.page ?? 0;
 
@@ -284,126 +702,259 @@ namespace AskalePortal.BLL
                 bool? bittiMi = filterPageParam?.liste?.bittiMi;
                 bool? redEttiMi = filterPageParam?.liste?.redEttiMi;
                 int userId = filterPageParam?.liste?.userId ?? 0;
-                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                AdminUser? user = bllAdminUsers.GetByID(userId);
-                BLLActions.RoleDetails bllRoleDetails = new BLLActions.RoleDetails(_configuration, _env, _mapper);
-                RoleDetail? roleDetail = bllRoleDetails.GetByRoleIDAndModuleID(user.roleId, (int)CommonConstants.MODULES.ICYAZISMA);
 
+                BLLActions.AdminUsers bllAdminUsers =
+                    new BLLActions.AdminUsers(_configuration, _env, _mapper);
+
+                AdminUser? user = bllAdminUsers.GetByID(userId);
+
+                if (user == null)
+                {
+                    result.content = new List<IcYazismaTableDto>();
+                    result.totalElements = 0;
+                    result.number = pageNumber;
+                    result.size = pageSize;
+                    return result;
+                }
+
+                BLLActions.RoleDetails bllRoleDetails =
+                    new BLLActions.RoleDetails(_configuration, _env, _mapper);
+
+                RoleDetail? roleDetail =
+                    bllRoleDetails.GetByRoleIDAndModuleID(
+                        user.roleId,
+                        (int)CommonConstants.MODULES.ICYAZISMA
+                    );
+
+
+                // ============================================================
+                // ADMIN
+                // ============================================================
                 if (user.roleId == 1)
                 {
                     var query =
-    (from a in dal.dB.IcYazismalarTable
-     join c in dal.dB.Company
-         on a.companyId equals c.Id into companyJoin
-     from c in companyJoin.DefaultIfEmpty() 
-     join d in dal.dB.AdminUser
-         on a.createdUserId equals d.Id
-     join b in dal.dB.IcYazismaHierarchyTable
-         on a.kanalId equals b.Id into hierarchyJoin
-     from b in hierarchyJoin.DefaultIfEmpty()
-     where
-         a.enabled &&
-         (id == null || a.Id == id) &&
-         (string.IsNullOrEmpty(konu) || a.konu.Contains(konu)) &&
-         (companyId == null || a.companyId == companyId) &&
-         (string.IsNullOrEmpty(servisi) || a.servisi.Contains(servisi)) &&
-         (redEttiMi == null || a.redEttiMi == redEttiMi) &&
-         (bittiMi == null || a.bittiMi == bittiMi)
-     select new IcYazismaTableDto
-     {
-         id = a.Id,
-         companyName = c != null ? c.vtext : "",
-         servisi = a.servisi,
-         konu = a.konu,
-         createdDate = a.tarih,
-         kanal = b != null ? b.bolumAdi : "",
-         createdUser = d.name,
-         status = a.redEttiMi,
-         createdUserId = a.createdUserId,
-         onay1Ok = a.onay1Ok
-     })
-     .Distinct();
+                        from a in dal.dB.IcYazismalarTable
+
+                        join c in dal.dB.Company
+                            on a.companyId equals c.Id into companyJoin
+                        from c in companyJoin.DefaultIfEmpty()
+
+                        join d in dal.dB.AdminUser
+                            on a.createdUserId equals d.Id
+
+                        join b in dal.dB.IcYazismaHierarchyTable
+                            on a.kanalId equals b.Id into hierarchyJoin
+                        from b in hierarchyJoin.DefaultIfEmpty()
+
+                        where
+                            a.enabled &&
+                            (id == null || a.Id == id) &&
+                            (string.IsNullOrEmpty(konu) || a.konu.Contains(konu)) &&
+                            (companyId == null || a.companyId == companyId) &&
+                            (string.IsNullOrEmpty(servisi) || a.servisi.Contains(servisi)) &&
+                            (redEttiMi == null || a.redEttiMi == redEttiMi) &&
+                            (bittiMi == null || a.bittiMi == bittiMi)
+
+                        select new
+                        {
+                            id = a.Id,
+                            companyName = c != null ? c.vtext : "",
+                            servisi = a.servisi,
+                            konu = a.konu,
+
+                            // DİKKAT:
+                            // Burada ToString yapmıyoruz.
+                            createdDate = a.tarih,
+
+                            kanal = b != null ? b.bolumAdi : "",
+                            createdUser = d.name,
+                            status = a.redEttiMi,
+                            createdUserId = a.createdUserId,
+                            onay1Ok = a.onay1Ok
+                        };
+
+
+                    // Count SQL tarafında problemsiz çalışır.
                     result.totalElements = query.Count();
 
-                    result.content = query
+
+                    // Önce SQL sorgusunu çalıştır.
+                    var pageData = query
                         .OrderByDescending(x => x.id)
                         .Skip(pageSize * pageNumber)
                         .Take(pageSize)
                         .ToList();
 
+
+                    // Artık veri memory'de.
+                    // DateTime -> string dönüşümünü burada yapıyoruz.
+                    result.content = pageData
+                        .Select(x => new IcYazismaTableDto
+                        {
+                            id = x.id,
+                            companyName = x.companyName,
+                            servisi = x.servisi,
+                            konu = x.konu,
+
+                            createdDate =
+                                (x.createdDate ?? DateTime.Now)
+                                .ToString("dd.MM.yyyy"),
+
+                            kanal = x.kanal,
+                            createdUser = x.createdUser,
+                            status = x.status,
+                            createdUserId = x.createdUserId,
+                            onay1Ok = x.onay1Ok
+                        })
+                        .ToList();
+
+
                     result.number = pageNumber;
                     result.size = pageSize;
+
                     return result;
                 }
+
+
+                // ============================================================
+                // LOG GÖRME YETKİSİ OLAN KULLANICI
+                // ============================================================
                 else if (roleDetail != null && roleDetail.canSeeLogs)
                 {
-                    BLLActions.Roles bllRoles = new BLLActions.Roles(_configuration, _env, _mapper);
+                    BLLActions.Roles bllRoles =
+                        new BLLActions.Roles(_configuration, _env, _mapper);
+
                     Role? role = bllRoles.GetByID(user.roleId);
-                    string[] listCompanyIds = role?.companies.Replace("[", "").Replace("]", "").Split(",") ?? [];
+
+
+                    string[] listCompanyIds =
+                        role?.companies?
+                            .Replace("[", "")
+                            .Replace("]", "")
+                            .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                        ?? Array.Empty<string>();
+
+
                     List<int> listCompanyIdsint = new List<int>();
+
+
                     foreach (string companyIds in listCompanyIds)
                     {
-                        BLLActions.Companies bllCompanies = new BLLActions.Companies(_configuration, _env, _mapper);
-                        Company company = bllCompanies.getByVkorgCompany(companyIds);
-                        listCompanyIdsint.Add(company.Id);
+                        BLLActions.Companies bllCompanies =
+                            new BLLActions.Companies(
+                                _configuration,
+                                _env,
+                                _mapper
+                            );
+
+                        Company company =
+                            bllCompanies.getByVkorgCompany(companyIds.Trim());
+
+                        if (company != null)
+                        {
+                            listCompanyIdsint.Add(company.Id);
+                        }
                     }
 
 
                     var query =
-    from a in dal.dB.IcYazismalarTable
-    join c in dal.dB.Company
-        on a.companyId equals c.Id into companyJoin
-    from c in companyJoin.DefaultIfEmpty() 
-    join d in dal.dB.AdminUser
-        on a.createdUserId equals d.Id
-    join b in dal.dB.IcYazismaHierarchyTable
-        on a.kanalId equals b.Id into hierarchyJoin
-    from b in hierarchyJoin.DefaultIfEmpty() 
-    where
-        a.enabled &&
-        (id == null || a.Id == id) &&
-        (string.IsNullOrEmpty(konu) || a.konu.Contains(konu)) &&
-        (companyId == null || a.companyId == companyId) &&
-        (string.IsNullOrEmpty(servisi) || a.servisi.Contains(servisi)) &&
-        (redEttiMi == null || a.redEttiMi == redEttiMi) &&
-        (bittiMi == null || a.bittiMi == bittiMi) &&
-        listCompanyIdsint.Contains(d.companyId)  
-    orderby a.Id descending
-    select new IcYazismaTableDto
-    {
-        id = a.Id,
-        companyName = c != null ? c.vtext : "",
-        servisi = a.servisi,
-        konu = a.konu,
-        createdDate = a.tarih,
-        kanal = b != null ? b.bolumAdi : "",
-        createdUser = d.name,
-        status = a.redEttiMi,
-        createdUserId = a.createdUserId,
-        onay1Ok = a.onay1Ok
-    };
+                        from a in dal.dB.IcYazismalarTable
+
+                        join c in dal.dB.Company
+                            on a.companyId equals c.Id into companyJoin
+                        from c in companyJoin.DefaultIfEmpty()
+
+                        join d in dal.dB.AdminUser
+                            on a.createdUserId equals d.Id
+
+                        join b in dal.dB.IcYazismaHierarchyTable
+                            on a.kanalId equals b.Id into hierarchyJoin
+                        from b in hierarchyJoin.DefaultIfEmpty()
+
+                        where
+                            a.enabled &&
+                            (id == null || a.Id == id) &&
+                            (string.IsNullOrEmpty(konu) || a.konu.Contains(konu)) &&
+                            (companyId == null || a.companyId == companyId) &&
+                            (string.IsNullOrEmpty(servisi) || a.servisi.Contains(servisi)) &&
+                            (redEttiMi == null || a.redEttiMi == redEttiMi) &&
+                            (bittiMi == null || a.bittiMi == bittiMi) &&
+                            listCompanyIdsint.Contains(d.companyId)
+
+                        select new
+                        {
+                            id = a.Id,
+                            companyName = c != null ? c.vtext : "",
+                            servisi = a.servisi,
+                            konu = a.konu,
+
+                            // SQL içinde formatlama yok.
+                            createdDate = a.tarih,
+
+                            kanal = b != null ? b.bolumAdi : "",
+                            createdUser = d.name,
+                            status = a.redEttiMi,
+                            createdUserId = a.createdUserId,
+                            onay1Ok = a.onay1Ok
+                        };
+
+
                     result.totalElements = query.Count();
 
-                    result.content = query
+
+                    var pageData = query
+                        .OrderByDescending(x => x.id)
                         .Skip(pageSize * pageNumber)
                         .Take(pageSize)
                         .ToList();
 
+
+                    result.content = pageData
+                        .Select(x => new IcYazismaTableDto
+                        {
+                            id = x.id,
+                            companyName = x.companyName,
+                            servisi = x.servisi,
+                            konu = x.konu,
+
+                            createdDate =
+                                (x.createdDate ?? DateTime.Now)
+                                .ToString("dd.MM.yyyy"),
+
+                            kanal = x.kanal,
+                            createdUser = x.createdUser,
+                            status = x.status,
+                            createdUserId = x.createdUserId,
+                            onay1Ok = x.onay1Ok
+                        })
+                        .ToList();
+
+
                     result.number = pageNumber;
                     result.size = pageSize;
+
                     return result;
                 }
+
+
+                // ============================================================
+                // NORMAL KULLANICI
+                // ============================================================
                 else
                 {
                     var query =
                         from a in dal.dB.IcYazismalarTable
+
                         join c in dal.dB.Company
                             on a.companyId equals c.Id
+
                         join d in dal.dB.AdminUser
                             on a.createdUserId equals d.Id
+
                         join b in dal.dB.IcYazismaHierarchyTable
                             on a.kanalId equals b.Id into hierarchyJoin
                         from b in hierarchyJoin.DefaultIfEmpty()
+
                         where
                             a.enabled &&
                             (id == null || a.Id == id) &&
@@ -412,6 +963,7 @@ namespace AskalePortal.BLL
                             (string.IsNullOrEmpty(servisi) || a.servisi == servisi) &&
                             (redEttiMi == null || a.redEttiMi == redEttiMi) &&
                             (bittiMi == null || a.bittiMi == bittiMi) &&
+
                             (
                                 a.createdUserId == userId ||
                                 a.onaylayici1 == userId ||
@@ -420,35 +972,62 @@ namespace AskalePortal.BLL
                                 a.onaylayici4 == userId ||
                                 (b != null && b.userId == userId)
                             )
-                        orderby a.Id descending
-                        select new IcYazismaTableDto
+
+                        select new
                         {
                             id = a.Id,
                             companyName = c != null ? c.vtext : "",
                             servisi = a.servisi,
                             konu = a.konu,
+
+                            // SQL tarafında string formatlama yapmıyoruz.
                             createdDate = a.tarih,
+
                             kanal = b != null ? b.bolumAdi : "",
                             createdUser = d.name,
                             status = a.redEttiMi,
                             createdUserId = a.createdUserId,
                             onay1Ok = a.onay1Ok
                         };
+
+
                     result.totalElements = query.Count();
 
-                    result.content = query
+
+                    var pageData = query
+                        .OrderByDescending(x => x.id)
                         .Skip(pageSize * pageNumber)
                         .Take(pageSize)
                         .ToList();
 
+
+                    result.content = pageData
+                        .Select(x => new IcYazismaTableDto
+                        {
+                            id = x.id,
+                            companyName = x.companyName,
+                            servisi = x.servisi,
+                            konu = x.konu,
+
+                            createdDate =
+                                (x.createdDate ?? DateTime.Now)
+                                .ToString("dd.MM.yyyy"),
+
+                            kanal = x.kanal,
+                            createdUser = x.createdUser,
+                            status = x.status,
+                            createdUserId = x.createdUserId,
+                            onay1Ok = x.onay1Ok
+                        })
+                        .ToList();
+
+
                     result.number = pageNumber;
                     result.size = pageSize;
+
                     return result;
                 }
-
-
             }
-
             public IcYazismaDetayDto getDetail(IcYazismaTableDto icYazismaTableDto, int userId)
             {
                 BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
@@ -615,9 +1194,11 @@ namespace AskalePortal.BLL
                 return onaylayiciDto;
             }
 
-            public PageReturn<IcYazismaTableDto> mylist(FilterPageParam<InternalCorrespondencePageableListBilgiDtoParameter> filterPageParam)
+            public PageReturn<IcYazismaTableDto> mylist(
+      FilterPageParam<InternalCorrespondencePageableListBilgiDtoParameter> filterPageParam)
             {
-                PageReturn<IcYazismaTableDto>? result = new PageReturn<IcYazismaTableDto>();
+                PageReturn<IcYazismaTableDto> result = new PageReturn<IcYazismaTableDto>();
+
                 int pageSize = filterPageParam.size ?? 20;
                 int pageNumber = filterPageParam.page ?? 0;
 
@@ -628,110 +1209,252 @@ namespace AskalePortal.BLL
                 bool? bittiMi = filterPageParam?.liste?.bittiMi;
                 bool? redEttiMi = filterPageParam?.liste?.redEttiMi;
                 int userId = filterPageParam?.liste?.userId ?? 0;
-                BLLActions.AdminUsers bllAdminUsers = new BLLActions.AdminUsers(_configuration, _env, _mapper);
-                AdminUser? user = bllAdminUsers.GetByID(userId);
-                BLLActions.AuditorTable bllAuditorTable = new BLLActions.AuditorTable(_configuration, _env);
-                List<Data.Models.AuditorTable> listAuditorTable = bllAuditorTable.listAllByEnabled(true);
 
+                BLLActions.AdminUsers bllAdminUsers =
+                    new BLLActions.AdminUsers(_configuration, _env, _mapper);
+
+                AdminUser? user = bllAdminUsers.GetByID(userId);
+
+                if (user == null)
+                {
+                    result.totalElements = 0;
+                    result.content = new List<IcYazismaTableDto>();
+                    result.number = pageNumber;
+                    result.size = pageSize;
+
+                    return result;
+                }
+
+                BLLActions.AuditorTable bllAuditorTable =
+                    new BLLActions.AuditorTable(_configuration, _env);
+
+                List<Data.Models.AuditorTable> listAuditorTable =
+                    bllAuditorTable.listAllByEnabled(true);
+
+
+                // ============================================================
+                // AUDITOR
+                // ============================================================
                 if (listAuditorTable.Any(u => u.userId == userId))
                 {
                     var query =
-    from a in dal.dB.IcYazismalarTable
-    join c in dal.dB.Company
-        on a.companyId equals c.Id
-    join d in dal.dB.AdminUser
-        on a.createdUserId equals d.Id
-    join b in dal.dB.IcYazismaHierarchyTable
-        on a.kanalId equals b.Id into hierarchyJoin
-    from b in hierarchyJoin.DefaultIfEmpty() 
-    where
-        (( id == null ) ||(a.Id ==id)) &&
-			(a.konu.Contains(konu??"") || (konu == "" || konu == null)) &&
-			(( companyId == null) || (a.companyId ==companyId)) &&
-			(a.servisi.Contains(servisi??"") || (servisi ==""  ||  servisi == null)) &&
-			( redEttiMi == null || a.redEttiMi ==redEttiMi) &&
-			( bittiMi == null || a.bittiMi == bittiMi ) &&
-			a.enabled 
-    orderby a.Id descending
-    select new IcYazismaTableDto
-    {
-        id = a.Id,
-        companyName = c.vtext,
-        servisi = a.servisi,
-        konu = a.konu,
-        createdDate = a.tarih,
-        kanal = b != null ? b.bolumAdi : "",
-        createdUser = d.name,
-        status = a.redEttiMi,
-        createdUserId = a.createdUserId,
-        onay1Ok = a.onay1Ok
-    };
-                    result.totalElements = query.Count();
+                        from a in dal.dB.IcYazismalarTable
 
-                    result.content = query
-                        .Skip(pageSize * pageNumber)
-                        .Take(pageSize)
-                        .ToList();
+                        join c in dal.dB.Company
+                            on a.companyId equals c.Id
 
-                    result.number = pageNumber;
-                    result.size = pageSize;
-                    return result;
+                        join d in dal.dB.AdminUser
+                            on a.createdUserId equals d.Id
 
-                }
-                else
-                {
+                        join b in dal.dB.IcYazismaHierarchyTable
+                            on a.kanalId equals b.Id into hierarchyJoin
 
-                    var query =
-    (from a in dal.dB.IcYazismalarTable
-     join c in dal.dB.Company
-         on a.companyId equals c.Id
-     join d in dal.dB.AdminUser
-         on a.createdUserId equals d.Id
-     join b in dal.dB.IcYazismalarDetayTable
-         on a.Id equals b.icYazismaId
-     join e in dal.dB.IcYazismaHierarchyTable
-         on a.kanalId equals e.Id into hierarchyJoin
-     from e in hierarchyJoin.DefaultIfEmpty() 
-     where
-       ((a.Id == id) || (id == null)) && 
-			b.approved==null && b.enabled  && b.userId ==userId && 
+                        from b in hierarchyJoin.DefaultIfEmpty()
 
-            a.onaylandiMi == false &&
-			(a.konu.Contains(konu??"") || (konu == ""  && a.konu == null)) &&
-			(a.companyId ==companyId || (companyId == null )) &&
-			(a.servisi ==servisi || (servisi == ""  ||  servisi == null)) &&
-			(a.redEttiMi == redEttiMi || redEttiMi == null ) &&
-			(a.bittiMi == bittiMi ) &&
-			a.enabled 
-     select new IcYazismaTableDto
-     {
-         id = a.Id,
-         companyName = c.vtext,
-         servisi = a.servisi,
-         konu = a.konu,
-         createdDate = a.tarih,
-         kanal = e != null ? e.bolumAdi : "",
-         createdUser = d.name,
-         status = a.redEttiMi,
-         createdUserId = a.createdUserId,
-         onay1Ok = a.onay1Ok
-     })
-     .Distinct();
+                        where
+                            a.enabled &&
+
+                            (id == null || a.Id == id) &&
+
+                            (
+                                string.IsNullOrEmpty(konu) ||
+                                (a.konu != null && a.konu.Contains(konu))
+                            ) &&
+
+                            (
+                                companyId == null ||
+                                a.companyId == companyId
+                            ) &&
+
+                            (
+                                string.IsNullOrEmpty(servisi) ||
+                                (a.servisi != null && a.servisi.Contains(servisi))
+                            ) &&
+
+                            (
+                                redEttiMi == null ||
+                                a.redEttiMi == redEttiMi
+                            ) &&
+
+                            (
+                                bittiMi == null ||
+                                a.bittiMi == bittiMi
+                            )
+
+                        select new
+                        {
+                            id = a.Id,
+                            companyName = c.vtext,
+                            servisi = a.servisi,
+                            konu = a.konu,
+
+                            // Burada string formatlama yapmıyoruz
+                            createdDate = a.tarih,
+
+                            kanal = b != null ? b.bolumAdi : "",
+                            createdUser = d.name,
+                            status = a.redEttiMi,
+                            createdUserId = a.createdUserId,
+                            onay1Ok = a.onay1Ok
+                        };
+
 
                     result.totalElements = query.Count();
 
-                    result.content = query
+
+                    var pageData = query
                         .OrderByDescending(x => x.id)
                         .Skip(pageSize * pageNumber)
                         .Take(pageSize)
                         .ToList();
 
+
+                    result.content = pageData
+                        .Select(x => new IcYazismaTableDto
+                        {
+                            id = x.id,
+                            companyName = x.companyName,
+                            servisi = x.servisi,
+                            konu = x.konu,
+
+                            createdDate =
+                                (x.createdDate ?? DateTime.Now)
+                                .ToString("dd.MM.yyyy"),
+
+                            kanal = x.kanal,
+                            createdUser = x.createdUser,
+                            status = x.status,
+                            createdUserId = x.createdUserId,
+                            onay1Ok = x.onay1Ok
+                        })
+                        .ToList();
+
+
                     result.number = pageNumber;
                     result.size = pageSize;
+
+                    return result;
+                }
+
+
+                // ============================================================
+                // NORMAL KULLANICI - ONAY BEKLEYENLER
+                // ============================================================
+                else
+                {
+                    var query =
+                        from a in dal.dB.IcYazismalarTable
+
+                        join c in dal.dB.Company
+                            on a.companyId equals c.Id
+
+                        join d in dal.dB.AdminUser
+                            on a.createdUserId equals d.Id
+
+                        join e in dal.dB.IcYazismaHierarchyTable
+                            on a.kanalId equals e.Id into hierarchyJoin
+
+                        from e in hierarchyJoin.DefaultIfEmpty()
+
+                        where
+
+                            a.enabled &&
+
+                            // Kullanıcının onay bekleyen detay kaydı var mı?
+                            dal.dB.IcYazismalarDetayTable.Any(b =>
+                                b.icYazismaId == a.Id &&
+                                b.approved == null &&
+                                b.enabled &&
+                                b.userId == userId
+                            ) &&
+
+                            a.onaylandiMi == false &&
+
+                            (
+                                id == null ||
+                                a.Id == id
+                            ) &&
+
+                            (
+                                string.IsNullOrEmpty(konu) ||
+                                (a.konu != null && a.konu.Contains(konu))
+                            ) &&
+
+                            (
+                                companyId == null ||
+                                a.companyId == companyId
+                            ) &&
+
+                            (
+                                string.IsNullOrEmpty(servisi) ||
+                                a.servisi == servisi
+                            ) &&
+
+                            (
+                                redEttiMi == null ||
+                                a.redEttiMi == redEttiMi
+                            ) &&
+
+                            (
+                                bittiMi == null ||
+                                a.bittiMi == bittiMi
+                            )
+
+                        select new
+                        {
+                            id = a.Id,
+                            companyName = c.vtext,
+                            servisi = a.servisi,
+                            konu = a.konu,
+
+                            // Burada da formatlama yok
+                            createdDate = a.tarih,
+
+                            kanal = e != null ? e.bolumAdi : "",
+                            createdUser = d.name,
+                            status = a.redEttiMi,
+                            createdUserId = a.createdUserId,
+                            onay1Ok = a.onay1Ok
+                        };
+
+
+                    result.totalElements = query.Count();
+
+
+                    var pageData = query
+                        .OrderByDescending(x => x.id)
+                        .Skip(pageSize * pageNumber)
+                        .Take(pageSize)
+                        .ToList();
+
+
+                    result.content = pageData
+                        .Select(x => new IcYazismaTableDto
+                        {
+                            id = x.id,
+                            companyName = x.companyName,
+                            servisi = x.servisi,
+                            konu = x.konu,
+
+                            createdDate =
+                                (x.createdDate ?? DateTime.Now)
+                                .ToString("dd.MM.yyyy"),
+
+                            kanal = x.kanal,
+                            createdUser = x.createdUser,
+                            status = x.status,
+                            createdUserId = x.createdUserId,
+                            onay1Ok = x.onay1Ok
+                        })
+                        .ToList();
+
+
+                    result.number = pageNumber;
+                    result.size = pageSize;
+
                     return result;
                 }
             }
-
             public async Task<int> approve(IcYazismaResponseMyList responseMyList, int userId)
             {
                 try

@@ -19,5 +19,6 @@ namespace AskalePortal.Data.ResponseModels
         public string? imageUrl{get;set;}
         public string? createdByUserName{get;set;}
         public string? newsDate{get;set;}
+        public bool? oncelikliMi { get; set; }
     }
 }

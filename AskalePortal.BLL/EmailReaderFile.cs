@@ -11,7 +11,9 @@ using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AskalePortal.BLL
@@ -199,6 +201,95 @@ namespace AskalePortal.BLL
                 content.Replace("{footer}", "Copyright &copy; 2016 Aşkale Çimento");
                 return content;
             }
+
+            public string buildVade(IConfiguration configuration, IWebHostEnvironment env, string title, string firstUser, string kunnr, string name1, string belnr, string zfbdt,
+                   string newValue, string description, string ok_link, string no_link)
+            {
+                string? filePath = "C:\\Users\\dilek.sariyerlioglu\\Source\\Repos\\askaleportalccore\\AskalePortal.BLL\\templates\\Email\\emailVade.html";
+
+                //string? filePath = Path.Combine(env.IsDevelopment() ? configuration["FilePath:local"]! : env.IsProduction() ? configuration["FilePath:server"]! :
+                //  configuration["FilePath:test"]!, "templates\\Email\\emailVade.html");
+
+                string content = File.ReadAllText(filePath);
+
+                content = ReplaceThymeleafText(content, "title", title);
+                content = ReplaceThymeleafText(content, "firstUser", firstUser);
+                content = ReplaceThymeleafText(content, "kunnr", kunnr);
+                content = ReplaceThymeleafText(content, "name1", name1);
+                content = ReplaceThymeleafText(content, "belnr", belnr);
+                content = ReplaceThymeleafText(content, "zfbdt", zfbdt);
+                content = ReplaceThymeleafText(content, "newValue", newValue);
+                content = ReplaceThymeleafText(content, "description", description);
+                content = ReplaceThymeleafLink(content, "okLink", ok_link);
+                content = ReplaceThymeleafLink(content, "noLink", no_link);
+
+
+                content = content.Replace("{footer}", "Copyright &copy; 2016 Aşkale Çimento");
+
+                return content;
+            }
+            public string buildCredit(IConfiguration _configuration, IWebHostEnvironment _env, string title, string firstUser, string kunnr, string name1, string klimk, string amount,
+                 string description, string ok_link, string no_link)
+            {
+
+                string? filePath = "C:\\Users\\dilek.sariyerlioglu\\Source\\Repos\\askaleportalccore\\AskalePortal.BLL\\templates\\Email\\emailCredit.html";
+
+                //string? filePath = Path.Combine(_env.IsDevelopment() ? _configuration["FilePath:local"]! : _env.IsProduction() ? _configuration["FilePath:server"]! :
+                //    _configuration["FilePath:test"]!, "templates\\Email\\emailCredit.html");
+                string content = File.ReadAllText(filePath);
+
+                content = ReplaceThymeleafText(content, "title", title);
+                content = ReplaceThymeleafText(content, "firstUser", firstUser);
+                content = ReplaceThymeleafText(content, "kunnr", kunnr);
+                content = ReplaceThymeleafText(content, "name1", name1);
+                content = ReplaceThymeleafText(content, "klimk", klimk);
+                content = ReplaceThymeleafText(content, "amount", amount);
+                content = ReplaceThymeleafText(content, "description", description);
+                content = ReplaceThymeleafLink(content, "okLink", ok_link);
+                content = ReplaceThymeleafLink(content, "noLink", no_link);
+
+
+                content = content.Replace("{footer}", "Copyright &copy; 2016 Aşkale Çimento");
+
+                return content;
+
+
+            }
+
+            public static string ReplaceThymeleafText(string content, string key, string value)
+            {
+                string pattern = $@"(?<open><(?<tag>[A-Za-z0-9]+)\b[^>]*?)\s+th:text=""\$\{{{Regex.Escape(key)}\}}""(?<openEnd>[^>]*>).*?(?<close></\k<tag>>)";
+                string encodedValue = WebUtility.HtmlEncode(value ?? string.Empty);
+                return Regex.Replace(content, pattern, match =>
+                    match.Groups["open"].Value
+                    + match.Groups["openEnd"].Value
+                    + encodedValue
+                    + match.Groups["close"].Value,
+                    RegexOptions.Singleline);
+            }
+
+            public static string ReplaceThymeleafLink(string content, string key, string value)
+            {
+                string encodedValue = WebUtility.HtmlEncode(value ?? string.Empty);
+                return content.Replace($"th:href=\"${{{key}}}\"", $"href=\"{encodedValue}\"");
+            }
+
+            public string CreateMailString(IConfiguration configuration, IWebHostEnvironment env, string title, string description)
+            {
+                //string filePath = Path.Combine(
+                //    env.IsDevelopment() ? configuration["FilePath:local"]!
+                //        : env.IsProduction() ? configuration["FilePath:server"]!
+                //        : configuration["FilePath:test"]!,
+                //    "templates\\Email\\email.html");
+                string? filePath = "C:\\Users\\dilek.sariyerlioglu\\Source\\Repos\\askaleportalccore\\AskalePortal.BLL\\templates\\Email\\email.html";
+
+                string content = File.ReadAllText(filePath);
+                content = content.Replace("{title}", title);
+                content = content.Replace("{description}", description);
+                content = content.Replace("{footer}", "Copyright &copy; 2016 Aşkale Çimento");
+                return content;
+            }
+
         }
     }
 }

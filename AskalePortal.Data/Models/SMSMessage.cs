@@ -29,5 +29,7 @@ public partial class SMSMessage
 
     public int? updatedUserId { get; set; }
 
+    public bool isSentSMSControl { get; set; }
+
     public virtual MeetingDetail meetingDetail { get; set; }
 }

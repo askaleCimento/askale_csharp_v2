@@ -28,7 +28,7 @@ namespace AskalePortal.API.Controllers
         {
             BLL.BLLActions.FactoryManagerMeetings bllFactoryManagerMeetings = new BLL.BLLActions.FactoryManagerMeetings(_configuration, _env);
 
-            List<FactoryManagerMeeting>? listMeeting = bllFactoryManagerMeetings.GetAll();
+            List<FactoryManagerMeetingSaveDto>? listMeeting = bllFactoryManagerMeetings.GetAllDto();
             return Ok(listMeeting);
 
         }

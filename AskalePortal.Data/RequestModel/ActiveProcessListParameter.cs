@@ -13,7 +13,7 @@ namespace AskalePortal.Data.RequestModel
         public string? relatedDataPrimaryId { get; set; }
         public string? relatedDataPrimaryDesc { get; set; }
         public int? stateId { get; set; }
-        public string? type { get; set; }
+        public List<int>? type { get; set; }
         public int? userId { get; set; }
     }
 }

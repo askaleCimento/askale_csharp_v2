@@ -53,14 +53,15 @@ public partial class ActiveProcess
 
     public int? oncekiArtirim { get; set; }
 
-    public string? belgeTutari { get; set; }
-
     public DateTime? updatedDate { get; set; }
 
     public int? updatedUserId { get; set; }
-    public double avg_days {  get; set; }
 
-    public  double avg_vade { get; set; }
+    public string belgeTutari { get; set; }
+
+    public double? avg_days { get; set; }
+
+    public double? avg_vade { get; set; }
 
     public virtual ICollection<ActiveProcessDetail> ActiveProcessDetail { get; set; } = new List<ActiveProcessDetail>();
 

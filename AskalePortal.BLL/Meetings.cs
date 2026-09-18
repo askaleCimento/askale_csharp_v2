@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using AskalePortal.Data.ResponseModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,28 @@ namespace AskalePortal.BLL
             }
 
             #endregion GetAll
+
+            public List<MeetingSaveDto> gelAllDto()
+            {
+                var q = dal.Get(u => u.enabled == true).OrderByDescending(u => u.Id).Select(u => new MeetingSaveDto
+                {
+                    createdDate = u.createdDate.HasValue
+    ? u.createdDate.Value.ToString("dd.MM.yyyy HH:ss")
+    : "",
+                    enabled = u.enabled,
+                    createdUserId = u.createdUserId,
+                    id = u.Id,
+                    meetingDate = u.meetingDate.HasValue
+    ? u.meetingDate.Value.ToString("dd.MM.yyyy HH:ss")
+    : "",
+                    meetingPlace = u.meetingPlace,
+                    updateDate = u.updatedDate.ToString(),
+                    updatedUserId = u.updatedUserId,
+                    users = u.users,
+
+                });
+                return q.ToList();
+            }
 
             #region GetByDate
 

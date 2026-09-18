@@ -29,5 +29,7 @@ public partial class PressAnnouncement
 
     public DateTime? newsDate { get; set; }
 
+    public bool? oncelikliMi { get; set; }
+
     public virtual AdminUser createdUser { get; set; }
 }

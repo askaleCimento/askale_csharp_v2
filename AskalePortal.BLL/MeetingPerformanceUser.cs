@@ -21,7 +21,7 @@ namespace AskalePortal.BLL
 			{
 
 				var q = dal.Get(k=>k.enabled ==true)
-									 .OrderBy(k => k.dataOrder);
+									 .OrderBy(k => k.Id);
 				return q.ToList();
 			
 			}

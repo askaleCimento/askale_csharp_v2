@@ -35,5 +35,5 @@ public partial class EmailMessage
 
     public int? updatedUserId { get; set; }
 
-    public virtual MeetingDetail meetingDetail { get; set; }
+    public bool? isSentEmailControl { get; set; }
 }

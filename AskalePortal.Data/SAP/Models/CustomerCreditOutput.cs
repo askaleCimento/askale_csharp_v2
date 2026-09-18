@@ -3,7 +3,12 @@ using SapNwRfc;
 
 namespace AskalePortal.Data.SAP.Models
 {
-    public class CustomerCredit
+    public class CustomerCreditOutput
+    {
+        [SapName("OUTPUT")]
+        public CustomerCreditList[] OUTPUT { get; set; } = Array.Empty<CustomerCreditList>();
+    }
+    public class CustomerCreditList
     {
         [SapName("KUNNR")]
         [JsonPropertyName("kunnr")]

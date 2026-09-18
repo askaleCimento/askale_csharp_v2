@@ -1,5 +1,7 @@
 using AskalePortal.Data.Contracts.Detached;
+using AskalePortal.Data.Models;
 using AskalePortal.Data.RequestModel;
+using AskalePortal.Data.ResponseModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -59,28 +61,28 @@ namespace AskalePortal.API.Controllers
             [FromForm] ActiveProcessChecksDto request)
         {
             var entity =
-                request.ToEntity<ActiveProcessChecksEntity>();
+                request.ToEntity<ActiveProcessChecksSaveDto>();
 
             var userId = GetCurrentUserId();
             var bll = CreateBll();
 
             if (entity.id is not null)
             {
-                entity.updateDate = DateTime.Now;
+                entity.updateDate = DateTime.Now.ToString();
                 entity.updatedUserId =
                     userId == 0 ? null : userId;
 
-                await bll.Update(entity);
+                await bll.Update(_mapper.Map<ActiveProcessChecks>(entity));
             }
             else
             {
-                entity.createdDate = DateTime.Now;
+                entity.createdDate = DateTime.Now.ToString();
                 entity.createdUserId =
                     userId == 0 ? null : userId;
 
                 entity.enabled = true;
 
-                await bll.Add(entity);
+                await bll.Add(_mapper.Map<ActiveProcessChecks>(entity));
             }
 
             return Ok(
@@ -201,23 +203,19 @@ namespace AskalePortal.API.Controllers
         #region GetByActiveProcessId
 
         [HttpPost("getByActiveProcessId")]
-        public ActionResult<List<ActiveProcessChecksDto>>
+        public ActionResult<List<ActiveProcessChecksSaveDto>>
             GetByActiveProcessId(
                 [FromForm] int activeProcessId)
         {
             var bll = CreateBll();
 
-            List<ActiveProcessChecksEntity> entities =
-                bll.getByActiveProcessId(
-                    activeProcessId) ?? [];
+            List<ActiveProcessChecksSaveDto> list =
+                bll.getByActiveProcessIdDto(
+                    activeProcessId);
 
-            var response = entities
-                .Select(entity =>
-                    (ActiveProcessChecksDto)
-                    DetachedDtoMapper.ToDetached(entity)!)
-                .ToList();
+           
 
-            return Ok(response);
+            return Ok(list);
         }
 
         #endregion

@@ -90,9 +90,17 @@ namespace AskalePortal.BLL
                     return nextUser.userId;
             }
 
-            public List<ApprovalProcessDetail> findByProcessIdAndEnabled(int processId, bool v)
+            public List<ApprovalProcessDetail> findByProcessIdAndEnabled(int processId, bool enabled)
             {
-                throw new NotImplementedException();
+                var list = dal.Get(u => u.processId == processId && u.enabled == enabled)
+                    .OrderBy(u => u.dataOrder).ToList();
+                for (int i = 0; i < list.Count; i++)
+                {
+                    list[i].dataOrder = i + 1;
+                    Update(list[i]).GetAwaiter().GetResult();
+                }
+                return dal.Get(u => u.processId == processId && u.enabled == enabled)
+                    .OrderBy(u => u.dataOrder).ToList();
             }
 
             public List<ApprovalProcessDetail> findByProcessIdAndEnabledOrderByDataOrderAsc(int processId)
@@ -102,34 +110,34 @@ namespace AskalePortal.BLL
 
             public AdminUser? GetNextUser(int? currentUserId, int? processId, bool enabled)
             {
-                ApprovalProcessDetail approvalProcessDetail = dal.Get(u => u.userId == currentUserId && u.processId == processId && u.enabled == enabled).First();
+                ApprovalProcessDetail approvalProcessDetail = dal.Get(u => u.userId == currentUserId && u.processId == processId && u.enabled == enabled).Single();
                 int newDataOrder = approvalProcessDetail.dataOrder + 1;
 
-                AdminUser? nextUser = nextUser = dal.Get(b =>
+                AdminUser? nextUser = dal.Get(b =>
         b.processId == processId &&
         b.dataOrder == newDataOrder &&
         b.enabled == enabled &&
         b.user.enabled == enabled
     )
     .Select(b => b.user)
-    .FirstOrDefault();
+    .SingleOrDefault();
 
                 return nextUser;
             }
 
             public ApprovalProcessDetail? findByUserIdAndProcessIdAndEnabled(int currentUserId, int processId, bool enabled)
             {
-                return dal.Get(u => u.userId == currentUserId && u.processId == processId && u.enabled == enabled).FirstOrDefault();
+                return dal.Get(u => u.userId == currentUserId && u.processId == processId && u.enabled == enabled).SingleOrDefault();
             }
 
             public ApprovalProcessDetail? findByProcessIdAndDataOrderAndEnabled(int processId, int dataOrder, bool enabled)
             {
-                return dal.Get(u => u.processId == processId && u.dataOrder == dataOrder && u.enabled == enabled).FirstOrDefault();
+                return dal.Get(u => u.processId == processId && u.dataOrder == dataOrder && u.enabled == enabled).SingleOrDefault();
             }
 
             internal ApprovalProcessDetail? findByProcessIdAndUserIdAndEnabled(int approvalProcessId, int userId, bool enabled)
             {
-                return dal.Get(u => u.processId == approvalProcessId && u.userId == userId && u.enabled == enabled).FirstOrDefault();
+                return dal.Get(u => u.processId == approvalProcessId && u.userId == userId && u.enabled == enabled).SingleOrDefault();
             }
 
             public async Task<bool> changeOrder(int processId, int oldIndex, int newIndex)
@@ -172,31 +180,31 @@ namespace AskalePortal.BLL
             {
                 if (entity.id == null)
                 {
-                    entity.createdUserId=userId;
-                    entity.createdDate=DateTime.Now.ToString();
+                    entity.createdUserId = userId;
+                    entity.createdDate = DateTime.Now.ToString();
 
                     ApprovalProcessDetail? approvalProcessDetail = dal.Get(u => u.processId == entity.processId && u.enabled == true).OrderByDescending(u => u.dataOrder).FirstOrDefault();
-                       
+
                     if (approvalProcessDetail == null)
                     {
-                        entity.dataOrder=1;
+                        entity.dataOrder = 1;
                     }
                     else
                     {
                         int dataOrder = approvalProcessDetail.dataOrder;
-                        entity.dataOrder=dataOrder + 1;
+                        entity.dataOrder = dataOrder + 1;
                     }
                     ApprovalProcessDetail? savedData = await Add(_mapper.Map<ApprovalProcessDetail>(entity));
                     return _mapper.Map<ApprovalProcessDetailSaveDto>(savedData);
                 }
                 else
                 {
-                    entity.updatedUserId=userId;
-                    entity.updateDate=DateTime.Now.ToString();
+                    entity.updatedUserId = userId;
+                    entity.updateDate = DateTime.Now.ToString();
                     await Update(_mapper.Map<ApprovalProcessDetail>(entity));
                     return entity;
                 }
-                
+
             }
 
 

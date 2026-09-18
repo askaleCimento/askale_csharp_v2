@@ -4,6 +4,7 @@ using AskalePortal.Data.ResponseModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using static AskalePortal.BLL.BLLActions;
 
 namespace AskalePortal.API.Controllers
 {
@@ -47,6 +48,17 @@ namespace AskalePortal.API.Controllers
 
         }
         #endregion
+        #region getAll
+        [HttpPost("getAll")]
+        public ActionResult<object> getAll()
+        {
+            BLLActions.MeetingDetails bllMeetingDetails = new BLLActions.MeetingDetails(_configuration, _env);
+
+            List<MeetingDetail> roles = bllMeetingDetails.GetAll();
+            return Ok(roles);
+
+        }       
+        #endregion
 
 
         #region Save
@@ -84,6 +96,24 @@ namespace AskalePortal.API.Controllers
                 }
             }
             return Ok(null);
+        }
+        #endregion
+
+        #region delete
+        [HttpPost("delete")]
+        public ActionResult<int> delete([FromForm] int id)
+        {
+            try
+            {
+                BLLActions.MeetingDetails bllMeetingDetails = new BLLActions.MeetingDetails(_configuration, _env);
+                bllMeetingDetails.Delete(id);
+                return Ok(1);
+            }
+            catch
+            {
+                return Ok(0);
+            }
+
         }
         #endregion
     }

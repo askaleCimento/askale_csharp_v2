@@ -8,6 +8,9 @@ public partial class DBDataContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
     {
+
+        ConfigureActiveProcessExtras(modelBuilder);
+
         modelBuilder.Entity<AuthRefreshToken>(entity =>
         {
             entity.ToTable("AuthRefreshTokens");

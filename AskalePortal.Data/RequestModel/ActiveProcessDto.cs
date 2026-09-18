@@ -1,4 +1,5 @@
-﻿using AskalePortal.Data.Models;
+﻿using AskalePortal.Data.Contracts.Detached;
+using AskalePortal.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace AskalePortal.Data.RequestModel
        public AdminUser? currentUser{get;set;}
        public AdminUser? userVekalet{get;set;}
        public ApprovalProcess? approvalProcess{get;set;}
-       public List<ActiveProcessDetail>? listActiveProcessDetail{get;set;}
+       public List<ActiveProcessDetailDto>? listActiveProcessDetail{get;set;}
        public string? dagitimKanali{get;set;}
        public string? relatedData{get;set;}
        public string? relatedDataId{get;set;}
@@ -31,7 +32,7 @@ namespace AskalePortal.Data.RequestModel
        public string? customFields{get;set;}
        public string? disaprovecondition{get;set;}
        public int? oncekiArtirim{get;set;}
-       public DateTime? createdDate{get;set;}
+       public string? createdDate{get;set;}
        public int? createdUserId{get;set;}
        public string? belgeTutari{get;set;}
        public double? avgDays{get;set;}

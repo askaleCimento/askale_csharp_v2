@@ -1,5 +1,6 @@
 ﻿
 
+using AskalePortal.Data.Contracts.Detached;
 using AskalePortal.Data.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -75,7 +76,38 @@ namespace AskalePortal.BLL
             {
                 return dal.Get(u => u.enabled == enabled && listActiveProcessId.Contains(u.activeProcessId)).ToList();
             }
+            public List<ActiveProcessDetailDto> findAllByListActiveProcessIdAndEnabledDto(List<int> listActiveProcessId, bool enabled)
+            {
+                return dal.Get(u => u.enabled == enabled && listActiveProcessId.Contains(u.activeProcessId)).Select(u=>new ActiveProcessDetailDto()
+                {
+                    activeProcessId=u.activeProcessId,
+                    approved=u.approved,
+                    createdDate=u.createdDate.ToString("dd.MM.yyyy"),
+                    createdUserId=u.createdUserId,
+                    description = u.description,
+                    enabled= u.enabled,
+                    guid = u.guid,
+                    Id = u.Id,
+                    isReplied = u.isReplied,
+                    replyDate = u.replyDate.HasValue? u.replyDate.Value.ToString("dd.MM.yyyy"):"",
+                    updatedDate = u.updatedDate,
+                    updatedUserId = u.updatedUserId,
+                    userId = u.userId,
+                    vekaletId = u.vekaletId
+                } ).ToList();
+            }
 
+            public List<ActiveProcessDetail> findAllByActiveProcessIdAndEnabled(int activeProcessId, bool enabled)
+            {
+                return dal.Get(u => u.enabled == enabled && u.activeProcessId == activeProcessId).ToList();
+            }
+
+            public string getGuid(int activeProcessId, int userId, bool enabled)
+            {
+                string guid = dal.Get(u => u.enabled == enabled && u.activeProcessId == activeProcessId && u.userId == userId).FirstOrDefault()?.guid.ToString() ??"";
+
+                return guid;
+            }
         }
     }
 }

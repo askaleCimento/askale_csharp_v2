@@ -27,5 +27,9 @@ public partial class HRAnnouncement
 
     public int? updatedUserId { get; set; }
 
+    public bool? isStart { get; set; }
+
+    public bool? isEmployed { get; set; }
+
     public virtual AdminUser createdUser { get; set; }
 }

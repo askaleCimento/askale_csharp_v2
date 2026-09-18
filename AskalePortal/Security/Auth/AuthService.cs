@@ -199,7 +199,9 @@ public sealed class AuthService(
             new AuthUserResponse(user.Id, user.username, user.name ?? user.username, roles));
     }
 
-    private async Task<IReadOnlyCollection<string>> BuildRolesAsync(int roleId, CancellationToken cancellationToken)
+    private async Task<IReadOnlyCollection<string>> BuildRolesAsync(
+       int roleId,
+       CancellationToken cancellationToken)
     {
         var details = await db.RoleDetail
             .AsNoTracking()
@@ -207,15 +209,28 @@ public sealed class AuthService(
             .ToListAsync(cancellationToken);
 
         var roles = new HashSet<string>(StringComparer.Ordinal);
+
         foreach (var item in details)
         {
-            if (item.canAdd) roles.Add($"ROLE_{item.moduleId}_ADD");
-            if (item.canDelete) roles.Add($"ROLE_{item.moduleId}_DELETE");
-            if (item.canEdit) roles.Add($"ROLE_{item.moduleId}_EDIT");
-            if (item.canSee) roles.Add($"ROLE_{item.moduleId}_SEE");
-            if (item.canSeeLogs) roles.Add($"ROLE_{item.moduleId}_LOGS");
-            if (item.canApprove) roles.Add($"ROLE_{item.moduleId}_APPROVE");
+            if (item.canAdd)
+                roles.Add($"ROLE_{item.moduleId}_ADD");
+
+            if (item.canDelete)
+                roles.Add($"ROLE_{item.moduleId}_DELETE");
+
+            if (item.canEdit)
+                roles.Add($"ROLE_{item.moduleId}_EDIT");
+
+            if (item.canSee)
+                roles.Add($"ROLE_{item.moduleId}_SEE");
+
+            if (item.canSeeLogs)
+                roles.Add($"ROLE_{item.moduleId}_SEE_LOGS");
+
+            if (item.canApprove)
+                roles.Add($"ROLE_{item.moduleId}_APPROVE");
         }
+
         return roles;
     }
 

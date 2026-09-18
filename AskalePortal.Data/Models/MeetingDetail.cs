@@ -43,8 +43,6 @@ public partial class MeetingDetail
 
     public int? updatedUserId { get; set; }
 
-    public virtual ICollection<EmailMessage> EmailMessage { get; set; } = new List<EmailMessage>();
-
     public virtual ICollection<EmailMessageKurumsal> EmailMessageKurumsal { get; set; } = new List<EmailMessageKurumsal>();
 
     public virtual ICollection<EmailMessages_12112020> EmailMessages_12112020 { get; set; } = new List<EmailMessages_12112020>();

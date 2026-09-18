@@ -38,7 +38,7 @@ namespace AskalePortal.API.Controllers
                 BLL.BLLActions.RatingQuestions bllRatingQuestion = new BLL.BLLActions.RatingQuestions(_configuration, _env);
                 RatingQuestion ratingQuestion = _mapper.Map<RatingQuestion>(entity);
 
-                if (ratingQuestion?.Id != 0)
+                if (ratingQuestion?.Id != null)
                 {
 
                     ratingQuestion!.updatedDate = DateTime.Now;

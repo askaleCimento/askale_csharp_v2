@@ -77,17 +77,19 @@ namespace AskalePortal.BLL
 
 
 
-                IQueryable<PressAnnouncement> query = dal.Get(k => k.enabled == true);
+                IQueryable<PressAnnouncement> query = dal.Get(k => k.enabled == true).OrderByDescending(u=>u.Id);
                 result.content = query
+                    .OrderByDescending(u=> u.Id)
                   .Skip(pageSize * pageNumber).Take(pageSize)
-
                     .Select(u => new PressAnnouncementDto()
                     {
                         id = u.Id,
                         createdByUserName = u.createdByUserName,
                         description = u.description,
                         imageUrl = u.imageUrl,
-                        newsDate = u.newsDate,
+                        newsDate = u.newsDate.HasValue
+    ? u.newsDate.Value.ToString("dd.MM.yyyy")
+    : "",
                         title = u.title,
 
 
@@ -100,10 +102,22 @@ namespace AskalePortal.BLL
                 return result;
             }
 
-            public List<PressAnnouncement>? ListTop8Picture()
+            public List<PressAnnouncementDto>? ListTop8Picture()
             {
-                
-                List<PressAnnouncement>? list = dal.Get(k => k.enabled == true).OrderByDescending(k => k.newsDate).Take(8).ToList();
+                List<PressAnnouncementDto>? list = dal
+    .Get(k => k.enabled == true)
+    .OrderByDescending(k => k.oncelikliMi == true)
+    .ThenByDescending(k => k.newsDate)
+    .Take(8).Select(u=> new PressAnnouncementDto { createdByUserName=u.createdByUserName,
+    description=u.description,
+    id=u.Id,
+    imageUrl=u.imageUrl,
+        newsDate = u.newsDate.HasValue
+    ? u.newsDate.Value.ToString("dd.MM.yyyy")
+    : "",
+        title =u.title})
+    .ToList();
+
                 return list;
             }
         }

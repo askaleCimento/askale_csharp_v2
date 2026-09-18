@@ -1,4 +1,5 @@
 ﻿using AskalePortal.Constants;
+using AskalePortal.Data.Models;
 using AskalePortal.Data.ResponseModels;
 using AskalePortal.Data.SAP.InputParams;
 using AskalePortal.Data.SAP.Models;
@@ -112,9 +113,12 @@ namespace AskalePortal.BLL
                     sapConn.Disconnect();
 
 
-                    foreach(ListCustomer i in output.customer ?? [])
+                    //foreach(ListCustomer i in output.customer ?? [])
+                    for (int a = 0; a < (output.customer ?? []).Length; a++)
                     {
+                        var i = output.customer[a];
                         CustomerListDto customerListDto = new CustomerListDto();
+                        customerListDto.id = a;
                         customerListDto.adrnr = i.ADRNR;
                         customerListDto.name1 = i.NAME1;
                         customerListDto.duefl = i.DUEFL;
@@ -156,8 +160,8 @@ namespace AskalePortal.BLL
 
             }
 
-                
-                
+
+
 
             public Data.SAP.Models.Customer? GetByKUNNR(string KUNNR)
             {
@@ -218,14 +222,14 @@ namespace AskalePortal.BLL
             //    return cevap;
             //}
 
-            public Data.SAP.Models.CustomerCredit? GetCustomerCreditByKUNNR(string KUNNR)
+            public Data.SAP.Models.CustomerCreditList? GetCustomerCreditByKUNNR(string KUNNR)
             {
                 //return new Data.SAP.Models.CustomerCredit { KUNNR = "0000200020",
                 //    NAME1 = "ŞAH-İN İNŞAAT NAKLİYAT TAAHHÜT",
                 //    TOP_BORC = 123
                 //};
 
-                List<Data.SAP.Models.CustomerCredit>? lstCustomerCredits = new List<Data.SAP.Models.CustomerCredit>();
+                List<Data.SAP.Models.CustomerCreditList>? lstCustomerCredits = new List<Data.SAP.Models.CustomerCreditList>();
 
                 try
                 {
@@ -484,7 +488,7 @@ namespace AskalePortal.BLL
                         sapConn.Connect();
                         ISapFunction sapFunction = sapConn.CreateFunction("ZWEBI019");
 
-                        EVMESSAGE message = sapFunction.Invoke<EVMESSAGE>(input: new SapSanalLimitIncrease { kunnr = KUNNR, dmbtr = DMBTR, yeniMusteri = yeniMusteriMi, kullaniciAdi = username }
+                        EVMESSAGE message = sapFunction.Invoke<EVMESSAGE>(input: new SapSanalLimitIncrease { kunnr = KUNNR, dmbtr = DMBTR, yeniMusteri = username, kullaniciAdi = yeniMusteriMi }
 
                                   );
                         sapConn.Disconnect();
@@ -493,7 +497,7 @@ namespace AskalePortal.BLL
                     }
                     else
                     {
-                        return "sapError";
+                        return "";
                     }
 
 
@@ -501,7 +505,7 @@ namespace AskalePortal.BLL
                 catch (Exception ex)
                 {
                     LogError(ex);
-                    return "sapError";
+                    return "";
 
                 }
 
@@ -546,7 +550,7 @@ namespace AskalePortal.BLL
 
             }
 
-            public CustomerCredit? getCustomerCredit(string kunnr)
+            public CustomerCreditList? getCustomerCredit(string kunnr)
             {
 
 
@@ -561,15 +565,22 @@ namespace AskalePortal.BLL
                         ISapFunction sapFunction = sapConn.CreateFunction("ZWEBI012");
 
 
-                        CustomerCreditSap? customerCreditSap = sapFunction.Invoke<CustomerCreditSap>(
+                        CustomerCreditOutput? customerCreditOutput = sapFunction.Invoke<CustomerCreditOutput>(
                             input: new KunnrParams { kunnr = kunnr }
 
                                  );
                         sapConn.Disconnect();
-                        //buraya bak olmazsa dto ile yapmam gerekiyor
-                        CustomerCredit? customerCredit = customerCreditSap.listcCustomerCredit.FirstOrDefault();
-                        Console.WriteLine(customerCredit);
-                        return customerCredit ;
+
+                        CustomerCreditList? customer = customerCreditOutput.OUTPUT.LastOrDefault();
+                        if (customer != null)
+                        {
+                            customer.KUNNR = customer.KUNNR?.Trim();
+                            customer.NAME1 = customer.NAME1?.Trim();
+                            // Java compatibility: Java overwrites cheque values with note values.
+                            customer.ACIK_CEK_K = customer.ACIK_SENET_K;
+                            customer.ACIK_CEK_M = customer.ACIK_SENET_M;
+                        }
+                        return customer;
 
 
                     }
@@ -676,7 +687,7 @@ namespace AskalePortal.BLL
                         sapConn.Connect();
                         ISapFunction sapFunction = sapConn.CreateFunction("ZWEBI035");
 
-                        EVMESSAGE message = sapFunction.Invoke<EVMESSAGE>(input: new SapFiyatOnayInput{ iv_wi_id = wiid, onay = onay }  );
+                        EVMESSAGE message = sapFunction.Invoke<EVMESSAGE>(input: new SapFiyatOnayInput { iv_wi_id = wiid, onay = onay });
                         sapConn.Disconnect();
                         return message.EV_MESSAGE ?? "";
 

@@ -13,6 +13,6 @@ namespace AskalePortal.Data.ResponseModels
         public string? description{get;set;}
         public string? imageUrl{get;set;}
         public string? createdByUserName{get;set;}
-        public DateTime? newsDate{get;set;}
+        public string? newsDate{get;set;}
     }
 }

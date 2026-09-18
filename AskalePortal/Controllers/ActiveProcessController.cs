@@ -25,7 +25,7 @@ namespace AskalePortal.API.Controllers
         }
         #region hasactiveprocess
         [HttpPost("hasactiveprocess")]
-        public ActionResult<bool> hasactiveprocess([FromForm] int processType, [FromForm] string relatedDataId, [FromForm] string relatedDataDesc)
+        public ActionResult<bool> hasactiveprocess([FromForm] int processType, [FromForm] string relatedDataId, [FromForm] string? relatedDataDesc)
         {
             BLLActions.ActiveProcesses bllActiveProcesses = new BLLActions.ActiveProcesses(_configuration, _env, _mapper);
             bool sonuc = bllActiveProcesses.hasActiveProcess(processType, relatedDataId, relatedDataDesc);
@@ -71,13 +71,13 @@ namespace AskalePortal.API.Controllers
 
         #region changedate
         [HttpPost("changedate")]
-        public async Task<ActionResult<bool>> changedate([FromForm] string bukrs, [FromForm] int gjahr,
+        public async Task<ActionResult<ActiveProcessSaveDto>> changedate([FromForm] string bukrs, [FromForm] int gjahr,
             [FromForm] string name1, [FromForm] string kunnr, [FromForm] string faedt,
             [FromForm] string belnr, [FromForm] string zfbdt, [FromForm] string dagitimKanali,
-            [FromForm] int newValue, [FromForm] string description, [FromForm] int userId, [FromForm] string belgeTutari)
+            [FromForm] int newValue, [FromForm] string? description, [FromForm] int userId, [FromForm] string belgeTutari)
         {
             BLLActions.ActiveProcesses bllActiveProcesses = new BLLActions.ActiveProcesses(_configuration, _env, _mapper);
-            bool deger = await bllActiveProcesses.changedate(bukrs, gjahr, name1, kunnr, faedt, belnr, zfbdt,
+            ActiveProcessSaveDto deger = await bllActiveProcesses.changedate(bukrs, gjahr, name1, kunnr, faedt, belnr, zfbdt,
                     dagitimKanali, newValue, description, userId, belgeTutari);
 
             return Ok(deger);
@@ -168,6 +168,7 @@ namespace AskalePortal.API.Controllers
             return Ok(deger);
         }
         #endregion
+       
         #region getAvgVadeDays
         [HttpPost("getAvgVadeDays")]
         public ActionResult<AvgVadeDaysDto> getAvgVadeDays([FromForm] string kunnr)
@@ -178,5 +179,23 @@ namespace AskalePortal.API.Controllers
         }
         #endregion
 
+        #region changealldatewithCheck
+        [HttpPost("changealldatewithCheck")]
+        public async Task<ActionResult<bool>> changealldateWithCheck(
+            [FromForm] bool approved,
+            [FromForm] List<int> listInt,
+            [FromForm] int userId)
+        {
+            BLLActions.ActiveProcesses bllActiveProcesses =
+                new BLLActions.ActiveProcesses(_configuration, _env, _mapper);
+
+            bool deger = await bllActiveProcesses.changeAllDateWithCheck(
+                approved,
+                listInt,
+                userId);
+
+            return Ok(deger);
+        }
+        #endregion
     }
 }

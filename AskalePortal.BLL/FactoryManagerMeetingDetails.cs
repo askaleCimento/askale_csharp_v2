@@ -1,4 +1,5 @@
 ﻿using AskalePortal.Data.Models;
+using AskalePortal.Data.ResponseModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -30,6 +31,35 @@ namespace AskalePortal.BLL
                                     (k.itemStatus == itemStatus || itemStatus == null || itemStatus == 0) &&
                                     (k.detailNumber == detailNumber || string.IsNullOrEmpty(detailNumber)))
                                      .OrderByDescending(k => k.Id);
+                return q.ToList();
+            }
+
+            public List<FactoryManagerMeetingDetailSaveDto> GetAllDto()
+            {
+                var q = dal.Get(k => k.enabled == true)
+                                     .OrderByDescending(k => k.Id).Select(u => new FactoryManagerMeetingDetailSaveDto
+                                     {
+                                         users = u.users,
+                                         updatedUserId = u.updatedUserId,
+                                         completedDate = u.completedDate.HasValue
+    ? u.completedDate.Value.ToString("dd.MM.yyyy")
+    : "",
+                                         completedNote = u.completedNote,
+                                         copyFromMeetingDetailId = u.copyFromMeetingDetailId,
+                                         copyFromMeetingId = u.copyFromMeetingId,
+                                         createdDate = u.createdDate.HasValue ? u.createdDate.Value.ToString("dd.MM.yyyy"):"",
+                                         createdUserId = u.createdUserId,
+                                         description = u.description,
+                                         detailNumber = u.detailNumber,
+                                         enabled = u.enabled,
+                                         id = u.Id,
+                                         itemStatus = u.itemStatus,
+                                         meetingDate = u.meetingDate.HasValue ? u.meetingDate.Value.ToString("dd.MM.yyyy") : "",
+                                         meetingId = u.meetingId,
+                                         plannedDate = u.plannedDate.HasValue ? u.plannedDate.Value.ToString("dd.MM.yyyy") : "",
+                                         title = u.title,
+                                         updateDate =  u.updatedDate.ToString(),
+                                     });
                 return q.ToList();
             }
 
