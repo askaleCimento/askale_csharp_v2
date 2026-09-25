@@ -54,7 +54,45 @@ namespace AskalePortal.API.Controllers
         {
             BLLActions.Customers bllCustomers = new BLLActions.Customers(_configuration, _env);
             CustomerCreditList? data = bllCustomers.getCustomerCredit(kunnr);
-            return Ok(data ?? new CustomerCreditList());
+            if (data == null)
+            {
+                return NotFound(new { message = "Müşteri kredi bilgisi alınamadı." });
+            }
+
+            // Explicit keys survive DetachedEntityResultFilter and Newtonsoft.Json.
+            return Ok(new Dictionary<string, object?>
+            {
+                ["kunnr"] = data.KUNNR,
+                ["name1"] = data.NAME1,
+                ["dmbtr"] = data.DMBTR,
+                ["dmbtr120"] = data.DMBTR_120,
+                ["dmbtra"] = data.DMBTR_A,
+                ["dmbtrg"] = data.DMBTR_G,
+                ["riskborc"] = data.RISK_BORC,
+                ["dmbtrt"] = data.DMBTR_T,
+                ["acikcekm"] = data.ACIK_CEK_M,
+                ["acikcekk"] = data.ACIK_CEK_K,
+                ["aciksd"] = data.ACIK_SD,
+                ["topborc"] = data.TOP_BORC,
+                ["aciksenetm"] = data.ACIK_SENET_M,
+                ["aciksenetk"] = data.ACIK_SENET_K,
+                ["kredikul"] = data.KREDI_KUL,
+                ["klimk"] = data.KLIMK,
+                ["dmbtrvade1"] = data.DMBTR_VADE1,
+                ["dmbtrvade2"] = data.DMBTR_VADE2,
+                ["dmbtrvade3"] = data.DMBTR_VADE3,
+                ["dmbtrvade4"] = data.DMBTR_VADE4,
+                ["dmbtrvade5"] = data.DMBTR_VADE5,
+                ["dmbtr2vade1"] = data.DMBTR2_VADE1,
+                ["dmbtr2vade2"] = data.DMBTR2_VADE2,
+                ["dmbtr2vade3"] = data.DMBTR2_VADE3,
+                ["dmbtr2vade4"] = data.DMBTR2_VADE4,
+                ["dmbtr2vade5"] = data.DMBTR2_VADE5,
+                ["dmbtrt901"] = data.DMBTR_T_901,
+                ["dmbtrt902"] = data.DMBTR_T_902,
+                ["snlmt"] = data.SNLMT,
+                ["kllmt"] = data.KLLMT,
+            });
         }
         #endregion
 

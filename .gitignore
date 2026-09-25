@@ -406,3 +406,4 @@ FodyWeavers.xsd
 /AskalePortal/appsettings.json
 /AskalePortal/Properties/launchSettings.json
 >>>>>>> d2496fd (İlk .NET proje yüklemesi)
+**/appsettings.OpenAI.local.json

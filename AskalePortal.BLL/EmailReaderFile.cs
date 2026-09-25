@@ -25,6 +25,11 @@ namespace AskalePortal.BLL
 
             public string BuildEmailTemplate(IConfiguration _configuration, IWebHostEnvironment env, string title, string description)
             {
+                //var configuredPath = _configuration["EmailTemplates:BasePath"];
+                //var basePath = string.IsNullOrWhiteSpace(configuredPath)
+                //    ? Path.Combine(AppContext.BaseDirectory, "templates", "Email")
+                //    : Path.GetFullPath(configuredPath, env.ContentRootPath);
+                //string content = File.ReadAllText(Path.Combine(basePath, "email.html"), Encoding.UTF8);
                 string? filePath = "C:\\Users\\dilek.sariyerlioglu\\source\\repos\\askale_csharp_v2\\AskalePortal.BLL\\templates\\Email\\email.html";
                 //string? filePath = Path.Combine(env.IsDevelopment() ? _configuration["FilePath:local"]! : env.IsProduction() ? _configuration["FilePath:server"]! :
                 //    _configuration["FilePath:test"]!, "templates\\Email\\email.html");

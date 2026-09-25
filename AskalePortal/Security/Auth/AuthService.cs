@@ -79,6 +79,9 @@ public sealed class AuthService(
             return null;
         }
 
+        if (stored.CredentialVersion != CredentialVersion.Create(user.Id, user.password, _options.SecurityKey))
+            return null;
+
         stored.UsedAtUtc = now;
         var response = await IssueTokenPairAsync(
             user,
@@ -155,7 +158,8 @@ public sealed class AuthService(
             new("userId", user.Id.ToString()),
             new("username", user.username),
             new("name", user.name ?? user.username),
-            new("sid", sessionId)
+            new("sid", sessionId),
+            new("cv", CredentialVersion.Create(user.Id, user.password, _options.SecurityKey))
         };
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
@@ -174,6 +178,7 @@ public sealed class AuthService(
         db.AuthRefreshTokens.Add(new AuthRefreshToken
         {
             UserId = user.Id,
+            CredentialVersion = CredentialVersion.Create(user.Id, user.password, _options.SecurityKey),
             TokenHash = HashToken(refreshToken),
             JwtId = jwtId,
             SessionId = sessionId,

@@ -54,6 +54,9 @@ namespace AskalePortal.API.Controllers
         [HttpPost("changepassword")]
         public async Task<ActionResult<int>> changepassword([FromForm] int userId, [FromForm] string newPassword)
         {
+            // The self-service endpoint must not accept another account's ID.
+            if (!int.TryParse(User.FindFirstValue("userId"), out var authenticatedUserId) || authenticatedUserId != userId)
+                return Forbid();
 
             BLLActions.AdminUsers bllAdminUser = new BLLActions.AdminUsers(_configuration, _env, _mapper);
             AdminUser? adminUser = bllAdminUser.GetByID(userId);

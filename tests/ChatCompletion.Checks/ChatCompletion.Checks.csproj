@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup><TargetFramework>net9.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../AskalePortal/Services/ChatGpt/*.cs" Link="Services/%(Filename)%(Extension)" />
+    <Compile Include="../../AskalePortal/Features/ChatHistory/ChatHistoryContract.cs" Link="ChatHistoryContract.cs" />
+    <Compile Include="../../AskalePortal/Features/ChatHistory/ChatHistoryResponse.cs" Link="ChatHistoryResponse.cs" />
+    <Compile Include="../../AskalePortal.Data/Contracts/Detached/DetachedDtoMapper.cs" Link="DetachedDtoMapper.cs" />
+    <Compile Include="../../AskalePortal/Controllers/ChatCompletionController.cs" Link="ChatCompletionController.cs" />
+    <Compile Include="../../AskalePortal/Infrastructure/Errors/ApiErrorWriter.cs" Link="ApiErrorWriter.cs" />
+    <Compile Include="../../AskalePortal/Infrastructure/Errors/ApiErrorResponse.cs" Link="ApiErrorResponse.cs" />
+  </ItemGroup>
+</Project>

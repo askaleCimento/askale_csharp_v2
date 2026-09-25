@@ -1,4 +1,4 @@
-﻿using AskalePortal.Constants;
+using AskalePortal.Constants;
 using AskalePortal.Data.Models;
 using AskalePortal.Data.ResponseModels;
 using AskalePortal.Data.SAP.InputParams;
@@ -576,9 +576,7 @@ namespace AskalePortal.BLL
                         {
                             customer.KUNNR = customer.KUNNR?.Trim();
                             customer.NAME1 = customer.NAME1?.Trim();
-                            // Java compatibility: Java overwrites cheque values with note values.
-                            customer.ACIK_CEK_K = customer.ACIK_SENET_K;
-                            customer.ACIK_CEK_M = customer.ACIK_SENET_M;
+
                         }
                         return customer;
 

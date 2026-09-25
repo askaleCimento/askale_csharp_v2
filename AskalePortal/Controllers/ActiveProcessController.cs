@@ -197,5 +197,19 @@ namespace AskalePortal.API.Controllers
             return Ok(deger);
         }
         #endregion
+
+
+        #region getbyId
+        [HttpPost("getbyId")]
+        public  ActionResult<ActiveProcess> GetById([FromForm] int id)
+        {
+            BLLActions.ActiveProcesses bllActiveProcesses =
+                new BLLActions.ActiveProcesses(_configuration, _env, _mapper);
+
+            ActiveProcess? process =  bllActiveProcesses.GetByID(id);
+
+            return Ok(process);
+        }
+        #endregion
     }
 }

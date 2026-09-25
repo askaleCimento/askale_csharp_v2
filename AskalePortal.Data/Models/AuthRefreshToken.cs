@@ -4,6 +4,7 @@ public sealed class AuthRefreshToken
 {
     public long Id { get; set; }
     public int UserId { get; set; }
+    public string? CredentialVersion { get; set; }
     public required string TokenHash { get; set; }
     public required string JwtId { get; set; }
     public required string SessionId { get; set; }
